@@ -30,7 +30,7 @@ article, aside, canvas, details, embed, figure, figcaption, footer, header, hgro
   text-decoration: none;
   vertical-align: baseline;
   /* font-family has to be last in this declaration */
-  font-family: "CharisSIL", "Charis SIL", "Gentium Plus", "Doulos SIL", "Lucida Sans Unicode", "Times New Roman", serif, sans-serif; }
+  font-family: 'Gentium Plus', serif, sans-serif; }
 
 /* Styling by classes or element type */
 a, a:hover, a:visited, a:active {
@@ -49,15 +49,16 @@ blockquote:before, blockquote:after, q:before, q:after {
   content: none; }
 
 h1 {
+  font-weight: bold;
   text-align: center; }
 
 input {
   background-color: lightgray; }
 
-input[type="date"] {
+input[type='date] {
   flex-direction: row; }
 
-input[type="radio"] {
+input[type='radio'] {
   align-self: center; }
 
 ol, ul {
