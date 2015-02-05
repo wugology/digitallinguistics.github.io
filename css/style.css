@@ -47,10 +47,22 @@ blockquote, q {
 blockquote:before, blockquote:after, q:before, q:after {
   content: '';
   content: none; }
+  
+body{
+    width: 800px;
+	margin: 50px;
+	padding: 0px; }
+    
+em {
+    font-weight:bold; }
 
 h1 {
   font-weight: bold;
   text-align: center; }
+
+h2 {
+    font-weight: bold; 
+    font-size: 150%; }
 
 input {
   background-color: lightgray; }
@@ -87,6 +99,11 @@ thead {
 	
 tr {
   display: table-row; }
+
+ul {
+    list-style-type: disc;
+    padding-left: 50px; }
+
 
 /* Styling by DOM elements */
 html, body {
