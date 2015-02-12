@@ -32,14 +32,24 @@ article, aside, canvas, details, embed, figure, figcaption, footer, header, hgro
   /* font-family has to be last in this declaration */
   font-family: 'Gentium Plus', serif, sans-serif; }
 
-/* Styling by classes or element type */
+/* Styling by CSS rule (alphabetical by CSS rule) */
+input[type='radio'] {
+  align-self: center; }
+
+a, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var {
+  display: inline; }
+
+input[type='date'], main, nav > ul {
+  flex-direction: row; }
+
+main, section {
+  flex-grow: 1; }
+
+/* Styling by classes or element type (alphabetical by class/element) */
 a, a:hover, a:visited, a:active {
   background: transparent;
   color: inherit;
   text-decoration: none: }
-
-a, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var {
-  display: inline; }
 
 blockquote, q {
   quotes: none; }
@@ -55,12 +65,6 @@ h1 {
 input {
   background-color: lightgray; }
 
-input[type='date] {
-  flex-direction: row; }
-
-input[type='radio'] {
-  align-self: center; }
-
 ol, ul {
   list-style: none; }
 
@@ -72,7 +76,7 @@ table {
 tbody {
   display: table-row-group; }
 
-td, td {
+td, th {
   vertical-align: middle; }
 	
 td {
@@ -88,6 +92,7 @@ thead {
 tr {
   display: table-row; }
 
-/* Styling by DOM elements */
-html, body {
-  background: white; }
+/* Styling by DOM elements (organized by DOM structure) */
+body {
+  background: white;
+  min-height: 100vh; }
