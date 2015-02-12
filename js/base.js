@@ -7,9 +7,9 @@ var Model = function(attributes, options){
     }, this)
 }
 
-var ModelView = function(model, options){
+var ModelView = function(options){
   this.el = options.el || document.createElement('div');
-  this.model = model;
+  this.model = options.model;
   this.render = options.render;
 }
 
@@ -30,7 +30,7 @@ var CollectionView = function(collection, options){
   this.render = function(){
     var fragment = document.createDocumentFragment();
     this.collection.forEach(function(model){
-      var modelView = new ModelView(model, {});
+      var modelView = new ModelView({model: model});
       fragment.appendChild(modelView);
     }) 
     return fragment;
@@ -62,3 +62,7 @@ var Phrase = function(){
 }
 Phrase.prototype = Object.create(Model.prototype);
 
+var PhraseView = function(){
+  ModelView.apply(this, arguments);
+}
+PhraseView.prototype = Object.create(ModelView.prototype);

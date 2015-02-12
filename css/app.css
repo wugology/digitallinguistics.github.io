@@ -1,0 +1,17 @@
+body > header { 
+  border-bottom: 1px solid lightgray;
+}
+
+section { 
+  padding: 1em;
+}
+
+#corpus {
+  flex: 1;
+}
+
+#text {
+  flex: 4;
+  border-left:  1px solid lightgray;
+  border-right: 1px solid lightgray;
+}

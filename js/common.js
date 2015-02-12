@@ -7,7 +7,8 @@ var hydrate = function(selector, data){
 
   Object.keys(data)
     .forEach(function(key){
-      node.querySelector('.' + key).textContent = data[key]
+      var match = node.querySelector('.' + key);
+      if(match){ match.textContent = data[key] }
     })
 
   return node; 
