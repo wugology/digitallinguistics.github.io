@@ -1,3 +1,6 @@
+/* Imports the fonts.css file */
+@import url(fonts.css);
+
 /* CSS reset */
 /* General elements */
 html, body, div, span, applet, object, iframe,
@@ -20,22 +23,19 @@ article, aside, canvas, details, embed, figure, figcaption, footer, header, hgro
   display: flex;
   height: auto;
   flex-direction: column;
+  font-family: 'Gentium Plus';
   font-size: 100%;
   font-weight: normal;
-  font: inherit;
   line-height: 150%;
   margin: 0;
   outline: none;
   padding: 0;
   text-decoration: none;
   vertical-align: baseline;
-  /* font-family has to be last in this declaration */
-  font-family: 'Gentium Plus'; }
+  /* font:inherit has to come after font-family in this declaration */
+  font: inherit; }
 
-/* Styling by CSS rule (alphabetical by CSS rule) */
-input[type='radio'] {
-  align-self: center; }
-
+/* Styling by CSS rule(s) (alphabetical by CSS rule) */
 a, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var {
   display: inline; }
 
@@ -48,13 +48,10 @@ main, section {
 h1, header > p {
   font-weight: bold; }
 
-li {
-  padding: 0 0.5rem; }
-
 h1, header > p {
   text-align: center; }
 
-img {
+img, nav {
   width: 100%; }
 
 /* Styling by classes or element type (alphabetical by class/element) */
@@ -71,11 +68,31 @@ blockquote:before, blockquote:after, q:before, q:after {
   content: none; }
 
 code {
-  font-family: 'DejaVu Sans Mono';
-}
+  font-family: 'DejaVu Sans Mono'; }
 
 input {
   background-color: lightgray; }
+
+input[type='radio'] {
+  align-self: center; }
+
+nav {
+  position: fixed; }
+
+nav > ul {
+  background-color: #3F93F9;
+  justify-content: center; }
+
+nav > ul > li {
+  color: white;
+  font-family: 'Fira Sans';
+  padding: 0.5rem; }
+
+nav > ul > li > a {
+  border-bottom: 1px solid #3F93F9; }
+
+nav > ul > li > a:hover {
+  border-bottom: 1px solid white; }
 
 ol, ul {
   list-style: none; }
@@ -108,3 +125,6 @@ tr {
 body {
   background: white;
   min-height: 100vh; }
+
+header img {
+  margin-top: 2.25rem; }

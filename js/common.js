@@ -1,7 +1,7 @@
 /* functions used throughout the app that aren't part of domain-specific objects */
 
 var hydrate = function(selector, data){
-  var 
+  var
     templateNode = document.querySelector(selector),
     node = document.importNode(templateNode.content, true);
 
