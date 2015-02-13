@@ -30,7 +30,7 @@ article, aside, canvas, details, embed, figure, figcaption, footer, header, hgro
   text-decoration: none;
   vertical-align: baseline;
   /* font-family has to be last in this declaration */
-  font-family: 'Gentium Plus', serif, sans-serif; }
+  font-family: 'Gentium Plus'; }
 
 /* Styling by CSS rule (alphabetical by CSS rule) */
 input[type='radio'] {
@@ -45,6 +45,18 @@ input[type='date'], main, nav > ul {
 main, section {
   flex-grow: 1; }
 
+h1, header > p {
+  font-weight: bold; }
+
+li {
+  padding: 0 0.5rem; }
+
+h1, header > p {
+  text-align: center; }
+
+img {
+  width: 100%; }
+
 /* Styling by classes or element type (alphabetical by class/element) */
 a, a:hover, a:visited, a:active {
   background: transparent;
@@ -58,9 +70,9 @@ blockquote:before, blockquote:after, q:before, q:after {
   content: '';
   content: none; }
 
-h1 {
-  font-weight: bold;
-  text-align: center; }
+code {
+  font-family: 'DejaVu Sans Mono';
+}
 
 input {
   background-color: lightgray; }
