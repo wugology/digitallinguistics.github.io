@@ -36,14 +36,23 @@ article, aside, canvas, details, embed, figure, figcaption, footer, header, hgro
   font: inherit; }
 
 /* Styling by CSS rule(s) (alphabetical by CSS rule) */
-a, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var {
+a, a:hover, a:visited, a:active {
+  color: #3F93F9; }
+
+.plainLink a {
+  color: white; }
+
+a, abbr, address, cite, code, del, dfn, em, img, ins, kbd, p, q, s, samp, small, strike, strong, sub, sup, tt, var {
   display: inline; }
 
-input[type='date'], main, nav > ul {
+footer, footer label, input[type='date'], main, nav > ul {
   flex-direction: row; }
 
 main, section {
   flex-grow: 1; }
+
+nav > ul > li {
+  padding: 0.5rem; }
 
 h1, header > p {
   font-weight: bold; }
@@ -51,13 +60,12 @@ h1, header > p {
 h1, header > p {
   text-align: center; }
 
-img, nav {
+header img, nav {
   width: 100%; }
 
 /* Styling by classes or element type (alphabetical by class/element) */
 a, a:hover, a:visited, a:active {
   background: transparent;
-  color: inherit;
   text-decoration: none: }
 
 blockquote, q {
@@ -77,16 +85,12 @@ input[type='radio'] {
   align-self: center; }
 
 nav {
+  background-color: #3F93F9;
+  font-family: 'Fira Sans';
   position: fixed; }
 
 nav > ul {
-  background-color: #3F93F9;
   justify-content: center; }
-
-nav > ul > li {
-  color: white;
-  font-family: 'Fira Sans';
-  padding: 0.5rem; }
 
 nav > ul > li > a {
   border-bottom: 1px solid #3F93F9; }
@@ -126,5 +130,19 @@ body {
   background: white;
   min-height: 100vh; }
 
-header img {
+nav + * {
   margin-top: 2.25rem; }
+
+footer {
+  font-size: 80%;
+  justify-content: space-between;
+  padding: 0.5rem 0; }
+
+footer label {
+  align-items: center; }
+
+footer div {
+  padding: 0 0.5rem; }
+
+footer img {
+  margin: 0 0.5rem; }

@@ -15,3 +15,7 @@ section {
   border-left:  1px solid lightgray;
   border-right: 1px solid lightgray;
 }
+
+footer {
+  border: 1px solid lightgray;
+}

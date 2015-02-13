@@ -1,61 +1,67 @@
 <!DOCTYPE html>
 <html lang=en>
 <head>
-<meta charset=utf-8>
+	<meta charset=utf-8>
+	<title>App</title>	
+	<meta name=author content='The Wugbot Team'>
+	<meta name=description content='The Wugbot app for managing linguistic data'>
+	<meta name=keywords content='wugbot, digital linguistics, DLX, linguistics, language documentation, awesome'>
 
-<title>Wugbot Chainsaw</title>
-
-<meta name=author content='The Wugbot Team'>
-<meta name=description content='An Interlinear Text Viewer'>
-<meta name=keywords content='documentation, linguistics, digital linguistics'>
-
-<link rel=stylesheet href='css/style.css'>
-<link rel=stylesheet href='css/app.css'>
-
+  <link rel=stylesheet type='text/css' href='css/style.css'>
+  <link rel=stylesheet type='text/css' href='css/app.css'>
 </head>
 <body>
+  <header>
+    <nav class='plainLink'>
+      <ul>
+        <li><a href='index.html'>Home</a></li>
+        <li><a href='app.html' style='border-bottom: 1px solid white;'>App</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <section id=corpus>
+      <header><h1>corpus</h1></header>
+      <ul id=titles></ul>
+    </section>
+    
+    <section id=text>
+      <header><h1 class=title>Text Title</h1></header>
+      <div id=phrases></div>
+    </section>
+    
+    <section id=lexicon>
+      <header><h1>lexicon</h1></header>
+      <dl id=entries></dl>
+    </section>
+  </main>
+  <footer>
+    <div>
+      <p>&copy;2015 Wugbot</p>
+      <p>The code for this app is made available under <a href='http://mit-license.org/'>an MIT license</a>.</p>
+    </div>
+    <label for=github>
+      <p><a href='https://github.com/wugbot/'>View the code for this app on Github.</a></p>
+      <a href='https://github.com/wugbot/'><img src='img/GitHub32px.png' alt='GitHub octocat' height=32 width=32></a>
+    </label>
+  </footer>
+  
+  <div id=templates>
+    <template id=phraseTemplate>
+      <div class=phrase> 
+        <p class=transcription></p>
+        <p class=translation></p>
+      </div>
+    </template>
 
-<header>
-  <h1>Wugbot Chainsaw</h1>
-</header>
-
-<main>
-
-<section id=corpus>
-  <header><h1>corpus</h1></header>
-  <ul id=titles></ul>
-</section>
-
-<section id=text>
-  <header><h1 class=title>Text Title</h1></header>
-  <div id=phrases></div>
-</section>
-
-<section id=lexicon>
-  <header><h1>lexicon</h1></header>
-  <dl id=entries></dl>
-</section>
-</main>
-
-<footer>
-<p>a team wugbot production</p>
-</footer>
-
-<template id=phraseTemplate>
-  <div class=phrase> 
-    <p class=transcription></p>
-    <p class=translation></p>
+    <template id=wordTemplate>
+      <dt class=token></dt>
+      <dd class=gloss></dd>
+    </template>
   </div>
-</template>
 
-<template id=wordTemplate>
-  <dt class=token></dt>
-  <dd class=gloss></dd>
-</template>
-
-<script src=js/common.js></script>
-<script src=js/base.js></script>
-<script src=js/app.js></script>
+  <script src=js/common.js></script>
+  <script src=js/base.js></script>
+  <script src=js/app.js></script>
 </body>
 </html>
-
