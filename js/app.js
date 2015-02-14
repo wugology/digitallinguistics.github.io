@@ -7,6 +7,19 @@ app.p = new Phrase({
   translation: 'call me wugbot'
 })
 
+app.pp = new Phrases({
+  models: [
+    {
+      transcription: 'me llamo wugbot', 
+      translation: 'Call me Wugbot.'
+    },
+    {
+      transcription: 'estoy aqui para cortar árboles', 
+      translation: 'I’m here to cut down trees.'
+    }
+  ]
+})
+
 app.w = new Word(
   {
     token: 'casa', 
@@ -38,7 +51,21 @@ app.pv = new PhraseView({
   }
 });
 
+app.ppv = new PhrasesView({
+  el: document.querySelector('#phrases'),
+
+  collection : app.pp,
+  modelView : PhraseView,
+
+  markup : template('#phraseTemplate', this.model),
+
+  render: function(){
+    this.el.appendChild(this.markup);
+    return this;
+  }
+});
 
 
 app.wv.render();
 app.pv.render();
+app.ppv.render();

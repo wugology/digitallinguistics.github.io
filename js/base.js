@@ -1,39 +1,61 @@
 // Singular 
 var Model = function(attributes, options){
-  Object
-    .keys(attributes)
-    .forEach(function(key){
-      this[key] = attributes[key]
-    }, this)
+
+  this.attributes = attributes;
+
+  this.toJSON = function(){ 
+    return this.attributes;
+  }
+
 }
 
 var ModelView = function(options){
   this.el = options.el || document.createElement('div');
   this.model = options.model;
-  this.render = options.render;
-}
-
-// plural
-
-var Collection = function(models, options){
-  this.models = models || [];
-
-  this.forEach = function(fn){
-    this.models.forEach(fn);
+  this.templateSelector = options.templateSelector;
+  //this.render = options.render;
+  this.render = function(){ 
+    var node = template(this.templateSelector, this.model.attributes);
+    this.el.appendChild(node) ;
+    return this;
   }
 }
 
-var CollectionView = function(collection, options){
+// Plural
+var Collection = function(options){
+  this.models = options.models.map(function(m){
+    return new Model(m)
+  })
+
+  this.pluck = function(attr){
+    return this.models.map(function(m){
+      return m.attributes[attr]
+    })
+  }
+}
+
+var CollectionView = function(options){
   this.el = options.el || document.createElement('div');
-  this.collection = collection;
+  this.collection = options.collection;
+
+  this.templateSelector = options.templateSelector;
+  this.modelView = options.modelView;
+  this.itemViews = [];
 
   this.render = function(){
     var fragment = document.createDocumentFragment();
-    this.collection.forEach(function(model){
-      var modelView = new ModelView({model: model});
-      fragment.appendChild(modelView);
-    }) 
-    return fragment;
+    this.collection.models.forEach(function(model){
+
+    var modelView = new ModelView({
+      model: model,
+      templateSelector: this.templateSelector
+    });
+    this.itemViews.push(modelView);
+    fragment.appendChild(modelView.render().el);
+
+    }, this) 
+
+    this.el.appendChild(fragment);
   }.bind(this);
 }
 
@@ -66,3 +88,13 @@ var PhraseView = function(){
   ModelView.apply(this, arguments);
 }
 PhraseView.prototype = Object.create(ModelView.prototype);
+
+var Phrases = function(){
+  Collection.apply(this, arguments);
+}
+Phrases.prototype = Object.create(Model.prototype);
+
+var PhrasesView = function(){
+  CollectionView.apply(this, arguments);
+}
+PhraseView.prototype = Object.create(CollectionView.prototype);

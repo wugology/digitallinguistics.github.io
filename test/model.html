@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+<meta charset=utf-8>
+
+<title>test</title>
+
+</head>
+<body>
+<h1>
+test Model
+</h1>
+
+<template id=wordTemplate>
+  <dt class=token></dt>
+  <dd class=gloss></dd>
+</template>
+
+<pre></pre>
+
+<script src=../js/common.js></script>
+<script src=../js/base.js></script>
+
+<script>
+var  
+  model = new Model({a:1,b:2}),
+  log = document.querySelector('pre');
+
+log.innerHTML += JSON.stringify(model.toJSON());
+
+Object.keys(model).forEach(function(key){ console.log(key, model[key])})
+
+</script>
+</body>
+</html>
+
