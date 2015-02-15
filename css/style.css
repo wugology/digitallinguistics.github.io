@@ -17,8 +17,10 @@ button, caption, input, fieldset, form, label, legend, table, textarea, tbody, t
 article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, main, menu, nav, output, ruby, section, summary, time, mark, audio, video {
   border: none;
   box-sizing: border-box;
+  display: -webkit-flex;
   display: flex;
   height: auto;
+  -webkit-flex-direction: column;
   flex-direction: column;
   font-family: 'Gentium Plus';
   font-size: 100%;
@@ -43,9 +45,11 @@ a, abbr, address, cite, code, del, dfn, em, img, ins, kbd, p, q, s, samp, small,
   display: inline; }
 
 footer, footer label, input[type='date'], main {
+  -webkit-flex-direction: row;
   flex-direction: row; }
 
 main, section {
+  -webkit-flex-grow: 1;
   flex-grow: 1; }
 
 nav > ul > li {
