@@ -81,7 +81,6 @@
 @font-face {
   font-family: 'Fira Mono';
   src: local('Fira Mono'),
-    url('../fonts/Fira/ttf/FiraMono-Regular.ttf') format('truetype'),
     url('../fonts/Fira/woff/FiraMono-Regular.woff') format('woff');
   font-style: normal;
   font-weight: 400;
@@ -90,7 +89,6 @@
 @font-face {
   font-family: 'Fira Mono';
   src: local('Fira Mono Bold'),
-    url('../fonts/Fira/ttf/FiraMono-Bold.ttf') format('truetype'),
     url('../fonts/Fira/woff/FiraMono-Bold.woff') format('woff');
   font-style: normal;
   font-weight: 600;
@@ -99,7 +97,6 @@
 @font-face {
   font-family: 'Fira Sans';
   src: local('Fira Sans Hair'),
-    url('../fonts/Fira/ttf/FiraSans-Hair.ttf') format('truetype'),
     url('../fonts/Fira/woff/FiraSans-Hair.woff') format('woff');
   font-style: normal;
   font-weight: 100;
@@ -108,7 +105,6 @@
 @font-face {
   font-family: 'Fira Sans';
   src: local('Fira Sans Hair Italic'),
-    url('../fonts/Fira/ttf/FiraSans-HairItalic.ttf') format('truetype'),
     url('../fonts/Fira/woff/FiraSans-HairItalic.woff') format('woff');
   font-style: italic;
   font-weight: 100;
@@ -117,7 +113,6 @@
 @font-face {
   font-family: 'Fira Sans';
   src: local('Fira Sans UltraLight'),
-    url('../fonts/Fira/ttf/FiraSans-UltraLight.ttf') format('truetype'),
     url('../fonts/Fira/woff/FiraSans-UltraLight.woff') format('woff');
   font-style: normal;
   font-weight: 200;
@@ -126,7 +121,6 @@
 @font-face {
   font-family: 'Fira Sans';
   src: local('Fira Sans UltraLight Italic'),
-    url('../fonts/Fira/ttf/FiraSans-UltraLightItalic.ttf') format('truetype'),
     url('../fonts/Fira/woff/FiraSans-UltraLightItalic.woff') format('woff');
   font-style: italic;
   font-weight: 200;
@@ -135,7 +129,6 @@
 @font-face {
   font-family: 'Fira Sans';
   src: local('Fira Sans Light'),
-    url('../fonts/Fira/ttf/FiraSans-Light.ttf') format('truetype'),
     url('../fonts/Fira/woff/FiraSans-Light.woff') format('woff');
   font-style: normal;
   font-weight: 300;
@@ -144,7 +137,6 @@
 @font-face {
   font-family: 'Fira Sans';
   src: local('Fira Sans Light Italic'),
-    url('../fonts/Fira/ttf/FiraSans-LightItalic.ttf') format('truetype'),
     url('../fonts/Fira/woff/FiraSans-LightItalic.woff') format('woff');
   font-style: italic;
   font-weight: 300;
@@ -153,7 +145,6 @@
 @font-face {
   font-family: 'Fira Sans';
   src: local('Fira Sans Regular'),
-    url('../fonts/Fira/ttf/FiraSans-Regular.ttf') format('truetype'),
     url('../fonts/Fira/woff/FiraSans-Regular.woff') format('woff');
   font-style: normal;
   font-weight: normal;
@@ -162,7 +153,6 @@
 @font-face {
   font-family: 'Fira Sans';
   src: local('Fira Sans Regular Italic'),
-    url('../fonts/Fira/ttf/FiraSans-Italic.ttf') format('truetype'),
     url('../fonts/Fira/woff/FiraSans-Italic.woff') format('woff');
   font-style: italic;
   font-weight: normal;
@@ -171,7 +161,6 @@
 @font-face {
   font-family: 'Fira Sans';
   src: local('Fira Sans Medium'),
-    url('../fonts/Fira/ttf/FiraSans-Medium.ttf') format('truetype'),
     url('../fonts/Fira/woff/FiraSans-Medium.woff') format('woff');
   font-style: normal;
   font-weight: 500;
@@ -180,7 +169,6 @@
 @font-face {
   font-family: 'Fira Sans';
   src: local('Fira Sans Medium Italic'),
-    url('../fonts/Fira/ttf/FiraSans-MediumItalic.ttf') format('truetype'),
     url('../fonts/Fira/woff/FiraSans-MediumItalic.woff') format('woff');
   font-style: italic;
   font-weight: 500;
@@ -189,7 +177,6 @@
 @font-face {
   font-family: 'Fira Sans';
   src: local('Fira Sans SemiBold'),
-    url('../fonts/Fira/ttf/FiraSans-SemiBold.ttf') format('truetype'),
     url('../fonts/Fira/woff/FiraSans-SemiBold.woff') format('woff');
   font-style: normal;
   font-weight: 600;
@@ -198,7 +185,6 @@
 @font-face {
   font-family: 'Fira Sans';
   src: local('Fira Sans SemiBold Italic'),
-    url('../fonts/Fira/ttf/FiraSans-SemiBoldItalic.ttf') format('truetype'),
     url('../fonts/Fira/woff/FiraSans-SemiBoldItalic.woff') format('woff');
   font-style: italic;
   font-weight: 600;
@@ -207,7 +193,6 @@
 @font-face {
   font-family: 'Fira Sans';
   src: local('Fira Sans Bold'),
-    url('../fonts/Fira/ttf/FiraSans-Bold.ttf') format('truetype'),
     url('../fonts/Fira/woff/FiraSans-Bold.woff') format('woff');
   font-style: normal;
   font-weight: bold;
@@ -216,7 +201,6 @@
 @font-face {
   font-family: 'Fira Sans';
   src: local('Fira Sans Bold Italic'),
-    url('../fonts/Fira/ttf/FiraSans-BoldItalic.ttf') format('truetype'),
     url('../fonts/Fira/woff/FiraSans-BoldItalic.woff') format('woff');
   font-style: italic;
   font-weight: bold;
@@ -225,7 +209,6 @@
 @font-face {
   font-family: 'Fira Sans';
   src: local('Fira Sans ExtraBold'),
-    url('../fonts/Fira/ttf/FiraSans-ExtraBold.ttf') format('truetype'),
     url('../fonts/Fira/woff/FiraSans-ExtraBold.woff') format('woff');
   font-style: normal;
   font-weight: 800;
@@ -234,7 +217,6 @@
 @font-face {
   font-family: 'Fira Sans';
   src: local('Fira Sans ExtraBold Italic'),
-    url('../fonts/Fira/ttf/FiraSans-ExtraBoldItalic.ttf') format('truetype'),
     url('../fonts/Fira/woff/FiraSans-ExtraBoldItalic.woff') format('woff');
   font-style: italic;
   font-weight: 800;
@@ -243,7 +225,6 @@
 @font-face {
   font-family: 'Fira Sans';
   src: local('Fira Sans Heavy'),
-    url('../fonts/Fira/ttf/FiraSans-Heavy.ttf') format('truetype'),
     url('../fonts/Fira/woff/FiraSans-Heavy.woff') format('woff');
   font-style: normal;
   font-weight: 900;
@@ -252,7 +233,6 @@
 @font-face {
   font-family: 'Fira Sans';
   src: local('Fira Sans Heavy Italic'),
-    url('../fonts/Fira/ttf/FiraSans-HeavyItalic.ttf') format('truetype'),
     url('../fonts/Fira/woff/FiraSans-HeavyItalic.woff') format('woff');
   font-style: italic;
   font-weight: 900;
@@ -261,10 +241,7 @@
 @font-face {
   font-family: 'Gentium Plus';
   src: local('Gentium Plus Regular'),
-    url('../fonts/Gentium Plus/GentiumPlus-R.woff') format('woff'),
-    url('../fonts/Gentium Plus/GentiumPlus-R.ttf') format('ttf'),
-    url('../fonts/Gentium Plus/GentiumPlus-R.svg#gentium_plusregular') format('svg'),
-    url('http://dwhieb.coffeecup.com/GentiumPlus/GentiumPlus-R.svg#gentium_plusregular') format('svg');
+    url('http://www.danielhieber.com/test/Resources/Fonts/GentiumPlus-R.woff') format('woff');
   font-style: normal;
   font-weight: normal;
 }
@@ -272,10 +249,7 @@
 @font-face {
   font-family: 'Gentium Plus';
   src: local('Gentium Plus Italic'),
-    url('../fonts/Gentium Plus/GentiumPlus-I.woff') format('woff'),
-    url('../fonts/Gentium Plus/GentiumPlus-I.ttf') format('ttf'),
-    url('../fonts/Gentium Plus/GentiumPlus-I.svg#gentium_plusitalic') format('svg'),
-    url('http://dwhieb.coffeecup.com/GentiumPlus/GentiumPlus-I.svg#gentium_plusitalic') format('svg');
+    url('http://www.danielhieber.com/test/Resources/Fonts/GentiumPlus-I.woff') format('woff');
   font-style: italic;
   font-weight: normal;
 }
