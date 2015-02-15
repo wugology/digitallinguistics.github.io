@@ -44,7 +44,7 @@ a, a:hover, a:visited, a:active {
 a, abbr, address, cite, code, del, dfn, em, img, ins, kbd, p, q, s, samp, small, strike, strong, sub, sup, tt, var {
   display: inline; }
 
-footer, footer label, input[type='date'], main {
+input[type='date'], main {
   -webkit-flex-direction: row;
   flex-direction: row; }
 

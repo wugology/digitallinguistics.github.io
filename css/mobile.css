@@ -4,9 +4,10 @@ nav {
   align-items: flex-start; }
 
 nav > ul {
-  display: none;
-  -webkit-flex-direction: column;
-  flex-direction: column; }
+  display: none; }
 
 #banner {
   width: 100%; }
+
+footer label {
+  margin-top: 0.5rem; }
