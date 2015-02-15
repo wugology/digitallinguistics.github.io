@@ -261,7 +261,7 @@
 @font-face {
   font-family: 'Gentium Plus';
   src: local('Gentium Plus Regular'),
-    url('../fonts/Gentium Plus/GentiumPlus-R.ttf') format('truetype'),
+    url('../fonts/Gentium Plus/GentiumPlus-R.svg') format('svg'),
     url('../fonts/Gentium Plus/GentiumPlus-R.woff') format('woff');
   font-style: normal;
   font-weight: normal;
@@ -270,7 +270,7 @@
 @font-face {
   font-family: 'Gentium Plus';
   src: local('Gentium Plus Italic'),
-    url('../fonts/Gentium Plus/GentiumPlus-I.ttf') format('truetype'),
+    url('../fonts/Gentium Plus/GentiumPlus-I.svg') format('svg'),
     url('../fonts/Gentium Plus/GentiumPlus-I.woff') format('woff');
   font-style: italic;
   font-weight: normal;
