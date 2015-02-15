@@ -42,7 +42,7 @@ a, a:hover, a:visited, a:active {
 a, abbr, address, cite, code, del, dfn, em, img, ins, kbd, p, q, s, samp, small, strike, strong, sub, sup, tt, var {
   display: inline; }
 
-footer, footer label, input[type='date'], main, nav > ul {
+footer, footer label, input[type='date'], main {
   flex-direction: row; }
 
 main, section {
@@ -56,9 +56,6 @@ h1, header > p {
 
 h1, header > p {
   text-align: center; }
-
-header img, nav {
-  width: 100%; }
 
 /* Styling by classes or element type (alphabetical by class/element) */
 a, a:hover, a:visited, a:active {
@@ -75,6 +72,9 @@ blockquote:before, blockquote:after, q:before, q:after {
 code {
   font-family: 'DejaVu Sans Mono'; }
 
+header {
+  align-items: center; }
+
 input {
   background-color: lightgray; }
 
@@ -84,9 +84,10 @@ input[type='radio'] {
 nav {
   background-color: #3F93F9;
   font-family: 'Fira Sans';
-  position: fixed; }
+  width: 100%; }
 
 nav > ul {
+  flex-wrap: wrap;
   justify-content: center; }
 
 nav > ul > li > a {
@@ -127,11 +128,7 @@ body {
   background: white;
   min-height: 100vh; }
 
-nav + * {
-  margin-top: 2.25rem; }
-
 footer {
-  font-family: 'Gentium Plus';
   font-size: 80%;
   justify-content: space-between;
   padding: 0.5rem 0; }
@@ -144,8 +141,3 @@ footer div {
 
 footer img {
   margin: 0 0.5rem; }
-
-@media handheld {
-  img {
-    display: none; }
-}
