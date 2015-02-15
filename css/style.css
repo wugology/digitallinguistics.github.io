@@ -52,7 +52,7 @@ main, section {
   -webkit-flex-grow: 1;
   flex-grow: 1; }
 
-nav > ul > li {
+#menuIcon, nav > ul > li {
   padding: 0.5rem; }
 
 h1, header > p {
@@ -125,8 +125,8 @@ nav {
   width: 100%; }
 
 #menuIcon {
-  height: 1.5rem;
-  padding: 0.25rem;
+  cursor: pointer;
+  height: 2rem;
 }
 
 nav > ul {
