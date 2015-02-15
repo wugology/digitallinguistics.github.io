@@ -1,0 +1,7 @@
+/* Desktop CSS */
+nav > ul {
+  -webkit-flex-direction: row;
+  flex-direction: row; }
+
+header img {
+  max-width: 300px; }
