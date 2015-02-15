@@ -1,5 +1,6 @@
 /* Mobile CSS */
 nav > ul {
+  -webkit-flex-direction: column;
   flex-direction: column; }
 
 header img {

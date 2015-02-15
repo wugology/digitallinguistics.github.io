@@ -31,7 +31,7 @@ article, aside, canvas, details, embed, figure, figcaption, footer, header, hgro
   padding: 0;
   text-decoration: none;
   vertical-align: baseline;
-  /* font:inherit has to come after font-family in this declaration */
+  /* inherit has to come after font-family in this declaration */
   font: inherit; }
 
 /* Styling by CSS rule(s) (alphabetical by CSS rule) */
@@ -77,12 +77,14 @@ code {
   font-family: 'DejaVu Sans Mono'; }
 
 header {
+  -webkit-align-items: center;
   align-items: center; }
 
 input {
   background-color: lightgray; }
 
 input[type='radio'] {
+  -webkit-align-self: center;
   align-self: center; }
 
 nav {
@@ -91,6 +93,7 @@ nav {
   width: 100%; }
 
 nav > ul {
+  -webkit-flex-wrap: wrap;
   flex-wrap: wrap;
   justify-content: center; }
 
@@ -134,10 +137,12 @@ body {
 
 footer {
   font-size: 80%;
+  -webkit-justify-content: space-between;
   justify-content: space-between;
   padding: 0.5rem 0; }
 
 footer label {
+  -webkit-align-items: center;
   align-items: center; }
 
 footer div {
