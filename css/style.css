@@ -131,7 +131,7 @@ nav + * {
   margin-top: 2.25rem; }
 
 footer {
-  font-family: 'Courier New';
+  font-family: 'Gentium Plus';
   font-size: 80%;
   justify-content: space-between;
   padding: 0.5rem 0; }
@@ -144,3 +144,8 @@ footer div {
 
 footer img {
   margin: 0 0.5rem; }
+
+@media handheld {
+  img {
+    display: none; }
+}
