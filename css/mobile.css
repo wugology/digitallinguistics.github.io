@@ -1,7 +1,12 @@
 /* Mobile CSS */
+nav {
+  -webkit-align-items: flex-start;
+  align-items: flex-start; }
+
 nav > ul {
+  display: none;
   -webkit-flex-direction: column;
   flex-direction: column; }
 
-header img {
+#banner {
   width: 100%; }

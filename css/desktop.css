@@ -1,7 +1,11 @@
 /* Desktop CSS */
+/* Styling by DOM (organized by DOM structure) */
 nav > ul {
   -webkit-flex-direction: row;
   flex-direction: row; }
 
-header img {
+#banner {
   max-width: 300px; }
+
+#menuIcon {
+  display: none; }

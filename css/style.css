@@ -87,22 +87,6 @@ input[type='radio'] {
   -webkit-align-self: center;
   align-self: center; }
 
-nav {
-  background-color: #3F93F9;
-  font-family: 'Fira Sans';
-  width: 100%; }
-
-nav > ul {
-  -webkit-flex-wrap: wrap;
-  flex-wrap: wrap;
-  justify-content: center; }
-
-nav > ul > li > a {
-  border-bottom: 1px solid #3F93F9; }
-
-nav > ul > li > a:hover {
-  border-bottom: 1px solid white; }
-
 ol, ul {
   list-style: none; }
 
@@ -134,6 +118,28 @@ tr {
 body {
   background: white;
   min-height: 100vh; }
+
+nav {
+  background-color: #3F93F9;
+  font-family: 'Fira Sans';
+  width: 100%; }
+
+#menuIcon {
+  height: 1.5rem;
+  padding: 0.25rem;
+}
+
+nav > ul {
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-justify-content: center;
+  justify-content: center; }
+
+nav > ul > li > a {
+  border-bottom: 1px solid #3F93F9; }
+
+nav > ul > li > a:hover {
+  border-bottom: 1px solid white; }
 
 footer {
   font-size: 80%;

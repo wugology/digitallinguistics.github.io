@@ -241,7 +241,7 @@
 @font-face {
   font-family: 'Gentium Plus';
   src: local('Gentium Plus Regular'),
-    url('http://www.danielhieber.com/test/Resources/Fonts/GentiumPlus-R.woff') format('woff');
+    url('../fonts/Gentium Plus/GentiumPlus-R.woff') format('woff');
   font-style: normal;
   font-weight: normal;
 }
@@ -249,7 +249,7 @@
 @font-face {
   font-family: 'Gentium Plus';
   src: local('Gentium Plus Italic'),
-    url('http://www.danielhieber.com/test/Resources/Fonts/GentiumPlus-I.woff') format('woff');
+    url('../fonts/Gentium Plus/GentiumPlus-I.woff') format('woff');
   font-style: italic;
   font-weight: normal;
 }
