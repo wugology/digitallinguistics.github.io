@@ -9,5 +9,8 @@ nav > ul {
 #banner {
   width: 100%; }
 
+footer div p {
+  text-align: center; }
+
 footer label {
   margin-top: 0.5rem; }
