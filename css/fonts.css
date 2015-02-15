@@ -270,8 +270,11 @@
 @font-face {
   font-family: 'Gentium Plus';
   src: local('Gentium Plus Italic'),
-    url(../fonts/Gentium Plus/GentiumPlus-I.svg#gentium_plusitalic') format('svg'),
+    url('../fonts/Gentium Plus/GentiumPlus-I.svg#gentium_plusitalic') format('svg'),
     url('../fonts/Gentium Plus/GentiumPlus-I.woff') format('woff');
   font-style: italic;
   font-weight: normal;
 }
+
+footer {
+  background-color: green; }
