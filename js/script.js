@@ -6,22 +6,12 @@ page.nodes = {
   mainNav: document.querySelector('#mainNav')
 };
 
-page.display = function(el) {
-  el.style.display = 'flex';
-};
-
-page.hide = function(el) {
-  el.style.display = 'none';
+page.toggleDisplay = function(el) {
+  el.classList.toggle('hideonMobile');
+  el.classList.toggle('hideonDesktop');
 };
 
 /* EVENT LISTENERS */
-page.nodes.menuIcon.addEventListener('click', function() {
-  if (page.nodes.mainNav.style.display !== 'flex') {
-    if (page.nodes.appNav) {
-      page.hide(page.nodes.appNav);
-    }
-    page.display(page.nodes.mainNav);
-  } else {
-    page.hide(page.nodes.mainNav);
-  }
+page.nodes.menuIcon.addEventListener('click', function(ev) {
+  page.toggleDisplay(page.nodes.mainNav);
 });

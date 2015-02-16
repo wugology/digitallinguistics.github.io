@@ -1,12 +1,13 @@
 /* Mobile CSS */
 /* Styling by CSS rule (alphabetical by CSS rule) */
-#appNav, #mainNav {
-  display: none; }
 
 /* Styling by class or element (alphabetical by class/element) */
 nav {
   -webkit-align-items: flex-start;
   align-items: flex-start; }
+
+.hideonMobile {
+  display: none; }
 
 /* Styling by DOM structure (organized by DOM structure) */
 #banner {
@@ -18,5 +19,29 @@ footer div p {
 footer label {
   margin-top: 0.5rem; }
 
-#menuIcon {
-  display: flex; }
+#navbar {
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap; }
+
+#navbar #navIcons {
+  -webkit-order: 1;
+  order: 1;
+}
+
+#navbar #navs {
+  -webkit-order: 3;
+  order: 3;
+  width: 100%;
+}
+
+#navbar #corpusIndicator {
+  -webkit-order: 4;
+  order: 4;
+}
+
+#navbar #settingsButton {
+  -webkit-order: 2;
+  order: 2;
+}

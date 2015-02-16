@@ -1,7 +1,6 @@
 /* functions used throughout the app that aren't part of domain-specific objects */
 
 
-
 var Template = function(selector){
   var templateNode = document.querySelector(selector);
   if(!templateNode){

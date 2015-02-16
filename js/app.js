@@ -1,3 +1,4 @@
+/*
 // app
 
 var app = {};
@@ -77,23 +78,14 @@ app.ppv = new PhrasesView({
   }
 });
 
-
 app.wv.render();
 app.pv.render();
 app.ppv.render();
+*/
+
 
 page.nodes.boxIcon = document.querySelector('#boxIcon');
 
-app.wv.render();
-app.pv.render();
-
-page.nodes.boxIcon.addEventListener('click', function() {
-  if (page.nodes.appNav.style.display !== 'flex' && page.nodes.appNav.style.display !== 'none') {
-    page.hide(page.nodes.appNav);
-  } else if (page.nodes.appNav.style.display !== 'flex') {
-    page.display(page.nodes.appNav);
-    page.hide(page.nodes.mainNav);
-  } else {
-    page.hide(page.nodes.appNav);
-  }
+page.nodes.boxIcon.addEventListener('click', function(ev) {
+  page.toggleDisplay(page.nodes.appNav);
 });

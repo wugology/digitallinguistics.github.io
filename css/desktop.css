@@ -4,13 +4,14 @@ footer, footer label, nav > ul, #navbar {
   -webkit-flex-direction: row;
   flex-direction: row; }
 
+/* Styling by class or element type (alphabetical by class/element) */
+.hideonDesktop {
+  display: none; }
+
 /* Styling by DOM (organized by DOM structure) */
 #navbar {
   -webkit-align-items: center;
   align-items: center; }
-
-#appNav {
-  display: flex; }
 
 #banner {
   max-width: 300px; }

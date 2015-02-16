@@ -5,8 +5,3 @@ footer, section {
 /* Styling by class or element (alphabetical by class/element) */
 
 /* Styling by DOM element (organized by DOM structure) */
-#appNav, #boxIcon, #menuIcon {
-  display: flex; }
-
-#mainNav {
-  display: none; }

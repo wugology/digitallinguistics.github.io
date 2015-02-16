@@ -49,9 +49,6 @@ a, a:hover, a:visited, a:active {
 a, abbr, address, cite, code, del, dfn, em, img, ins, kbd, p, q, s, samp, small, strike, strong, sub, sup, tt, var {
   display: inline; }
 
-#appNav, #boxIcon, #menuIcon {
-  display: none; }
-
 input[type='date'], main, #navIcons {
   -webkit-flex-direction: row;
   flex-direction: row; }
