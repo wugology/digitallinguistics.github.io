@@ -1,8 +1,9 @@
-/*
+
 // app
 
 var app = {};
 
+/*
 app.p = new Phrase({
   transcription: 'me llamo wugbot', 
   translation: 'call me wugbot'
@@ -83,9 +84,14 @@ app.pv.render();
 app.ppv.render();
 */
 
+app.preferences = {
+  currentCorpus: 'Mixtec',
+  currentWorkview: 'texts'
+};
 
 page.nodes.boxIcon = document.querySelector('#boxIcon');
 
 page.nodes.boxIcon.addEventListener('click', function(ev) {
   page.toggleDisplay(page.nodes.appNav);
+  page.hide(page.nodes.mainNav);
 });

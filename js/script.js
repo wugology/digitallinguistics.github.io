@@ -6,6 +6,11 @@ page.nodes = {
   mainNav: document.querySelector('#mainNav')
 };
 
+page.hide = function(el) {
+  el.classList.add('hideonDesktop');
+  el.classList.add('hideonMobile');
+};
+
 page.toggleDisplay = function(el) {
   el.classList.toggle('hideonMobile');
   el.classList.toggle('hideonDesktop');
@@ -14,4 +19,7 @@ page.toggleDisplay = function(el) {
 /* EVENT LISTENERS */
 page.nodes.menuIcon.addEventListener('click', function(ev) {
   page.toggleDisplay(page.nodes.mainNav);
+  if (page.nodes.appNav) {
+    page.hide(page.nodes.appNav);
+  }
 });

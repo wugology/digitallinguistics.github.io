@@ -36,7 +36,10 @@ article, aside, canvas, details, embed, figure, figcaption, footer, header, hgro
 footer label, header {
   -webkit-align-items: center;
   align-items: center; }
-  
+
+nav > ul > li a:hover, .underline {
+  border-bottom: 1px solid white; }
+
 a, a:hover, a:visited, a:active {
   color: #3F93F9; }
 
@@ -92,7 +95,8 @@ input[type='radio'] {
   align-self: center; }
 
 .mainSection {
-  padding: 1rem; }
+  padding: 1rem;
+  width: 33%; }
 
 strong {
   font-weight: 500; }
@@ -150,9 +154,6 @@ nav > ul {
 
 nav > ul > li > a {
   border-bottom: 1px solid #3F93F9; }
-
-nav > ul > li > a:hover {
-  border-bottom: 1px solid white; }
 
 footer {
   font-size: 80%;

@@ -26,17 +26,17 @@
             <li><a href=index.html>Home</a></li>
             <li><a href=aboutWugbot.html>About Wugbot</a></li>
             <li><a href=aboutDLX.html>About Digital Linguistics</a></li>
-            <li><a href=app.html style='border-bottom: 1px solid white;'>App</a></li>
+            <li><a href=app.html class=underline>App</a></li>
           </ul>
         </nav>
         <nav id=appNav class=hideonMobile>
           <ul>
-            <li>Documents</li>
-            <li>Media</li>
-            <li>Texts</li>
-            <li>Lexicon</li>
-            <li>Orthographies</li>
-            <li>Tags</li>
+            <li><a>Documents</a></li>
+            <li><a>Lexicon</a></li>
+            <li><a>Media</a></li>
+            <li><a>Orthographies</a></li>
+            <li><a>Tags</a></li>
+            <li><a>Texts</a></li>
           </ul>
         </nav>
       </div>
@@ -45,18 +45,27 @@
     </div>
   </header>
   <main>
-    <section id=corpus class=mainSection>
-      <header><h1>corpus</h1></header>
+    <section id=overviewPane class=mainSection>
+      <header>
+        <h1>Overview Pane</h1>
+      </header>
+      
       <ul id=titles></ul>
     </section>
     
-    <section id=text class=mainSection>
-      <header><h1 class=title>Text Title</h1></header>
+    <section id=detailPane class=mainSection>
+      <header>
+        <h1>Details Pane</h1>
+      </header>
+      
       <div id=phrases></div>
     </section>
     
-    <section id=lexicon class=mainSection>
-      <header><h1>lexicon</h1></header>
+    <section id=toolbar class=mainSection>
+      <header>
+        <h1>Toolbar</h1>
+      </header>
+      
       <dl id=entries></dl>
     </section>
   </main>
