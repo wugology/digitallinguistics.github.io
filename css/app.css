@@ -1,17 +1,12 @@
-body > header { 
-  border-bottom: 1px solid lightgray;
-}
+/* Styling by CSS rule (alphabetical by CSS rule) */
+footer, section {
+  border: 1px solid lightgray; }
 
-section { 
-  padding: 1em;
-}
+/* Styling by class or element (alphabetical by class/element) */
 
-#corpus {
-  flex: 1;
-}
+/* Styling by DOM element (organized by DOM structure) */
+#appNav, #boxIcon, #menuIcon {
+  display: flex; }
 
-#text {
-  flex: 4;
-  border-left:  1px solid lightgray;
-  border-right: 1px solid lightgray;
-}
+#mainNav {
+  display: none; }

@@ -9,8 +9,8 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="984"
-   height="242"
+   width="298.66666"
+   height="209.95145"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.2 r9819"
@@ -28,17 +28,17 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.5625"
-     inkscape:cx="539.90823"
-     inkscape:cy="23.540283"
+     inkscape:cx="197.24156"
+     inkscape:cy="3.6423765"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      showguides="true"
      inkscape:guide-bbox="true"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
+     fit-margin-top="20"
+     fit-margin-left="20"
+     fit-margin-right="20"
+     fit-margin-bottom="20"
      inkscape:window-width="1162"
      inkscape:window-height="828"
      inkscape:window-x="0"
@@ -46,7 +46,7 @@
      inkscape:window-maximized="0">
     <sodipodi:guide
        orientation="0,1"
-       position="150.16312,-1038.0813"
+       position="-192.50355,-1057.9792"
        id="guide4194" />
   </sodipodi:namedview>
   <metadata
@@ -57,7 +57,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -65,7 +65,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-937.44232,1770.3433)">
+     transform="translate(-1280.109,1758.1927)">
     <g
        id="g4234"
        transform="matrix(0.29167475,0,0,0.29167475,1105.9855,-1425.5744)"
@@ -328,7 +328,7 @@
       </g>
     </g>
     <rect
-       style="color:#000000;fill:none;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="color:#000000;fill:none;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        id="rect3042"
        width="984"
        height="242"

@@ -1,0 +1,255 @@
+@font-face {
+  font-family: 'Andika';
+  src: local('Andika Regular'),
+    url('../fonts/Andika/Andika-R.woff') format('woff');
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Charis SIL';
+  src: local('Charis SIL Regular'),
+    url('../fonts/Charis SIL/CharisSIL-R.woff') format('woff');
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Charis SIL Italic';
+  src: local('Charis SIL Italic'),
+    url('../fonts/Charis SIL/CharisSIL-I.woff') format('woff');
+  font-style: italic;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Charis SIL Bold';
+  src: local('Charis SIL Bold'),
+    url('../fonts/Charis SIL/CharisSIL-B.woff') format('woff');
+  font-style: normal;
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'Charis SIL Bold Italic';
+  src: local('Charis SIL Bold Italic'),
+    url('../fonts/CharisSIL/CharisSIL-BI.woff') format('woff');
+  font-style: italic;
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'DejaVu Sans Mono';
+  src: local('DejaVu Sans Mono Book'),
+    url('../fonts/DejaVu Sans Mono/DejaVuSansMono.woff') format('woff');
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'DejaVu Sans Mono';
+  src: local('DejaVu Sans Mono Bold'),
+    url('../fonts/DejaVu Sans Mono/DejaVuSansMono-Bold.woff') format('woff');
+  font-style: normal;
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'DejaVu Sans Mono';
+  src: local('DejaVu Sans Mono Oblique'),
+    url('../fonts/DejaVu Sans Mono/DejaVuSansMono-Oblique.woff') format('woff');
+  font-style: italic;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'DejaVu Sans Mono';
+  src: local('DejaVu Sans Mono Bold Oblique'),
+    url('../fonts/DejaVu Sans Mono/DejaVuSansMono-BoldOblique.woff') format('woff');
+  font-style: italic;
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'Doulos SIL';
+  src: local('Doulos SIL Regular'),
+    url('../fonts/Doulos SIL/DoulosSIL-R.woff') format('woff');
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Fira Mono';
+  src: local('Fira Mono'),
+    url('../fonts/Fira/woff/FiraMono-Regular.woff') format('woff');
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Fira Mono';
+  src: local('Fira Mono Bold'),
+    url('../fonts/Fira/woff/FiraMono-Bold.woff') format('woff');
+  font-style: normal;
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans Hair'),
+    url('../fonts/Fira/woff/FiraSans-Hair.woff') format('woff');
+  font-style: normal;
+  font-weight: 100;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans Hair Italic'),
+    url('../fonts/Fira/woff/FiraSans-HairItalic.woff') format('woff');
+  font-style: italic;
+  font-weight: 100;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans UltraLight'),
+    url('../fonts/Fira/woff/FiraSans-UltraLight.woff') format('woff');
+  font-style: normal;
+  font-weight: 200;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans UltraLight Italic'),
+    url('../fonts/Fira/woff/FiraSans-UltraLightItalic.woff') format('woff');
+  font-style: italic;
+  font-weight: 200;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans Light'),
+    url('../fonts/Fira/woff/FiraSans-Light.woff') format('woff');
+  font-style: normal;
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans Light Italic'),
+    url('../fonts/Fira/woff/FiraSans-LightItalic.woff') format('woff');
+  font-style: italic;
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans Regular'),
+    url('../fonts/Fira/woff/FiraSans-Regular.woff') format('woff');
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans Regular Italic'),
+    url('../fonts/Fira/woff/FiraSans-Italic.woff') format('woff');
+  font-style: italic;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans Medium'),
+    url('../fonts/Fira/woff/FiraSans-Medium.woff') format('woff');
+  font-style: normal;
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans Medium Italic'),
+    url('../fonts/Fira/woff/FiraSans-MediumItalic.woff') format('woff');
+  font-style: italic;
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans SemiBold'),
+    url('../fonts/Fira/woff/FiraSans-SemiBold.woff') format('woff');
+  font-style: normal;
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans SemiBold Italic'),
+    url('../fonts/Fira/woff/FiraSans-SemiBoldItalic.woff') format('woff');
+  font-style: italic;
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans Bold'),
+    url('../fonts/Fira/woff/FiraSans-Bold.woff') format('woff');
+  font-style: normal;
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans Bold Italic'),
+    url('../fonts/Fira/woff/FiraSans-BoldItalic.woff') format('woff');
+  font-style: italic;
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans ExtraBold'),
+    url('../fonts/Fira/woff/FiraSans-ExtraBold.woff') format('woff');
+  font-style: normal;
+  font-weight: 800;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans ExtraBold Italic'),
+    url('../fonts/Fira/woff/FiraSans-ExtraBoldItalic.woff') format('woff');
+  font-style: italic;
+  font-weight: 800;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans Heavy'),
+    url('../fonts/Fira/woff/FiraSans-Heavy.woff') format('woff');
+  font-style: normal;
+  font-weight: 900;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  src: local('Fira Sans Heavy Italic'),
+    url('../fonts/Fira/woff/FiraSans-HeavyItalic.woff') format('woff');
+  font-style: italic;
+  font-weight: 900;
+}
+
+@font-face {
+  font-family: 'Gentium Plus';
+  src: local('Gentium Plus Regular'),
+    url('../fonts/Gentium Plus/GentiumPlus-R.woff') format('woff');
+  font-style: normal;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: 'Gentium Plus';
+  src: local('Gentium Plus Italic'),
+    url('../fonts/Gentium Plus/GentiumPlus-I.woff') format('woff');
+  font-style: italic;
+  font-weight: normal;
+}

@@ -17,38 +17,64 @@ button, caption, input, fieldset, form, label, legend, table, textarea, tbody, t
 article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, main, menu, nav, output, ruby, section, summary, time, mark, audio, video {
   border: none;
   box-sizing: border-box;
+  display: -webkit-flex;
   display: flex;
   height: auto;
+  -webkit-flex-direction: column;
   flex-direction: column;
+  font-family: 'Fira Sans';
   font-size: 100%;
-  font-weight: normal;
-  font: inherit;
+  font-weight: 300;
   line-height: 150%;
   margin: 0;
   outline: none;
   padding: 0;
   text-decoration: none;
-  vertical-align: baseline;
-  /* font-family has to be last in this declaration */
-  font-family: 'Gentium Plus', serif, sans-serif; }
+  vertical-align: baseline; }
 
-/* Styling by CSS rule (alphabetical by CSS rule) */
-input[type='radio'] {
-  align-self: center; }
+/* Styling by CSS rule(s) (alphabetical by CSS rule) */
+footer label, header {
+  -webkit-align-items: center;
+  align-items: center; }
+  
+a, a:hover, a:visited, a:active {
+  color: #3F93F9; }
 
-a, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var {
+#navbar, nav a, nav a:hover, nav a:visited, nav a:active {
+  color: white; }
+
+#navbar img, #navbar nav ul li {
+  cursor: pointer; }
+
+a, abbr, address, cite, code, del, dfn, em, img, ins, kbd, p, q, s, samp, small, strike, strong, sub, sup, tt, var {
   display: inline; }
 
-input[type='date'], main, nav > ul {
+#appNav, #boxIcon, #menuIcon {
+  display: none; }
+
+input[type='date'], main, #navIcons {
+  -webkit-flex-direction: row;
   flex-direction: row; }
 
-main, section {
+main, #navs, section {
+  -webkit-flex-grow: 1;
   flex-grow: 1; }
+
+#corpusIndicator, #menuIcon, nav > ul > li {
+  padding: 0.5rem; }
+
+ul.bulletedList li {
+  padding: 0.25rem 0; }
+
+h1, h2, main p+p {
+  padding-top: 0.5rem; }
+
+h1, h2 {
+  font-size: 150%; }
 
 /* Styling by classes or element type (alphabetical by class/element) */
 a, a:hover, a:visited, a:active {
   background: transparent;
-  color: inherit;
   text-decoration: none: }
 
 blockquote, q {
@@ -58,15 +84,21 @@ blockquote:before, blockquote:after, q:before, q:after {
   content: '';
   content: none; }
 
-h1 {
-  font-weight: bold;
-  text-align: center; }
+code {
+  font-family: 'DejaVu Sans Mono'; }
 
 input {
   background-color: lightgray; }
 
-ol, ul {
-  list-style: none; }
+input[type='radio'] {
+  -webkit-align-self: center;
+  align-self: center; }
+
+.mainSection {
+  padding: 1rem; }
+
+strong {
+  font-weight: 500; }
 
 table {
   border-collapse: collapse;
@@ -92,7 +124,47 @@ thead {
 tr {
   display: table-row; }
 
+ul.bulletedList {
+  list-style: disc outside none; }
+
+ul.bulletedList li {
+  display: list-item;
+  margin-left: 1rem; }
+
 /* Styling by DOM elements (organized by DOM structure) */
 body {
   background: white;
   min-height: 100vh; }
+
+#navbar {
+  background-color: #3F93F9;
+  width: 100%; }
+
+#boxIcon, #settingsButton {
+  height: 2.5rem; }
+  
+#menuIcon {
+  height: 2rem;
+  margin: 0.25rem; }
+
+nav > ul {
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap; }
+
+nav > ul > li > a {
+  border-bottom: 1px solid #3F93F9; }
+
+nav > ul > li > a:hover {
+  border-bottom: 1px solid white; }
+
+footer {
+  font-size: 80%;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  padding: 0.5rem 0; }
+
+footer div {
+  padding: 0 0.5rem; }
+
+footer img {
+  margin: 0 0.5rem; }

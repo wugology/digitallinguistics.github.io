@@ -1,0 +1,16 @@
+/* Desktop CSS */
+/* Styling by CSS rule (alphabetical by CSS rule) */
+footer, footer label, nav > ul, #navbar {
+  -webkit-flex-direction: row;
+  flex-direction: row; }
+
+/* Styling by DOM (organized by DOM structure) */
+#navbar {
+  -webkit-align-items: center;
+  align-items: center; }
+
+#appNav {
+  display: flex; }
+
+#banner {
+  max-width: 300px; }

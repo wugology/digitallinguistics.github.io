@@ -3,12 +3,12 @@
 <head>
 <meta charset=utf-8>
 
-<title>test ModelView</title>
+<title>test ModelView click</title>
 
 </head>
 <body>
 <h1>
-test ModelView
+ test CollectionView click 
 </h1>
 
 <template>
@@ -28,17 +28,21 @@ var
 var m = new Model(data);
 
 var mv = new ModelView({
-  el: document.querySelector('div'),
+
   model: m, 
+
+  el: document.querySelector('div'),
+
   templateSelector: 'template',
+
   render: function(){ 
     var node = template(this.templateSelector, this.model.attributes);
-    //var node = template(this.templateSelector, this.model.attributes);
-  
     this.el.appendChild(node) ;
   }
+
 });
 
+mv.render();
 
 </script>
 </body>
