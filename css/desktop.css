@@ -9,5 +9,8 @@ footer, footer label, nav > ul, #navbar {
   -webkit-align-items: center;
   align-items: center; }
 
+#appNav {
+  display: flex; }
+
 #banner {
   max-width: 300px; }

@@ -1,7 +1,16 @@
 /* Mobile CSS */
+/* Styling by CSS rule (alphabetical by CSS rule) */
+#appNav, #mainNav {
+  display: none; }
+
+/* Styling by class or element (alphabetical by class/element) */
 nav {
   -webkit-align-items: flex-start;
   align-items: flex-start; }
+
+/* Styling by DOM structure (organized by DOM structure) */
+#menuIcon {
+  display: flex; }
 
 #banner {
   width: 100%; }

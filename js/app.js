@@ -44,8 +44,11 @@ app.wv.render();
 app.pv.render();
 
 page.nodes.boxIcon.addEventListener('click', function() {
-  if (page.nodes.appNav.style.display !== 'flex') {
+  if (page.nodes.appNav.style.display !== 'flex' && page.nodes.appNav.style.display !== 'none') {
+    page.hide(page.nodes.appNav);
+  } else if (page.nodes.appNav.style.display !== 'flex') {
     page.display(page.nodes.appNav);
+    page.hide(page.nodes.mainNav);
   } else {
     page.hide(page.nodes.appNav);
   }

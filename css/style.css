@@ -22,17 +22,15 @@ article, aside, canvas, details, embed, figure, figcaption, footer, header, hgro
   height: auto;
   -webkit-flex-direction: column;
   flex-direction: column;
-  font-family: 'Gentium Plus';
+  font-family: 'Fira Sans';
   font-size: 100%;
-  font-weight: normal;
+  font-weight: 300;
   line-height: 150%;
   margin: 0;
   outline: none;
   padding: 0;
   text-decoration: none;
-  vertical-align: baseline;
-  /* inherit has to come after font-family in this declaration */
-  font: inherit; }
+  vertical-align: baseline; }
 
 /* Styling by CSS rule(s) (alphabetical by CSS rule) */
 footer label, header {
@@ -51,7 +49,7 @@ a, a:hover, a:visited, a:active {
 a, abbr, address, cite, code, del, dfn, em, img, ins, kbd, p, q, s, samp, small, strike, strong, sub, sup, tt, var {
   display: inline; }
 
-#menuIcon, #boxIcon {
+#appNav, #boxIcon, #menuIcon {
   display: none; }
 
 input[type='date'], main, #navIcons {
@@ -65,11 +63,14 @@ main, #navs, section {
 #corpusIndicator, #menuIcon, nav > ul > li {
   padding: 0.5rem; }
 
-section {
-  padding: 1rem; }
+ul.bulletedList li {
+  padding: 0.25rem 0; }
 
-h1, header > p {
-  font-weight: bold; }
+h1, h2, main p+p {
+  padding-top: 0.5rem; }
+
+h1, h2 {
+  font-size: 150%; }
 
 /* Styling by classes or element type (alphabetical by class/element) */
 a, a:hover, a:visited, a:active {
@@ -93,8 +94,11 @@ input[type='radio'] {
   -webkit-align-self: center;
   align-self: center; }
 
-ol, ul {
-  list-style: none; }
+.mainSection {
+  padding: 1rem; }
+
+strong {
+  font-weight: 500; }
 
 table {
   border-collapse: collapse;
@@ -120,6 +124,13 @@ thead {
 tr {
   display: table-row; }
 
+ul.bulletedList {
+  list-style: disc outside none; }
+
+ul.bulletedList li {
+  display: list-item;
+  margin-left: 1rem; }
+
 /* Styling by DOM elements (organized by DOM structure) */
 body {
   background: white;
@@ -127,7 +138,6 @@ body {
 
 #navbar {
   background-color: #3F93F9;
-  font-family: 'Fira Sans';
   width: 100%; }
 
 #boxIcon {

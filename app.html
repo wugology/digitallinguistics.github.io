@@ -5,7 +5,7 @@
 	<title>App</title>	
 	<meta name=author content='The Wugbot Team'>
 	<meta name=description content='The Wugbot app for managing linguistic data'>
-	<meta name=keywords content='wugbot, digital linguistics, DLX, linguistics, language documentation, awesome'>
+	<meta name=keywords content='wugbot, digital linguistics, DLX, linguistics, computational linguistics, corpus linguistics language documentation, awesome'>
 
   <link rel=stylesheet type=text/css href=css/fonts.css>
   <link rel=stylesheet type=text/css href=css/style.css>
@@ -21,15 +21,15 @@
         <img id=boxIcon src=img/box.svg alt='open app menu'>
       </div>
       <div id=navs>
-        <nav>
-          <ul id=mainNav>
+        <nav id=mainNav>
+          <ul>
             <li><a href=index.html>Home</a></li>
             <li><a href=aboutWugbot.html>About Wugbot</a></li>
             <li><a href=app.html style='border-bottom: 1px solid white;'>App</a></li>
           </ul>
         </nav>
-        <nav>
-          <ul id=appNav style='display: flex;'>
+        <nav id=appNav>
+          <ul>
             <li>Documents</li>
             <li>Media</li>
             <li>Texts</li>
@@ -43,17 +43,17 @@
     </div>
   </header>
   <main>
-    <section id=corpus>
+    <section id=corpus class=mainSection>
       <header><h1>corpus</h1></header>
       <ul id=titles></ul>
     </section>
     
-    <section id=text>
+    <section id=text class=mainSection>
       <header><h1 class=title>Text Title</h1></header>
       <div id=phrases></div>
     </section>
     
-    <section id=lexicon>
+    <section id=lexicon class=mainSection>
       <header><h1>lexicon</h1></header>
       <dl id=entries></dl>
     </section>

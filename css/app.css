@@ -5,7 +5,7 @@ footer, section {
 /* Styling by class or element (alphabetical by class/element) */
 
 /* Styling by DOM element (organized by DOM structure) */
-#menuIcon, #boxIcon {
+#appNav, #boxIcon, #menuIcon {
   display: flex; }
 
 #mainNav {
