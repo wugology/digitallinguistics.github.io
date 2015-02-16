@@ -44,9 +44,9 @@ app.wv.render();
 app.pv.render();
 
 page.nodes.boxIcon.addEventListener('click', function() {
-  if (page.nodes.appNav.style.display === 'flex') {
-    page.hide(page.nodes.appNav);
-  } else {
+  if (page.nodes.appNav.style.display !== 'flex') {
     page.display(page.nodes.appNav);
+  } else {
+    page.hide(page.nodes.appNav);
   }
 });
