@@ -140,7 +140,7 @@ body {
   background-color: #3F93F9;
   width: 100%; }
 
-#boxIcon {
+#boxIcon, #settingsButton {
   height: 2.5rem; }
   
 #menuIcon {

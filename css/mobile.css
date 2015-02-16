@@ -9,9 +9,6 @@ nav {
   align-items: flex-start; }
 
 /* Styling by DOM structure (organized by DOM structure) */
-#menuIcon {
-  display: flex; }
-
 #banner {
   width: 100%; }
 
@@ -20,3 +17,6 @@ footer div p {
 
 footer label {
   margin-top: 0.5rem; }
+
+#menuIcon {
+  display: flex; }
