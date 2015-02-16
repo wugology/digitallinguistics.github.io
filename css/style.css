@@ -35,31 +35,41 @@ article, aside, canvas, details, embed, figure, figcaption, footer, header, hgro
   font: inherit; }
 
 /* Styling by CSS rule(s) (alphabetical by CSS rule) */
+footer label, header {
+  -webkit-align-items: center;
+  align-items: center; }
+  
 a, a:hover, a:visited, a:active {
   color: #3F93F9; }
 
-.plainLink a {
+#navbar, nav a, nav a:hover, nav a:visited, nav a:active {
   color: white; }
+
+#navbar img, #navbar nav ul li {
+  cursor: pointer; }
 
 a, abbr, address, cite, code, del, dfn, em, img, ins, kbd, p, q, s, samp, small, strike, strong, sub, sup, tt, var {
   display: inline; }
 
-input[type='date'], main {
+#menuIcon, #boxIcon {
+  display: none; }
+
+input[type='date'], main, #navIcons {
   -webkit-flex-direction: row;
   flex-direction: row; }
 
-main, section {
+main, #navs, section {
   -webkit-flex-grow: 1;
   flex-grow: 1; }
 
-#menuIcon, nav > ul > li {
+#corpusIndicator, #menuIcon, nav > ul > li {
   padding: 0.5rem; }
+
+section {
+  padding: 1rem; }
 
 h1, header > p {
   font-weight: bold; }
-
-h1, header > p {
-  text-align: center; }
 
 /* Styling by classes or element type (alphabetical by class/element) */
 a, a:hover, a:visited, a:active {
@@ -75,10 +85,6 @@ blockquote:before, blockquote:after, q:before, q:after {
 
 code {
   font-family: 'DejaVu Sans Mono'; }
-
-header {
-  -webkit-align-items: center;
-  align-items: center; }
 
 input {
   background-color: lightgray; }
@@ -119,21 +125,21 @@ body {
   background: white;
   min-height: 100vh; }
 
-nav {
+#navbar {
   background-color: #3F93F9;
   font-family: 'Fira Sans';
   width: 100%; }
 
+#boxIcon {
+  height: 2.5rem; }
+  
 #menuIcon {
-  cursor: pointer;
   height: 2rem;
-}
+  margin: 0.25rem; }
 
 nav > ul {
   -webkit-flex-wrap: wrap;
-  flex-wrap: wrap;
-  -webkit-justify-content: center;
-  justify-content: center; }
+  flex-wrap: wrap; }
 
 nav > ul > li > a {
   border-bottom: 1px solid #3F93F9; }
@@ -146,10 +152,6 @@ footer {
   -webkit-justify-content: space-between;
   justify-content: space-between;
   padding: 0.5rem 0; }
-
-footer label {
-  -webkit-align-items: center;
-  align-items: center; }
 
 footer div {
   padding: 0 0.5rem; }

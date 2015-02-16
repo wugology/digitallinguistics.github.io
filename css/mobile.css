@@ -3,9 +3,6 @@ nav {
   -webkit-align-items: flex-start;
   align-items: flex-start; }
 
-nav > ul {
-  display: none; }
-
 #banner {
   width: 100%; }
 

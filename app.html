@@ -7,17 +7,40 @@
 	<meta name=description content='The Wugbot app for managing linguistic data'>
 	<meta name=keywords content='wugbot, digital linguistics, DLX, linguistics, language documentation, awesome'>
 
-  <link rel=stylesheet type='text/css' href='css/style.css'>
-  <link rel=stylesheet type='text/css' href='css/app.css'>
+  <link rel=stylesheet type=text/css href=css/fonts.css>
+  <link rel=stylesheet type=text/css href=css/style.css>
+  <link rel=stylesheet type=text/css href=css/app.css>
+  <link rel=stylesheet type=text/css href=css/desktop.css media='(min-width: 400px)'>
+  <link rel=stylesheet type=text/css href=css/mobile.css media='(max-width: 400px)'>
 </head>
 <body>
   <header>
-    <nav class='plainLink'>
-      <ul>
-        <li><a href='index.html'>Home</a></li>
-        <li><a href='app.html' style='border-bottom: 1px solid white;'>App</a></li>
-      </ul>
-    </nav>
+    <div id=navbar>
+      <div id=navIcons>
+        <img id=menuIcon src=img/menu.svg alt='open site menu'>
+        <img id=boxIcon src=img/box.svg alt='open app menu'>
+      </div>
+      <div id=navs>
+        <nav>
+          <ul id=mainNav>
+            <li><a href=index.html>Home</a></li>
+            <li><a href=aboutWugbot.html>About Wugbot</a></li>
+            <li><a href=app.html style='border-bottom: 1px solid white;'>App</a></li>
+          </ul>
+        </nav>
+        <nav>
+          <ul id=appNav style='display: none;'>
+            <li>Documents</li>
+            <li>Media</li>
+            <li>Texts</li>
+            <li>Lexicon</li>
+            <li>Orthographies</li>
+            <li>Tags</li>
+          </ul>
+        </nav>
+      </div>
+      <p id=corpusIndicator>[current corpus here]</p>
+    </div>
   </header>
   <main>
     <section id=corpus>
@@ -38,11 +61,11 @@
   <footer>
     <div>
       <p>&copy;2015 Wugbot</p>
-      <p>The code for this app is made available under <a href='http://mit-license.org/'>an MIT license</a>.</p>
+      <p>The code for this app is made available under <a href=http://mit-license.org/>an MIT license</a>.</p>
     </div>
     <label for=github>
-      <p><a href='https://github.com/wugbot/'>View the code for this app on Github.</a></p>
-      <a href='https://github.com/wugbot/'><img src='img/GitHub32px.png' alt='GitHub octocat' height=32 width=32></a>
+      <p><a href=https://github.com/wugbot/>View the code for this app on Github.</a></p>
+      <a href=https://github.com/wugbot/><img src=img/GitHub32px.png alt='GitHub octocat' height=32 width=32></a>
     </label>
   </footer>
   
@@ -59,7 +82,8 @@
       <dd class=gloss></dd>
     </template>
   </div>
-
+  
+  <script src=js/script.js></script>
   <script src=js/common.js></script>
   <script src=js/base.js></script>
   <script src=js/app.js></script>

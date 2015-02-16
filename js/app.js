@@ -38,5 +38,15 @@ app.wv = new WordView({
   }
 });
 
+page.nodes.boxIcon = document.querySelector('#boxIcon');
+
 app.wv.render();
 app.pv.render();
+
+page.nodes.boxIcon.addEventListener('click', function() {
+  if (page.nodes.appNav.style.display === 'flex') {
+    page.hide(page.nodes.appNav);
+  } else {
+    page.display(page.nodes.appNav);
+  }
+});

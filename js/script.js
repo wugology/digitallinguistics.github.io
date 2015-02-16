@@ -1,8 +1,9 @@
 var page = {};
 
 page.nodes = {
+  appNav: document.querySelector('#appNav'),
   menuIcon: document.querySelector('#menuIcon'),
-  nav: document.querySelector('#nav')
+  mainNav: document.querySelector('#mainNav')
 };
 
 page.display = function(el) {
@@ -15,9 +16,12 @@ page.hide = function(el) {
 
 /* EVENT LISTENERS */
 page.nodes.menuIcon.addEventListener('click', function() {
-  if (page.nodes.nav.style.display !== 'flex') {
-    page.display(page.nodes.nav);
+  if (page.nodes.mainNav.style.display !== 'flex') {
+    if (page.nodes.appNav) {
+      page.hide(page.nodes.appNav);
+    }
+    page.display(page.nodes.mainNav);
   } else {
-    page.hide(page.nodes.nav);
+    page.hide(page.nodes.mainNav);
   }
 });
