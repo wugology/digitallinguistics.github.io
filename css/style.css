@@ -49,14 +49,14 @@ a, a:hover, a:visited, a:active {
 #navbar img, #navbar nav ul li {
   cursor: pointer; }
 
-a, abbr, address, cite, code, del, dfn, em, img, ins, kbd, p, q, s, samp, small, strike, strong, sub, sup, tt, var {
-  display: inline; }
+a, abbr, acronym, b, bdo, br, big, button, cite, code, del, dfn, em, i, img, input, ins, kbd, label, map, object, p, q, samp, select, s, small, span, strike, strong, sub, sup, textarea, tt, var {
+  display: inline-block; }
 
-input[type='date'], main, #navIcons {
+input[type='date'], #navIcons {
   -webkit-flex-direction: row;
   flex-direction: row; }
 
-main, #navs, section {
+main, #navs {
   -webkit-flex-grow: 1;
   flex-grow: 1; }
 
@@ -95,8 +95,7 @@ input[type='radio'] {
   align-self: center; }
 
 .mainSection {
-  padding: 1rem;
-  width: 33%; }
+  padding: 1rem; }
 
 strong {
   font-weight: 500; }
@@ -166,3 +165,22 @@ footer div {
 
 footer img {
   margin: 0 0.5rem; }
+
+/* Temporary or placeholder styling */
+.documentsModule,
+.lexiconModule,
+.mediaModule,
+.orthographiesModule,
+.tagsModule,
+.textsModule {
+  border: 1px solid black;
+  padding: 0.25rem; }
+
+.documentsModule ul,
+.lexiconModule ul,
+.mediaModule ul,
+.orthographiesModule ul,
+.tagsModule ul,
+.textsModule ul {
+  display: inline-block;
+  margin: 0.5rem; }

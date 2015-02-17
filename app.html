@@ -50,15 +50,78 @@
         <h1>Overview Pane</h1>
       </header>
       
-      <ul id=titles></ul>
+      <p>This is the overview pane. This will primarily display lists and summary details for different types of data in the corpus. Clicking on items here will generally display the details for that item in the details pane.</p>
+      <p>Each of the modules in this section will be hidden unless the user has selected the relevant view from the navigation menu at the top of the page.</p>
+      
+      <div class=documentsModule>
+        <p>This is a documents module. This module will display a list of documents associated with this corpus, such as scans of field notes or archival documents, copies of consent forms, etc. Clicking a document will display the document details in the details pane.</p>
+        <ul id=documentsList>Here is a <code>&lt;ul&gt;</code> with <code>id=documentsList</code> for displaying the list of documents associated with this corpus. It may be necssary to have multiple <code>&lt;ul&gt;</code>ʼs for different types of documents.</ul>
+      </div>
+      
+      <div class=lexiconModule>
+        <p>This is a lexicon module. This module will display the list of entries in the lexicon or lexica associated with this corpus, and can be filtered and sorted, etc. Clicking a lexical entry will display that entry in the details pane.</p>
+        <ul id=lexiconEntries>Here is a <code>&lt;ul&gt;</code> with <code>id=lexiconEntries</code> for displaying the list of lexical entries for this corpus.</ul>
+      </div>
+      
+      <div class=mediaModule>
+        <p>This is a media module. This module will display the list of audiovisual media files associated with this corpus. Clicking a media file will display the details of the media item in the details pane.</p>
+        <ul id=mediaItems>Here is a <code>&lt;ul&gt;</code> with <code>id=mediaItems</code> for displaying the list of media items associated with this corpus. It may be necessary to have multiple <code>&lt;ul&gt;</code>ʼs for different types of media.</ul>
+      </div>
+      
+      <div class=orthographiesModule>
+        <p>This is an orthographies module. This module will display the list of orthographies associated with this corpus. Clicking an orthography will display the orthography in the details pane for editing.</p>
+        <ul id=orthographiesList>Here is a <code>&lt;ul&gt;</code> with <code>id=orthographiesList</code> for displaying the list of orthographies associated with this corpus. It may be necessary to have multiple <code>&lt;ul&gt;</code>ʼs for different languages.</ul>
+      </div>
+      
+      <div class=tagsModule>
+        <p>This is a tags module. This module will display a list of tags in the corpus, organized in some way. It may be that this is removed later and integrated into other types of tools, like a corpus tagger. Alternatively, this may be the place where those tools live.</p>
+        <ul id=tagsList>Here is a <code>&lt;ul&gt;</code> with <code>id=tagsList</code> for displaying the list of tags associated with this corpus.</ul>
+      </div>
+      
+      <div class=textsModule>
+        <p>This is a texts module. This module will display a list of texts in this corpus. Clicking on a text will display that text and its details in the details pane.</p>
+        <ul id=textsList>Here is a <code>&lt;ul&gt;</code> with <code>id=textsList</code> for displaying the list of texts in this corpus.</ul>
+      </div>
     </section>
     
-    <section id=detailPane class=mainSection>
+    <section id=detailsPane class=mainSection>
       <header>
         <h1>Details Pane</h1>
       </header>
       
-      <div id=phrases></div>
+      <p>This is the details pane, where the user will be doing most of their work. Users will use the overview pane to pull up items to work on, and then input and edit those items here.</p>
+      <p>Each of the modules in this section will be hidden unless the user has selected the relevant view from the navigation menu at the top of the page.</p>
+
+      <div class=documentsModule>
+        <p>This is a documents module. Details of individual documents - or perhaps the document itself - will be displayed here.</p>
+      </div>
+      
+      <div class=lexiconModule>
+        <p>This is a lexicon module. Details of individual lexical entries will be displayed here.</p>
+      </div>
+      
+      <div class=mediaModule>
+        <p>This is a media module. Details of individual audiovisual media items will be displayed here.</p>
+      </div>
+      
+      <div class=orthographiesModule>
+        <p>This is an orthographies module. Details of individual orthographies will be displayed here.</p>
+      </div>
+      
+      <div class=tagsModule>
+        <p>This is a tags module. Details of individual tags will be displayed here (for example, all the phrases a tag has been applied to).</p>
+      </div>
+      
+      <div class=textsModule>
+        <p>This is a texts module. Individual texts will be displayed here when selected in the overview pane.</p>
+        
+        <ul id=textView>This is a <code>&lt;ul&gt;</code> with an <code>id=textView</code>, meant to represent a text view that has been generated and inserted into the DOM. The text view will be relatively minimal, consisting primarily of an <code>&lt;h1&gt;</code> holding the text title, and an empty <code>&lt;ol&gt;</code> with <code>id=phrases</code> where the phrases will be displayed (also by generating each phrase and inserting it into the DOM).</ul>
+        
+        <p>Below is a completely empty (and thus not visible without content) <code>&lt;ol&gt;</code> with <code>id=phrases</code> for testing purposes.</p>
+        
+        <ol id=phrases></ol>
+      </div>
+      
     </section>
     
     <section id=toolbar class=mainSection>

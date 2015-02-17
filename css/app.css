@@ -3,5 +3,7 @@ footer, section {
   border: 1px solid lightgray; }
 
 /* Styling by class or element (alphabetical by class/element) */
+.mainSection {
+  width: 33%; }
 
 /* Styling by DOM element (organized by DOM structure) */

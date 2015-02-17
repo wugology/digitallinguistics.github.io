@@ -9,6 +9,9 @@ nav {
 .hideonMobile {
   display: none; }
 
+.mainSection {
+  width: 100%; }
+
 /* Styling by DOM structure (organized by DOM structure) */
 #banner {
   width: 100%; }
@@ -45,3 +48,15 @@ footer label {
   -webkit-order: 2;
   order: 2;
 }
+
+main #toolbar {
+  -webkit-order: 1;
+  order: 1; }
+
+main #overviewPane {
+  -webkit-order: 2;
+  order: 2; }
+
+main #detailsPane {
+  -webkit-order: 3;
+  order: 3; }
