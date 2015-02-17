@@ -10,8 +10,8 @@
   <link rel=stylesheet type=text/css href=css/fonts.css>
   <link rel=stylesheet type=text/css href=css/style.css>
   <link rel=stylesheet type=text/css href=css/app.css>
-  <link rel=stylesheet type=text/css href=css/desktop.css media='(min-width: 1000px)'>
-  <link rel=stylesheet type=text/css href=css/mobile.css media='(max-width: 1000px)'>
+  <link id=desktopCSS rel=stylesheet type=text/css href=css/desktop.css media='(min-width: 1000px)'>
+  <link id=mobileCSS rel=stylesheet type=text/css href=css/mobile.css media='(max-width: 1000px)'>
 </head>
 <body>
   <header>
@@ -149,7 +149,7 @@
     <div id=settingsPopup class='hideonDesktop hideonMobile'>
       <img src=img/close.svg alt='close this popup' class='icon'>
       <h1>Settings</h1>
-      <p>This is the settings popup.</p>
+      <button id=switchLayoutButton type=button value='Switch between mobile/desktop layout'>Switch between mobile/desktop layout.</button>
     </div>
   </div>
   

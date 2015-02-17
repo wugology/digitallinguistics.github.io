@@ -94,6 +94,9 @@ page.nodes.corpusIndicator = document.querySelector('#corpusIndicator');
 page.nodes.popups = document.querySelector('#popups');
 page.nodes.settingsButton = document.querySelector('#settingsButton');
 page.nodes.settingsPopup = document.querySelector('#settingsPopup');
+page.nodes.switchLayoutButton = document.querySelector('#switchLayoutButton');
+page.nodes.desktopCSS = document.querySelector('#desktopCSS');
+page.nodes.mobileCSS = document.querySelector('#mobileCSS');
 
 // Sets up the workspace based on app.preferences (which will eventually be user.preferences)
 page.loadWorkspace = function() {
@@ -124,6 +127,18 @@ page.setWorkview = function(workview) {
   }
 };
 
+page.switchLayout = function() {
+  var small = '(min-width: 1000px)';
+  var large = '(max-width: 1000px)';
+  if (page.nodes.desktopCSS.media === small) {
+    page.nodes.desktopCSS.media = large;
+    page.nodes.mobileCSS.media = small;
+  } else {
+    page.nodes.desktopCSS.media = small;
+    page.nodes.mobileCSS.media = large;
+  }
+};
+
 // EVENT LISTENERS
 page.nodes.appNav.addEventListener('click', function(ev) {
   if (ev.target.tagName === 'A') {
@@ -145,6 +160,11 @@ page.nodes.popups.addEventListener('click', function(ev) {
 
 page.nodes.settingsButton.addEventListener('click', function(ev) {
   page.toggleDisplay(settingsPopup);
+});
+
+page.nodes.switchLayoutButton.addEventListener('click', function() {
+  page.switchLayout();
+  page.toggleDisplay(page.nodes.settingsPopup);
 });
 
 window.addEventListener('load', page.loadWorkspace);

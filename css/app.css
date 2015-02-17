@@ -14,11 +14,5 @@ img[src='img/close.svg'] {
   width: 33%; }
 
 /* Styling by DOM element (organized by DOM structure) */
-#corpusIndicator {
-  border: 1px solid white;
-  border-radius: 5px;
-  cursor: pointer;
-  padding: 0 0.5rem; }
-
 #corpusIndicator:hover {
   box-shadow: 0 0 5px 0 white; }

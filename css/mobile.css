@@ -57,6 +57,7 @@ body #popups {
   order: 1; }
 
 #navbar #navs {
+  font-size: 150%;
   -webkit-order: 4;
   order: 4; }
 

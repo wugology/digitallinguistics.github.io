@@ -33,9 +33,18 @@ article, aside, canvas, details, embed, figure, figcaption, footer, header, hgro
   vertical-align: baseline; }
 
 /* Styling by CSS rule(s) (alphabetical by CSS rule) */
-footer label, header {
+button, footer label, header {
   -webkit-align-items: center;
   align-items: center; }
+
+body, button {
+  background-color: white; }
+
+button {
+  border: 1px solid black; }
+
+#corpusIndicator {
+  border: 1px solid white; }
 
 nav > ul > li > a, #navIcons {
   border-bottom: 1px solid #3F93F9; }
@@ -52,7 +61,7 @@ a, a:hover, a:visited, a:active {
 #navbar img, #navbar nav ul li {
   cursor: pointer; }
 
-a, abbr, acronym, b, bdo, br, big, button, cite, code, del, dfn, em, i, img, input, ins, kbd, map, object, p, q, samp, select, s, small, span, strike, strong, sub, sup, textarea, tt, var {
+a, abbr, acronym, b, bdo, br, big, cite, code, del, dfn, em, i, img, input, ins, kbd, map, object, p, q, samp, select, s, small, span, strike, strong, sub, sup, textarea, tt, var {
   display: inline-block; }
 
 input[type='date'], #navIcons {
@@ -63,7 +72,10 @@ main, #navs {
   -webkit-flex-grow: 1;
   flex-grow: 1; }
 
-nav > ul > li {
+#corpusIndicator, footer div {
+  padding: 0 0.5rem; }
+
+button, nav > ul > li {
   padding: 0.5rem; }
 
 ul.bulletedList li {
@@ -89,6 +101,16 @@ blockquote, q {
 blockquote:before, blockquote:after, q:before, q:after {
   content: '';
   content: none; }
+
+button, #corpusIndicator {
+  border-radius: 5px;
+  cursor: pointer; }
+
+button:hover {
+  box-shadow: 0px 0px 3px 0px gray; }
+
+button:active {
+  box-shadow: 0px 0px 3px 0px black inset; }
 
 code {
   font-family: 'DejaVu Sans Mono';
@@ -140,7 +162,6 @@ ul.bulletedList li {
 
 /* Styling by DOM elements (organized by DOM structure) */
 body {
-  background: white;
   min-height: 100vh; }
 
 #navbar {
@@ -156,9 +177,6 @@ footer {
   -webkit-justify-content: space-between;
   justify-content: space-between;
   padding: 0.5rem 0; }
-
-footer div {
-  padding: 0 0.5rem; }
 
 footer img {
   margin: 0 0.5rem; }
