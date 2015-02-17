@@ -11,6 +11,10 @@ page.hide = function(el) {
   el.classList.add('hideonMobile');
 };
 
+page.setWorkview = function(workview) {
+  
+};
+
 page.toggleDisplay = function(el) {
   el.classList.toggle('hideonMobile');
   el.classList.toggle('hideonDesktop');

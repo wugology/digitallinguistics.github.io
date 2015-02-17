@@ -37,6 +37,9 @@ footer label, header {
   -webkit-align-items: center;
   align-items: center; }
 
+nav > ul > li > a, #navIcons {
+  border-bottom: 1px solid #3F93F9; }
+
 nav > ul > li a:hover, .underline {
   border-bottom: 1px solid white; }
 
@@ -151,9 +154,6 @@ body {
 nav > ul {
   -webkit-flex-wrap: wrap;
   flex-wrap: wrap; }
-
-nav > ul > li > a {
-  border-bottom: 1px solid #3F93F9; }
 
 footer {
   font-size: 80%;

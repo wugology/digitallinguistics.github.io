@@ -90,8 +90,48 @@ app.preferences = {
 };
 
 page.nodes.boxIcon = document.querySelector('#boxIcon');
+page.nodes.corpusIndicator = document.querySelector('#corpusIndicator');
+
+// Sets up the workspace based on app.preferences (which will eventually be user.preferences)
+page.loadWorkspace = function() {
+  page.nodes.corpusIndicator.textContent = app.preferences.currentCorpus;
+  page.setWorkview(app.preferences.currentWorkview);
+};
+
+// Displays all the modules associated with a given workview
+// Ex. The 'lexicon' workview displays everything with class=lexiconModule on it
+// Acceptable inputs for 'workview': 'documents', 'lexicon', 'media', 'orthographies', 'tags', 'texts'
+page.setWorkview = function(workview) {
+  var modules = document.querySelectorAll('.module');
+  var navButtons = document.querySelectorAll('#appNav a');
+  
+  for (var i=0; i<navButtons.length; i++) {
+    navButtons[i].classList.remove('underline');
+    if (navButtons[i].textContent.toLowerCase() === workview) {
+      navButtons[i].classList.add('underline');
+    }
+  }
+  
+  for (var i=0; i<modules.length; i++) {
+    if (modules[i].classList[0] === workview + 'Module') {
+      page.toggleDisplay(modules[i]);
+    } else {
+      page.hide(modules[i]);
+    }
+  }
+};
+
+// EVENT LISTENERS
+page.nodes.appNav.addEventListener('click', function(ev) {
+  if (ev.target.tagName === 'A') {
+    page.setWorkview(ev.target.textContent.toLowerCase());
+  }
+  page.toggleDisplay(page.nodes.appNav);
+});
 
 page.nodes.boxIcon.addEventListener('click', function(ev) {
   page.toggleDisplay(page.nodes.appNav);
   page.hide(page.nodes.mainNav);
 });
+
+window.addEventListener('load', page.loadWorkspace);
