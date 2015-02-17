@@ -26,6 +26,9 @@ nav {
   border-bottom: 1px solid black;
   position: relative; }
 
+ul.bulletedList li {
+  margin-left: 2.5rem; }
+
 /* Styling by DOM structure (organized by DOM structure) */
 body {
   font-size: 2.5rem; }

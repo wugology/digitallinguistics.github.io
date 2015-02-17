@@ -21,6 +21,9 @@ footer, footer label, nav > ul, main, #navbar {
   top: 20%;
   transform: translateX(-50%); }
 
+ul.bulletedList li {
+  margin-left: 1.5rem; }
+
 /* Styling by DOM (organized by DOM structure) */
 section {
   -webkit-flex-grow: 1;
