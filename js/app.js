@@ -91,6 +91,9 @@ app.preferences = {
 
 page.nodes.boxIcon = document.querySelector('#boxIcon');
 page.nodes.corpusIndicator = document.querySelector('#corpusIndicator');
+page.nodes.popups = document.querySelector('#popups');
+page.nodes.settingsButton = document.querySelector('#settingsButton');
+page.nodes.settingsPopup = document.querySelector('#settingsPopup');
 
 // Sets up the workspace based on app.preferences (which will eventually be user.preferences)
 page.loadWorkspace = function() {
@@ -132,6 +135,16 @@ page.nodes.appNav.addEventListener('click', function(ev) {
 page.nodes.boxIcon.addEventListener('click', function(ev) {
   page.toggleDisplay(page.nodes.appNav);
   page.hide(page.nodes.mainNav);
+});
+
+page.nodes.popups.addEventListener('click', function(ev) {
+  if (ev.target.className === 'closeIcon') {
+    page.toggleDisplay(ev.target.parentNode);
+  }
+});
+
+page.nodes.settingsButton.addEventListener('click', function(ev) {
+  page.toggleDisplay(settingsPopup);
 });
 
 window.addEventListener('load', page.loadWorkspace);

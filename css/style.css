@@ -63,11 +63,14 @@ main, #navs {
   -webkit-flex-grow: 1;
   flex-grow: 1; }
 
-#corpusIndicator, #menuIcon, nav > ul > li {
+#menuIcon, nav > ul > li {
   padding: 0.5rem; }
 
 ul.bulletedList li {
   padding: 0.25rem 0; }
+
+.mainSection, #popups > div {
+  padding: 1rem; }
 
 h1, h2, main p+p {
   padding-top: 0.5rem; }
@@ -91,15 +94,20 @@ code {
   font-family: 'DejaVu Sans Mono';
   white-space: pre; }
 
+img[src='img/close.svg'] {
+  cursor: pointer;
+  height: 30px;
+  width: 30px; }
+
+h1 {
+  text-align: center; }
+
 input {
   background-color: lightgray; }
 
 input[type='radio'] {
   -webkit-align-self: center;
   align-self: center; }
-
-.mainSection {
-  padding: 1rem; }
 
 strong {
   font-weight: 400; }

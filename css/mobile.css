@@ -1,5 +1,14 @@
 /* Mobile CSS */
 /* Styling by CSS rule (alphabetical by CSS rule) */
+#corpusIndicator, #navbar {
+  -webkit-flex-direction: row;
+  flex-direction: row; }
+
+#corpusIndicator, footer div p {
+  text-align: center; }
+
+#banner, #corpusIndicator, .mainSection, #navs {
+  width: 100%; }
 
 /* Styling by class or element (alphabetical by class/element) */
 nav {
@@ -9,45 +18,55 @@ nav {
 .hideonMobile {
   display: none; }
 
-.mainSection {
-  width: 100%; }
+img[src='img/close.svg'] {
+  position: absolute;
+  right: 0.5rem;
+  top: 0.5rem; }
+
+#popups > div {
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  position: relative; }
 
 /* Styling by DOM structure (organized by DOM structure) */
-#banner {
-  width: 100%; }
+body header {
+  -webkit-order: 1;
+  order: 1; }
 
-footer div p {
-  text-align: center; }
+body main {
+  -webkit-order: 3;
+  order: 3; }
 
-footer label {
-  margin-top: 0.5rem; }
+body footer {
+  -webkit-order: 4;
+  order: 4; }
+
+body #popups {
+  -webkit-order: 2;
+  order: 2; }
 
 #navbar {
-  -webkit-flex-direction: row;
-  flex-direction: row;
   -webkit-flex-wrap: wrap;
-  flex-wrap: wrap; }
+  flex-wrap: wrap;
+  -webkit-justify-content: center;
+  justify-content: center; }
 
 #navbar #navIcons {
   -webkit-order: 1;
-  order: 1;
-}
+  order: 1; }
 
 #navbar #navs {
-  -webkit-order: 3;
-  order: 3;
-  width: 100%;
-}
+  -webkit-order: 4;
+  order: 4; }
 
 #navbar #corpusIndicator {
-  -webkit-order: 4;
-  order: 4;
-}
+  margin: 0.75rem;
+  -webkit-order: 3;
+  order: 3; }
 
 #navbar #settingsButton {
   -webkit-order: 2;
-  order: 2;
-}
+  order: 2; }
 
 main #toolbar {
   -webkit-order: 1;
@@ -60,3 +79,6 @@ main #overviewPane {
 main #detailsPane {
   -webkit-order: 3;
   order: 3; }
+
+footer label {
+  margin-top: 0.5rem; }
