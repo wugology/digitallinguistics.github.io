@@ -126,7 +126,7 @@ page.nodes.appNav.addEventListener('click', function(ev) {
   if (ev.target.tagName === 'A') {
     page.setWorkview(ev.target.textContent.toLowerCase());
   }
-  page.toggleDisplay(page.nodes.appNav);
+  page.nodes.appNav.classList.add('hideonMobile');
 });
 
 page.nodes.boxIcon.addEventListener('click', function(ev) {
