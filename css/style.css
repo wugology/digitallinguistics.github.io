@@ -49,7 +49,7 @@ a, a:hover, a:visited, a:active {
 #navbar img, #navbar nav ul li {
   cursor: pointer; }
 
-a, abbr, acronym, b, bdo, br, big, button, cite, code, del, dfn, em, i, img, input, ins, kbd, label, map, object, p, q, samp, select, s, small, span, strike, strong, sub, sup, textarea, tt, var {
+a, abbr, acronym, b, bdo, br, big, button, cite, code, del, dfn, em, i, img, input, ins, kbd, map, object, p, q, samp, select, s, small, span, strike, strong, sub, sup, textarea, tt, var {
   display: inline-block; }
 
 input[type='date'], #navIcons {
@@ -85,7 +85,8 @@ blockquote:before, blockquote:after, q:before, q:after {
   content: none; }
 
 code {
-  font-family: 'DejaVu Sans Mono'; }
+  font-family: 'DejaVu Sans Mono';
+  white-space: pre; }
 
 input {
   background-color: lightgray; }
