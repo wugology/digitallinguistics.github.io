@@ -8,11 +8,8 @@ footer, footer label, nav > ul, main, #navbar {
 .hideonDesktop {
   display: none; }
 
-img[src='img/close.svg'] {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  transform: translate(25%, -25%); }
+.icon {
+  height: 2.5rem; }
 
 #popups > div {
   background-color: white;

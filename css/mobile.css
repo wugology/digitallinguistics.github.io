@@ -18,18 +18,16 @@ nav {
 .hideonMobile {
   display: none; }
 
-img[src='img/close.svg'] {
-  position: absolute;
-  right: 0.5rem;
-  top: 0.5rem; }
-
 #popups > div {
   border-top: 1px solid black;
   border-bottom: 1px solid black;
   position: relative; }
 
 /* Styling by DOM structure (organized by DOM structure) */
-body header {
+body {
+  font-size: 175%; }
+
+body > header {
   -webkit-order: 1;
   order: 1; }
 

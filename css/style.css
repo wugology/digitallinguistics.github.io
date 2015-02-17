@@ -63,7 +63,7 @@ main, #navs {
   -webkit-flex-grow: 1;
   flex-grow: 1; }
 
-#menuIcon, nav > ul > li {
+nav > ul > li {
   padding: 0.5rem; }
 
 ul.bulletedList li {
@@ -93,11 +93,6 @@ blockquote:before, blockquote:after, q:before, q:after {
 code {
   font-family: 'DejaVu Sans Mono';
   white-space: pre; }
-
-img[src='img/close.svg'] {
-  cursor: pointer;
-  height: 30px;
-  width: 30px; }
 
 h1 {
   text-align: center; }
@@ -151,13 +146,6 @@ body {
 #navbar {
   background-color: #3F93F9;
   width: 100%; }
-
-#boxIcon, #settingsButton {
-  height: 2.5rem; }
-  
-#menuIcon {
-  height: 2rem;
-  margin: 0.25rem; }
 
 nav > ul {
   -webkit-flex-wrap: wrap;

@@ -3,6 +3,13 @@ footer, section {
   border: 1px solid lightgray; }
 
 /* Styling by class or element (alphabetical by class/element) */
+img[src='img/close.svg'] {
+  cursor: pointer;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  transform: translate(25%, -25%); }
+
 .mainSection {
   width: 33%; }
 

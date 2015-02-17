@@ -138,7 +138,7 @@ page.nodes.boxIcon.addEventListener('click', function(ev) {
 });
 
 page.nodes.popups.addEventListener('click', function(ev) {
-  if (ev.target.className === 'closeIcon') {
+  if (ev.target.className === 'icon') {
     page.toggleDisplay(ev.target.parentNode);
   }
 });
