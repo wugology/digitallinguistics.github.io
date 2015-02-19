@@ -157,8 +157,7 @@ ul.bulletedList {
   list-style: disc outside none; }
 
 ul.bulletedList li {
-  display: list-item;
-  margin-left: 1rem; }
+  display: list-item; }
 
 /* Styling by DOM elements (organized by DOM structure) */
 body {
