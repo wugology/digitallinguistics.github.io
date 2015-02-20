@@ -10,13 +10,20 @@ var idb = {
     });
   },
   
-  // Creates a new Wugbot database if none is detected, and populates the objectStores (tables)
+  // Creates a new Wugbot database and its objectStores (tables)
   create: function() {
-    var corporaObjectStore = idb.database.createObjectStore('corpora', { keyPath: 'id', autoIncrement: true });
-    var languagesObjectStore = idb.database.createObjectStore('languages', { keyPath: 'id', autoIncrement: true });
-    var lexiconsObjectStore = idb.database.createObjectStore('lexicons', { keyPath: 'id', autoIncrement: true });
-    var mediaFilesObjectStore = idb.database.createObjectStore('mediaFiles', { keyPath: 'id', autoIncrement: true });
-    var textsObjectStore = idb.database.createObjectStore('texts', { keyPath: 'id', autoIncrement: true });
+    var defaults = { keyPath: 'id', autoIncrement: true };
+    var objectStores = [
+      'corpora',
+      'languages',
+      'lexicons',
+      'mediaFiles',
+      'texts'
+    ];
+    
+    objectStores.forEach(function(objectStore) {
+      idb.database.createObjectStore(objectStore, defaults);
+    });
   },
   
   // Opens the Wugbot database (and creates it if it doesn't yet exist)
