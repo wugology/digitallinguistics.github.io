@@ -16,6 +16,7 @@ button, caption, input, fieldset, form, label, legend, table, textarea, tbody, t
 /* Semantic elements */
 article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, main, menu, nav, output, ruby, section, summary, time, mark, audio, video {
   border: none;
+  border-collapse: collapse;
   box-sizing: border-box;
   display: -webkit-flex;
   display: flex;
@@ -130,7 +131,6 @@ strong {
   font-weight: 400; }
 
 table {
-  border-collapse: collapse;
   border-spacing: 0;
   display: table; }
 	
