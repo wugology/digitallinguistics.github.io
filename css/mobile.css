@@ -1,13 +1,13 @@
 /* Mobile CSS */
 /* Styling by CSS rule (alphabetical by CSS rule) */
-#corpusIndicator, #navbar {
+#corpusSelector, #navbar {
   -webkit-flex-direction: row;
   flex-direction: row; }
 
-#corpusIndicator, footer div p {
+#corpusSelector, footer div p {
   text-align: center; }
 
-#banner, #corpusIndicator, .mainSection, #navs {
+#banner, #corpusSelector, .mainSection, #navs {
   width: 100%; }
 
 /* Styling by class or element (alphabetical by class/element) */
@@ -64,8 +64,8 @@ body #popups {
   -webkit-order: 4;
   order: 4; }
 
-#navbar #corpusIndicator {
-  font-size: 200%;
+#navbar #corpusSelector {
+  font-size: 150%;
   margin: 0.75rem;
   -webkit-order: 3;
   order: 3; }

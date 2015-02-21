@@ -26,16 +26,49 @@ var idb = {
     });
   },
   
+  // Takes an array of object IDs and returns an array of the objects with those IDs from the specified object store database
+  get: function(ids, objectStore, successCallback) {
+    var records = [];
+    ids.forEach(function(id) {
+      idb.database.transaction(objectStore).objectStore(objectStore).get(id).onsuccess = function(ev) {
+        records.push(ev.target.result);
+        if (typeof successCallback === 'function') {
+          successCallback(records);
+        }
+      };
+    });
+    return records;
+  },
+  
+  // Returns an array of every object in the specified object store
+  // Mozilla actually has a .getAll() function, but Chrome does not
+  getAll: function(objectStore, successCallback) {
+    var records = [];
+    idb.database.transaction(objectStore).objectStore(objectStore).openCursor().onsuccess = function(ev) {
+      var cursor = ev.target.result;
+      if (cursor) {
+        records.push(cursor.value);
+        cursor.continue();
+      } else {
+        if (typeof successCallback === 'function') {
+          successCallback(records);
+        }
+      }
+    };
+    return records;
+  },
+  
   // Opens the Wugbot database (and creates it if it doesn't yet exist)
-  open: function() {
+  open: function(successCallback) {
     var request = window.indexedDB.open('Wugbot', 1);
 
     request.onsuccess = function() {
-      idb.database = request.result;
+      idb.database = this.result;
+      successCallback();
     };
-    
+        
     request.onupgradeneeded = function() {
-      idb.database = request.result;
+      idb.database = this.result;
       idb.create();
     };
   },
@@ -63,5 +96,3 @@ idb.database = {};
 idb.database.onerror = function(ev) {
   alert('Database error: ' + ev.target.errorCode);
 };
-
-idb.open();

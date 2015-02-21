@@ -14,7 +14,7 @@ dl, dt, dd, ol, ul, li,
 /* Forms & Tables */
 button, caption, input, fieldset, form, label, legend, table, textarea, tbody, tfoot, thead, tr, th, td,
 /* Semantic elements */
-article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, main, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+article, aside, audio, canvas, details, embed, figure, figcaption, footer, header, hgroup, main, mark, menu, nav, option, output, ruby, section, select, summary, time, video {
   border: none;
   border-collapse: collapse;
   box-sizing: border-box;
@@ -34,9 +34,12 @@ article, aside, canvas, details, embed, figure, figcaption, footer, header, hgro
   vertical-align: baseline; }
 
 /* Styling by CSS rule(s) (alphabetical by CSS rule) */
-button, footer label, header {
+button, label, header {
   -webkit-align-items: center;
   align-items: center; }
+
+#corpusSelector, #navbar {
+  background-color: #3F93F9; }
 
 body, button {
   background-color: white; }
@@ -44,7 +47,7 @@ body, button {
 button {
   border: 1px solid black; }
 
-#corpusIndicator {
+#corpusSelector {
   border: 1px solid white; }
 
 nav > ul > li > a, #navIcons {
@@ -56,16 +59,16 @@ nav > ul > li a:hover, .underline {
 a, a:hover, a:visited, a:active {
   color: #3F93F9; }
 
-#navbar, nav a, nav a:hover, nav a:visited, nav a:active {
+#corpusSelector, #navbar, nav a, nav a:hover, nav a:visited, nav a:active {
   color: white; }
 
-#navbar img, #navbar nav ul li {
+button, #navbar img, #navbar nav ul li {
   cursor: pointer; }
 
 a, abbr, acronym, b, bdo, br, big, cite, code, del, dfn, em, i, img, input, ins, kbd, map, object, p, q, samp, select, s, small, span, strike, strong, sub, sup, textarea, tt, var {
   display: inline-block; }
 
-input[type='date'], #navIcons {
+input[type='date'], label, #navIcons {
   -webkit-flex-direction: row;
   flex-direction: row; }
 
@@ -73,7 +76,10 @@ main, #navs {
   -webkit-flex-grow: 1;
   flex-grow: 1; }
 
-#corpusIndicator, footer div {
+h1, h2 {
+  font-size: 150%; }
+
+#corpusSelector, footer div {
   padding: 0 0.5rem; }
 
 button, nav > ul > li {
@@ -88,8 +94,8 @@ ul.bulletedList li {
 h1, h2, main p+p {
   padding-top: 0.5rem; }
 
-h1, h2 {
-  font-size: 150%; }
+h1, th {
+  text-align: center; }
 
 /* Styling by classes or element type (alphabetical by class/element) */
 a, a:hover, a:visited, a:active {
@@ -103,9 +109,8 @@ blockquote:before, blockquote:after, q:before, q:after {
   content: '';
   content: none; }
 
-button, #corpusIndicator {
-  border-radius: 5px;
-  cursor: pointer; }
+button {
+  border-radius: 5px; }
 
 button:hover {
   box-shadow: 0px 0px 3px 0px gray; }
@@ -117,15 +122,13 @@ code {
   font-family: 'DejaVu Sans Mono';
   white-space: pre; }
 
-h1 {
-  text-align: center; }
-
 input {
   background-color: lightgray; }
 
 input[type='radio'] {
   -webkit-align-self: center;
-  align-self: center; }
+  align-self: center;
+  margin: 0 0.25rem; }
 
 strong {
   font-weight: 400; }
@@ -144,8 +147,7 @@ td {
   display: table-cell; }
 	
 th {
-  display: table-cell;
-  text-align: center; }
+  display: table-cell; }
 	
 thead {
   display: table-header-group; }
@@ -164,7 +166,6 @@ body {
   min-height: 100vh; }
 
 #navbar {
-  background-color: #3F93F9;
   width: 100%; }
 
 nav > ul {

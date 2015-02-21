@@ -1,8 +1,34 @@
-
 // app
 
 var app = {};
 
+app.Corpus = {
+  create: function(name, documents, languages, lexicons, mediaFiles, texts) {
+    var newCorpus = new app.prototypes.Corpus(name, documents, languages, lexicons, mediaFiles, texts);
+    page.render.corpusSelector();
+    app.preferences.currentCorpus = newCorpus.name;
+    corpusSelector.value = app.preferences.currentCorpus;
+  },
+  
+  set: function(corpus) {
+    corpusSelector.value = corpus;
+    // Will also need to rerender whichever workview is current
+    app.preferences.currentCorpus = corpus;
+  }
+};
+
+app.prototypes = {
+  Corpus: function(name, documents, languages, lexicons, mediaFiles, texts) {
+    this.name = name;
+    this.documents = documents;
+    this.languages = languages;
+    this.lexicons = lexicons;
+    this.mediaFiles = mediaFiles;
+    this.texts = texts;
+  }
+};
+
+// Some of these were breaking while I was working on other things, so I commented them out for now [DWH]
 /*
 app.p = new Phrase({
   transcription: 'me llamo wugbot', 
@@ -84,13 +110,8 @@ app.pv.render();
 app.ppv.render();
 */
 
-app.preferences = {
-  currentCorpus: 'Mixtec',
-  currentWorkview: 'texts'
-};
-
 page.nodes.boxIcon = document.querySelector('#boxIcon');
-page.nodes.corpusIndicator = document.querySelector('#corpusIndicator');
+page.nodes.corpusSelector = document.querySelector('#corpusSelector');
 page.nodes.popups = document.querySelector('#popups');
 page.nodes.settingsButton = document.querySelector('#settingsButton');
 page.nodes.settingsPopup = document.querySelector('#settingsPopup');
@@ -98,10 +119,43 @@ page.nodes.switchLayoutButton = document.querySelector('#switchLayoutButton');
 page.nodes.desktopCSS = document.querySelector('#desktopCSS');
 page.nodes.mobileCSS = document.querySelector('#mobileCSS');
 
+// At any given time, only some of the elements on the page are being displayed
+// The dynamic content in these elements should not be loaded until the element is displayed
+// These functions load the dynamic content for different views - call them when you display that view
+page.render = {
+  corpusSelector: function() {
+    var displayCorpora = function(corpora) {
+      corpora.forEach(function(corpus) {
+        var option = document.createElement('option');
+        option.textContent = corpus.name;
+        corpusSelector.insertBefore(option, corpusSelector.lastChild);
+      });
+    }
+    
+    var corpora = idb.getAll('corpora', displayCorpora);
+    // Add a line that clears the corpus selector before rendering (maybe making the placeholders obsolete - just add the 'add corpus' option manually, after the corpora are done being added
+    // Add the 'new corpus' option here, after the other corpora have loaded
+  }
+};
+
 // Sets up the workspace based on app.preferences (which will eventually be user.preferences)
 page.loadWorkspace = function() {
-  page.nodes.corpusIndicator.textContent = app.preferences.currentCorpus;
+  if (localStorage.wugbotPreferences === undefined) {
+    app.preferences = {
+      currentCorpus: 'Select a corpus',
+      currentWorkview: 'texts'
+    };
+  } else {
+    app.preferences = JSON.parse(localStorage.wugbotPreferences);
+  }
   page.setWorkview(app.preferences.currentWorkview);
+  page.render.corpusSelector();
+  //page.nodes.corpusSelector.value = app.preferences.currentCorpus;
+};
+
+// Saves app.preferences to localStorage
+page.saveWorkspace = function() {
+  localStorage.wugbotPreferences = JSON.stringify(app.preferences, null, 2);
 };
 
 // Displays all the modules associated with a given workview
@@ -120,11 +174,13 @@ page.setWorkview = function(workview) {
   
   for (var i=0; i<modules.length; i++) {
     if (modules[i].classList[0] === workview + 'Module') {
-      page.toggleDisplay(modules[i]);
+      page.display(modules[i]);
     } else {
       page.hide(modules[i]);
     }
   }
+  
+  app.preferences.currentWorkview = workview;
 };
 
 page.switchLayout = function() {
@@ -152,6 +208,14 @@ page.nodes.boxIcon.addEventListener('click', function(ev) {
   page.hide(page.nodes.mainNav);
 });
 
+page.nodes.corpusSelector.addEventListener('change', function(ev) {
+  if (ev.target.value === 'Add a new corpus') {
+    app.Corpus.create();
+  } else {
+    app.Corpus.set(ev.target.value);
+  }
+});
+
 page.nodes.popups.addEventListener('click', function(ev) {
   if (ev.target.className === 'icon') {
     page.toggleDisplay(ev.target.parentNode);
@@ -167,4 +231,7 @@ page.nodes.switchLayoutButton.addEventListener('click', function() {
   page.toggleDisplay(page.nodes.settingsPopup);
 });
 
-window.addEventListener('load', page.loadWorkspace);
+window.addEventListener('load', function() {
+  idb.open(page.loadWorkspace);
+});
+window.addEventListener('unload', page.saveWorkspace);

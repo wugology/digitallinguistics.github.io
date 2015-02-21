@@ -76,8 +76,8 @@ var CollectionView = function(options){
 
 }
 
-// linguistics
-
+// These need to be copied into app.prototypes, which current just contains Danny's naive, non-abstract versions of these
+/*
 var Word = function(){
   Model.apply(this, arguments);
   Object.defineProperty(this, 'phonemes', { 
@@ -115,3 +115,4 @@ var PhrasesView = function(){
   CollectionView.apply(this, arguments);
 }
 PhraseView.prototype = Object.create(CollectionView.prototype);
+*/

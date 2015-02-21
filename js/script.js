@@ -6,6 +6,11 @@ page.nodes = {
   mainNav: document.querySelector('#mainNav')
 };
 
+page.display = function(el) {
+  el.classList.remove('hideonDesktop');
+  el.classList.remove('hideonMobile');
+};
+
 page.hide = function(el) {
   el.classList.add('hideonDesktop');
   el.classList.add('hideonMobile');
