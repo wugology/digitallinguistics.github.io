@@ -1,13 +1,16 @@
 // idb = IndexedDB - contains all the functions relevant to working with IndexedDB
 var idb = {
   // Adds an array of objects to the specified object store (table). Example usage:
-    // idb.add( [ text1, text2 ], 'texts'); <-- This adds the objects 'text1' and 'text2' to the 'texts' table
-  add: function(array, objectStore) {
+  // idb.add( [ text1, text2 ], 'texts'); <-- This adds the objects 'text1' and 'text2' to the 'texts' table
+  add: function(array, objectStore, callback) {
     var transaction = idb.database.transaction(objectStore, 'readwrite');
     var objectStore = transaction.objectStore(objectStore);
     array.forEach(function(item) {
       var request = objectStore.add(item);
     });
+    if (typeof callback === 'function') {
+      callback(array);
+    }
   },
   
   // Creates a new Wugbot database and its objectStores (tables)
@@ -27,6 +30,7 @@ var idb = {
   },
   
   // Takes an array of object IDs and returns an array of the objects with those IDs from the specified object store database
+  // Also takes an optional callback function which takes the array of retrieved objects as its argument, and will execute when the .get() operation is successful
   get: function(ids, objectStore, successCallback) {
     var records = [];
     ids.forEach(function(id) {
@@ -42,6 +46,7 @@ var idb = {
   
   // Returns an array of every object in the specified object store
   // Mozilla actually has a .getAll() function, but Chrome does not
+  // Also takes an optional callback function which takes the array of retrieved objects as its argument, and will execute when the .getAll() operation is successful
   getAll: function(objectStore, successCallback) {
     var records = [];
     idb.database.transaction(objectStore).objectStore(objectStore).openCursor().onsuccess = function(ev) {
@@ -59,6 +64,7 @@ var idb = {
   },
   
   // Opens the Wugbot database (and creates it if it doesn't yet exist)
+  // Also takes an optional callback function which will fire once the database is opened
   open: function(successCallback) {
     var request = window.indexedDB.open('Wugbot', 1);
 

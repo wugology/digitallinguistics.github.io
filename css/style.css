@@ -38,6 +38,11 @@ button, label, header {
   -webkit-align-items: center;
   align-items: center; }
 
+input[type=checkbox], input[type=radio], label p + input {
+  -webkit-align-self: center;
+  align-self: center;
+  margin: 0 0.25rem; }
+
 #corpusSelector, #navbar {
   background-color: #3F93F9; }
 
@@ -56,6 +61,9 @@ nav > ul > li > a, #navIcons {
 nav > ul > li a:hover, .underline {
   border-bottom: 1px solid white; }
 
+button, input[type=text] {
+  border-radius: 5px; }
+
 a, a:hover, a:visited, a:active {
   color: #3F93F9; }
 
@@ -68,7 +76,7 @@ button, #navbar img, #navbar nav ul li {
 a, abbr, acronym, b, bdo, br, big, cite, code, del, dfn, em, i, img, input, ins, kbd, map, object, p, q, samp, select, s, small, span, strike, strong, sub, sup, textarea, tt, var {
   display: inline-block; }
 
-input[type='date'], label, #navIcons {
+input[type=date], label, #navIcons {
   -webkit-flex-direction: row;
   flex-direction: row; }
 
@@ -79,11 +87,17 @@ main, #navs {
 h1, h2 {
   font-size: 150%; }
 
-#corpusSelector, footer div {
+legend, strong {
+  font-weight: 400; }
+
+#corpusSelector, footer div, input[type=text] {
   padding: 0 0.5rem; }
 
 button, nav > ul > li {
   padding: 0.5rem; }
+  
+form > * {
+  padding: 0.5rem 0; }
 
 ul.bulletedList li {
   padding: 0.25rem 0; }
@@ -94,7 +108,7 @@ ul.bulletedList li {
 h1, h2, main p+p {
   padding-top: 0.5rem; }
 
-h1, th {
+#corpusSelector, h1, th {
   text-align: center; }
 
 /* Styling by classes or element type (alphabetical by class/element) */
@@ -109,9 +123,6 @@ blockquote:before, blockquote:after, q:before, q:after {
   content: '';
   content: none; }
 
-button {
-  border-radius: 5px; }
-
 button:hover {
   box-shadow: 0px 0px 3px 0px gray; }
 
@@ -122,17 +133,12 @@ code {
   font-family: 'DejaVu Sans Mono';
   white-space: pre; }
 
-input {
-  background-color: lightgray; }
+input[type=text] {
+  border: 1px solid #CCC; }
 
-input[type='radio'] {
-  -webkit-align-self: center;
-  align-self: center;
-  margin: 0 0.25rem; }
-
-strong {
-  font-weight: 400; }
-
+input[type=text]:focus {
+  border-color: black; }
+  
 table {
   border-spacing: 0;
   display: table; }
@@ -154,6 +160,10 @@ thead {
 	
 tr {
   display: table-row; }
+
+option, .unicode {
+  font-family: 'Gentium Plus';
+  font-size: 120%; }
 
 ul.bulletedList {
   list-style: disc outside none; }

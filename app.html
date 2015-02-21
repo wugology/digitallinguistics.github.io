@@ -40,10 +40,7 @@
           </ul>
         </nav>
       </div>
-      <select id=corpusSelector>
-        <option disabled>Select a corpus</option>
-        <option>Add a new corpus</option>
-      </select>
+      <select id=corpusSelector class=unicode></select>
       <img id=settingsButton src=img/settings.svg alt='open settings' class=icon>
     </div>
   </header>
@@ -147,7 +144,23 @@
     </label>
   </footer>
   
-  <div id=popups>    
+  <div id=popups>  
+    <div id=newCorpusPopup class='hideonDesktop hideonMobile'>
+      <img src=img/close.svg alt='close this popup' class='icon'>
+      <h1>Create a new corpus</h1>
+      <form>
+        <label for=corpusNameBox>
+          <p>Name for this corpus:</p>
+          <input id=corpusNameBox type=text class=unicode>
+        </label>
+        <p>Would you like to add any preexisting resources to this corpus?</p>
+        <fieldset id=corpusTextsSelector>
+          <legend>Texts</legend>
+        </fieldset>
+        <button id=createCorpusButton type=submit value='Create corpus'>Create corpus</button>
+      </form>
+    </div>
+    
     <div id=settingsPopup class='hideonDesktop hideonMobile'>
       <img src=img/close.svg alt='close this popup' class='icon'>
       <h1>Settings</h1>

@@ -4,20 +4,24 @@ var app = {};
 
 app.Corpus = {
   create: function(name, documents, languages, lexicons, mediaFiles, texts) {
-    var newCorpus = new app.prototypes.Corpus(name, documents, languages, lexicons, mediaFiles, texts);
-    page.render.corpusSelector();
-    app.preferences.currentCorpus = newCorpus.name;
-    corpusSelector.value = app.preferences.currentCorpus;
+    app.preferences.currentCorpus = name;
+    page.saveWorkspace();
+    newCorpus = new app.prototypes.Corpus(name, documents, languages, lexicons, mediaFiles, texts);
+    idb.add([ newCorpus ], 'corpora', page.render.workspace);
   },
   
   set: function(corpus) {
-    corpusSelector.value = corpus;
-    // Will also need to rerender whichever workview is current
-    app.preferences.currentCorpus = corpus;
+    if (corpus !== undefined) {
+      corpusSelector.value = corpus;
+      app.preferences.currentCorpus = corpus;
+    } else {
+      corpusSelector.value = app.preferences.currentCorpus;
+    }
   }
 };
 
 app.prototypes = {
+  // This constructor takes arrays of IDs (i.e. the indexes of those objects in IndexedDB)
   Corpus: function(name, documents, languages, lexicons, mediaFiles, texts) {
     this.name = name;
     this.documents = documents;
@@ -112,48 +116,85 @@ app.ppv.render();
 
 page.nodes.boxIcon = document.querySelector('#boxIcon');
 page.nodes.corpusSelector = document.querySelector('#corpusSelector');
+page.nodes.corpusTextsSelector = document.querySelector('#corpusTextsSelector');
+page.nodes.createCorpusButton = document.querySelector('#createCorpusButton');
+page.nodes.desktopCSS = document.querySelector('#desktopCSS');
+page.nodes.newCorpusPopup = document.querySelector('#newCorpusPopup');
+page.nodes.mobileCSS = document.querySelector('#mobileCSS');
 page.nodes.popups = document.querySelector('#popups');
 page.nodes.settingsButton = document.querySelector('#settingsButton');
 page.nodes.settingsPopup = document.querySelector('#settingsPopup');
 page.nodes.switchLayoutButton = document.querySelector('#switchLayoutButton');
-page.nodes.desktopCSS = document.querySelector('#desktopCSS');
-page.nodes.mobileCSS = document.querySelector('#mobileCSS');
 
 // At any given time, only some of the elements on the page are being displayed
 // The dynamic content in these elements should not be loaded until the element is displayed
 // These functions load the dynamic content for different views - call them when you display that view
 page.render = {
-  corpusSelector: function() {
+  // This function doesn't finish in time for other functions which depend on it and immediately follow it, so the callback argument should always be used
+  corpusSelector: function(callback) {
+    page.nodes.corpusSelector.innerHTML = '';
     var displayCorpora = function(corpora) {
+      corpora.sort(function(a, b) { if (a.name > b.name) { return 1; } });
+      
       corpora.forEach(function(corpus) {
         var option = document.createElement('option');
         option.textContent = corpus.name;
-        corpusSelector.insertBefore(option, corpusSelector.lastChild);
+        corpusSelector.add(option);
       });
+      
+      var newCorpusOption = document.createElement('option');
+      newCorpusOption.textContent = 'Add a new corpus';
+      corpusSelector.add(newCorpusOption);
+      
+      if (typeof callback === 'function') {
+        callback();
+      }
     }
     
     var corpora = idb.getAll('corpora', displayCorpora);
-    // Add a line that clears the corpus selector before rendering (maybe making the placeholders obsolete - just add the 'add corpus' option manually, after the corpora are done being added
-    // Add the 'new corpus' option here, after the other corpora have loaded
-  }
-};
-
-// Sets up the workspace based on app.preferences (which will eventually be user.preferences)
-page.loadWorkspace = function() {
-  if (localStorage.wugbotPreferences === undefined) {
-    app.preferences = {
-      currentCorpus: 'Select a corpus',
-      currentWorkview: 'texts'
+  },
+  
+  newCorpusPopup: function() {
+    var renderTextsList = function(texts) {
+      texts.forEach(function(text) {
+        var newLabel = document.createElement('label');
+        newLabel.htmlFor = 'text_' + text.id;
+        var newInput = document.createElement('input');
+        newInput.id = 'text_' + text.id;
+        newInput.type = 'checkbox';
+        newInput.name = 'corpusTextsList'
+        newInput.value = text.id;
+        var newText = document.createElement('p');
+        newText.textContent = text.title;
+        newLabel.appendChild(newInput);
+        newLabel.appendChild(newText);
+        page.nodes.corpusTextsSelector.appendChild(newLabel);
+      });
     };
-  } else {
-    app.preferences = JSON.parse(localStorage.wugbotPreferences);
+    var texts = idb.getAll('texts', renderTextsList);
+  },
+  
+  workspace: function() {
+    if (localStorage.wugbotPreferences === undefined) {
+      app.preferences = {
+        currentWorkview: 'texts'
+      };
+    } else {
+      app.preferences = JSON.parse(localStorage.wugbotPreferences);
+    }
+    page.render.corpusSelector(app.Corpus.set);
+    page.setWorkview(app.preferences.currentWorkview);
+    var promptNewCorpus = function(corpora) {
+      if (corpora.length === 0) {
+        page.render.newCorpusPopup();
+        page.display(page.nodes.newCorpusPopup);
+      }
+    };
+    idb.getAll('corpora', promptNewCorpus);
   }
-  page.setWorkview(app.preferences.currentWorkview);
-  page.render.corpusSelector();
-  //page.nodes.corpusSelector.value = app.preferences.currentCorpus;
 };
 
-// Saves app.preferences to localStorage
+// Saves app.preferences to local storage
 page.saveWorkspace = function() {
   localStorage.wugbotPreferences = JSON.stringify(app.preferences, null, 2);
 };
@@ -208,9 +249,23 @@ page.nodes.boxIcon.addEventListener('click', function(ev) {
   page.hide(page.nodes.mainNav);
 });
 
+page.nodes.createCorpusButton.addEventListener('click', function(ev) {
+  var name = document.querySelector('#corpusNameBox').value;
+  var nodes = document.getElementsByName('corpusTextsList');
+  var textIDs = [];
+  for (var i=0; i<nodes.length; i++) {
+    if (nodes[i].checked === true) {
+      var textID = nodes[i].id.replace('text_', '');
+      textIDs.push(textID);
+    }
+  }
+  app.Corpus.create(name, [], [], [], [], textIDs);
+});
+
 page.nodes.corpusSelector.addEventListener('change', function(ev) {
   if (ev.target.value === 'Add a new corpus') {
-    app.Corpus.create();
+    page.render.newCorpusPopup();
+    page.display(page.nodes.newCorpusPopup);
   } else {
     app.Corpus.set(ev.target.value);
   }
@@ -232,6 +287,6 @@ page.nodes.switchLayoutButton.addEventListener('click', function() {
 });
 
 window.addEventListener('load', function() {
-  idb.open(page.loadWorkspace);
+  idb.open(page.render.workspace);
 });
 window.addEventListener('unload', page.saveWorkspace);
