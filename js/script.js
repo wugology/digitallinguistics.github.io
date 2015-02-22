@@ -16,6 +16,10 @@ page.hide = function(el) {
   el.classList.add('hideonMobile');
 };
 
+page.notify = function(text) {
+  alert(text);
+};
+
 page.toggleDisplay = function(el) {
   el.classList.toggle('hideonMobile');
   el.classList.toggle('hideonDesktop');

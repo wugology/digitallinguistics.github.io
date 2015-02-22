@@ -90,6 +90,9 @@ h1, h2 {
 legend, strong {
   font-weight: 400; }
 
+button {
+  margin: 0.25rem 0; }
+
 #corpusSelector, footer div, input[type=text] {
   padding: 0 0.5rem; }
 
@@ -206,6 +209,6 @@ footer img {
 .mediaModule ul,
 .orthographiesModule ul,
 .tagsModule ul,
-.textsModule ul {
+#detailsPane .textsModule ul {
   display: inline-block;
   margin: 0.5rem; }

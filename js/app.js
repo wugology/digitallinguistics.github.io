@@ -2,25 +2,48 @@
 
 var app = {};
 
+// Functionality tied to linguistic objects
 app.Corpus = {
   create: function(name, documents, languages, lexicons, mediaFiles, texts) {
-    app.preferences.currentCorpus = name;
-    page.saveWorkspace();
-    newCorpus = new app.prototypes.Corpus(name, documents, languages, lexicons, mediaFiles, texts);
-    idb.add([ newCorpus ], 'corpora', page.render.workspace);
+    newCorpus = new app.constructors.Corpus(name, documents, languages, lexicons, mediaFiles, texts);
+    var setCorpus = function(indexes) {
+      newCorpus.id = indexes[0];
+      app.preferences.currentCorpus = newCorpus;
+    };
+    var indexes = idb.add([ newCorpus ], 'corpora', setCorpus);
   },
   
-  set: function(corpus) {
-    if (corpus !== undefined) {
-      corpusSelector.value = corpus;
+  // The function returns an array of items
+  // The callback operates on each item individually
+  set: function(corpusID, callback) {
+    var successCallback = function(corpus) {
       app.preferences.currentCorpus = corpus;
-    } else {
-      corpusSelector.value = app.preferences.currentCorpus;
+      if (typeof callback === 'function') {
+        callback();
+      }
     }
+    idb.get(corpusID, 'corpora', successCallback);
   }
 };
 
-app.prototypes = {
+app.Text = {
+  create: function(mediaFiles, phrases, persons, tags, titles) {
+    var newText = new app.constructors.Text(mediaFiles, phrases, persons, tags, titles);
+    var texts = app.preferences.currentCorpus.texts;
+    var updateCorpus = function(textIDs) {
+      texts.push(textIDs[0]);
+      idb.update(app.preferences.currentCorpus.id, 'texts', texts, 'corpora');
+    };
+    var textIDs = idb.add([ newText ], 'texts', updateCorpus);
+    updateCorpus(textIDs);
+  },
+  
+  import: function(format) {
+  }
+};
+
+// Constructors for linguistic objects
+app.constructors = {
   // This constructor takes arrays of IDs (i.e. the indexes of those objects in IndexedDB)
   Corpus: function(name, documents, languages, lexicons, mediaFiles, texts) {
     this.name = name;
@@ -29,6 +52,14 @@ app.prototypes = {
     this.lexicons = lexicons;
     this.mediaFiles = mediaFiles;
     this.texts = texts;
+  },
+  
+  Text: function(mediaFiles, phrases, persons, tags, titles) {
+    this.mediaFiles = mediaFiles;
+    this.phrases = phrases;
+    this.persons = persons;
+    this.tags = tags;
+    this.titles = titles;
   }
 };
 
@@ -124,74 +155,120 @@ page.nodes.mobileCSS = document.querySelector('#mobileCSS');
 page.nodes.popups = document.querySelector('#popups');
 page.nodes.settingsButton = document.querySelector('#settingsButton');
 page.nodes.settingsPopup = document.querySelector('#settingsPopup');
-page.nodes.switchLayoutButton = document.querySelector('#switchLayoutButton');
+page.nodes.textsList = document.querySelector('#textsList');
 
 // At any given time, only some of the elements on the page are being displayed
 // The dynamic content in these elements should not be loaded until the element is displayed
-// These functions load the dynamic content for different views - call them when you display that view
-page.render = {
-  // This function doesn't finish in time for other functions which depend on it and immediately follow it, so the callback argument should always be used
-  corpusSelector: function(callback) {
-    page.nodes.corpusSelector.innerHTML = '';
-    var displayCorpora = function(corpora) {
-      corpora.sort(function(a, b) { if (a.name > b.name) { return 1; } });
-      
-      corpora.forEach(function(corpus) {
-        var option = document.createElement('option');
-        option.textContent = corpus.name;
-        corpusSelector.add(option);
-      });
-      
-      var newCorpusOption = document.createElement('option');
-      newCorpusOption.textContent = 'Add a new corpus';
-      corpusSelector.add(newCorpusOption);
-      
-      if (typeof callback === 'function') {
-        callback();
-      }
-    }
-    
-    var corpora = idb.getAll('corpora', displayCorpora);
-  },
-  
-  newCorpusPopup: function() {
-    var renderTextsList = function(texts) {
-      texts.forEach(function(text) {
-        var newLabel = document.createElement('label');
-        newLabel.htmlFor = 'text_' + text.id;
-        var newInput = document.createElement('input');
-        newInput.id = 'text_' + text.id;
-        newInput.type = 'checkbox';
-        newInput.name = 'corpusTextsList'
-        newInput.value = text.id;
-        var newText = document.createElement('p');
-        newText.textContent = text.title;
-        newLabel.appendChild(newInput);
-        newLabel.appendChild(newText);
-        page.nodes.corpusTextsSelector.appendChild(newLabel);
-      });
-    };
-    var texts = idb.getAll('texts', renderTextsList);
-  },
-  
-  workspace: function() {
-    if (localStorage.wugbotPreferences === undefined) {
-      app.preferences = {
-        currentWorkview: 'texts'
-      };
-    } else {
-      app.preferences = JSON.parse(localStorage.wugbotPreferences);
-    }
-    page.render.corpusSelector(app.Corpus.set);
-    page.setWorkview(app.preferences.currentWorkview);
-    var promptNewCorpus = function(corpora) {
-      if (corpora.length === 0) {
-        page.render.newCorpusPopup();
-        page.display(page.nodes.newCorpusPopup);
-      }
-    };
-    idb.getAll('corpora', promptNewCorpus);
+// Call the page.render() function whenever you display that view
+// Arguments:
+  // view - the view you want to render (e.g. corpusSelector, workspace, textsWorkview)
+  // rerender - whether you want this view to rerender each time the function fires, or only the first instance
+    // true = will rerender every time the function fires
+    // false = will only render the first time the function fires
+  // callback = some renderings take a while to load; use this callback function to call a new function when the rendering is complete
+page.render = function(view, rerender, callback) {
+  if (rerender === true) {
+    page.rerender[view] = true;
   }
+  
+  if (page.rerender[view] === true) {
+    switch (view) {
+      case 'corpusSelector':
+        page.nodes.corpusSelector.innerHTML = '';
+        var displayCorpora = function(corpora) {
+          corpora.sort(function(a, b) { if (a.name > b.name) { return 1; } });
+          
+          corpora.forEach(function(corpus) {
+            var option = document.createElement('option');
+            option.id = 'corpus_' + corpus.id;
+            option.textContent = corpus.name;
+            corpusSelector.add(option);
+          });
+          
+          var newCorpusOption = document.createElement('option');
+          newCorpusOption.textContent = 'Manage corpora';
+          corpusSelector.add(newCorpusOption);
+          
+          if (typeof callback === 'function') {
+            callback();
+          }
+        }
+        
+        var corpora = idb.getAll('corpora', displayCorpora);
+        break;
+      case 'newCorpusPopup':
+        var renderTextsList = function(texts) {
+          texts.forEach(function(text) {
+            var newLabel = document.createElement('label');
+            newLabel.htmlFor = 'text_' + text.id;
+            var newInput = document.createElement('input');
+            newInput.id = 'text_' + text.id;
+            newInput.type = 'checkbox';
+            newInput.name = 'corpusTextsList'
+            newInput.value = text.id;
+            var newText = document.createElement('p');
+            newText.textContent = text.title;
+            newLabel.appendChild(newInput);
+            newLabel.appendChild(newText);
+            page.nodes.corpusTextsSelector.appendChild(newLabel);
+          });
+        };
+        var texts = idb.getAll('texts', renderTextsList);
+        break;
+      case 'settingsPopup':
+        page.nodes.switchLayoutButton = document.querySelector('#switchLayoutButton');
+        
+        page.nodes.switchLayoutButton.addEventListener('click', function() {
+          page.switchLayout();
+          page.toggleDisplay(page.nodes.settingsPopup);
+        });
+        break;
+      case 'textsWorkview':
+        page.nodes.addNewTextButton = document.querySelector('#addNewTextButton');
+        page.nodes.importTextButton = document.querySelector('#importTextButton');
+        
+        page.nodes.addNewTextButton.addEventListener('click', function() {
+          app.Text.create();
+        });
+        page.nodes.importTextButton.addEventListener('click', function() {});
+        break;
+      case 'workspace':
+        var promptNewCorpus = function() {
+          page.render('newCorpusPopup', true);
+          page.display(page.nodes.newCorpusPopup);
+        };
+        
+        if (localStorage.wugbotPreferences === 'undefined') {
+          app.preferences = {
+            currentCorpus: { id: null },
+            currentWorkview: 'texts'
+          };
+        } else {
+          app.preferences = JSON.parse(localStorage.wugbotPreferences);
+        }
+        
+        if (app.preferences.currentCorpus.id === null) {
+          promptNewCorpus();
+        } else {
+          page.render('corpusSelector', true);
+          app.Corpus.set(app.preferences.currentCorpus.id);
+        }
+        
+        page.setWorkview(app.preferences.currentWorkview);
+        break;
+      default:
+    }
+    page.rerender[view] = false;
+  }
+};
+
+// Keeps track of what's been rendered already, and doesn't re-render if it already has
+page.rerender = {
+  corpusSelector: true,
+  newCorpusPopup: true,
+  settingsPopup: true,
+  textsWorkview: true,
+  workspace: true
 };
 
 // Saves app.preferences to local storage
@@ -250,6 +327,7 @@ page.nodes.boxIcon.addEventListener('click', function(ev) {
 });
 
 page.nodes.createCorpusButton.addEventListener('click', function(ev) {
+  ev.preventDefault();
   var name = document.querySelector('#corpusNameBox').value;
   var nodes = document.getElementsByName('corpusTextsList');
   var textIDs = [];
@@ -259,15 +337,28 @@ page.nodes.createCorpusButton.addEventListener('click', function(ev) {
       textIDs.push(textID);
     }
   }
+  
   app.Corpus.create(name, [], [], [], [], textIDs);
+  page.toggleDisplay(page.nodes.newCorpusPopup);
+  var render = function() {
+    var setValue = function() {
+      page.nodes.corpusSelector.value = name;
+    };
+    page.render('corpusSelector', setValue);
+  };
+  window.setTimeout(render, 1000);
 });
 
 page.nodes.corpusSelector.addEventListener('change', function(ev) {
-  if (ev.target.value === 'Add a new corpus') {
-    page.render.newCorpusPopup();
+  if (ev.target.value === 'Manage corpora') {
+    page.render('newCorpusPopup', true);
     page.display(page.nodes.newCorpusPopup);
+    ev.target.selectedIndex = 0;
   } else {
-    app.Corpus.set(ev.target.value);
+    var selectedIndex = page.nodes.corpusSelector.selectedIndex;
+    var option = page.nodes.corpusSelector.options[selectedIndex];
+    var corpusID = Number(option.id.replace('corpus_', ''));
+    app.Corpus.set(corpusID);
   }
 });
 
@@ -279,14 +370,14 @@ page.nodes.popups.addEventListener('click', function(ev) {
 
 page.nodes.settingsButton.addEventListener('click', function(ev) {
   page.toggleDisplay(settingsPopup);
-});
-
-page.nodes.switchLayoutButton.addEventListener('click', function() {
-  page.switchLayout();
-  page.toggleDisplay(page.nodes.settingsPopup);
+  page.render('settingsPopup', false);
 });
 
 window.addEventListener('load', function() {
-  idb.open(page.render.workspace);
+  var renderPage = function() {
+    page.render('workspace', true);
+  };
+  idb.open(renderPage);
 });
+
 window.addEventListener('unload', page.saveWorkspace);
