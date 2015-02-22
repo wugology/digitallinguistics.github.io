@@ -1,15 +1,13 @@
-// Singular 
+// Singular
 var Model = function(attributes, options){
-
   this.attributes = attributes;
 
   this.toJSON = function(){ 
     return this.attributes;
   }
-
 }
 
-// a view of a single model
+// A view of a single model
 var ModelView = function(options){
   this.el = options.el || document.createElement('div');
   this.model = options.model;
@@ -17,12 +15,12 @@ var ModelView = function(options){
 
   this.render = function(){ 
     var node = template(this.templateSelector, this.model.attributes);
-    this.el.appendChild(node) ;
+    this.el.appendChild(node);
     return this;
   }
 }
 
-// a collection of models
+// A collection of models
 var Collection = function(options){
   this.models = options.models.map(function(m){
     return new Model(m)
@@ -35,7 +33,7 @@ var Collection = function(options){
   }
 }
 
-// a view which renders a collection
+// A view which renders a collection
 var CollectionView = function(options){
   this.el = options.el || document.createElement('div');
   this.el.classList.add('collectionView');
@@ -68,7 +66,6 @@ var CollectionView = function(options){
         }, this)
 
       fragment.appendChild(el);
-
     }, this) 
 
     this.el.appendChild(fragment);
@@ -76,7 +73,6 @@ var CollectionView = function(options){
 
 }
 
-// These need to be copied into app.prototypes, which current just contains Danny's naive, non-abstract versions of these
 /*
 var Word = function(){
   Model.apply(this, arguments);

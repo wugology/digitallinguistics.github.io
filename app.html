@@ -82,7 +82,7 @@
         <h1>Texts</h1>
         <div>
           <button id=addNewTextButton type=button value='Add new text'>Add new text</button>
-          <button id=importTextButton type=button value='Import text'>Import text</button>
+          <button id=importTextButton type=button value='Import text' class=hideonMobile>Import text</button>
         </div>
         <ul id=textsList></ul>
       </div>
@@ -117,13 +117,10 @@
       </div>
       
       <div class='textsModule module hideonDesktop hideonMobile'>
-        <p>This is a texts module. Individual texts will be displayed here when selected in the overview pane.</p>
-        
-        <ul id=textView>This is a <code>&lt;ul&gt;</code> with an <code>id=textView</code>, meant to represent a text view that has been generated and inserted into the DOM. The text view will be relatively minimal, consisting primarily of an <code>&lt;h1&gt;</code> holding the text title, and an empty <code>&lt;ol&gt;</code> with <code>id=phrases</code> where the phrases will be displayed (also by generating each phrase and inserting it into the DOM).</ul>
-        
-        <p>Below is a completely empty (and thus not visible without content) <code>&lt;ol&gt;</code> with <code>id=phrases</code> for testing purposes.</p>
-        
-        <ol id=phrases></ol>
+        <header>
+          <div class=titles></div>
+        </header>        
+        <ol class=phrases></ol>
       </div>
     </section>
     
@@ -149,7 +146,7 @@
   </footer>
   
   <div id=popups>  
-    <div id=newCorpusPopup class='hideonDesktop hideonMobile'>
+    <div id=manageCorporaPopup class='hideonDesktop hideonMobile'>
       <img src=img/close.svg alt='close this popup' class='icon'>
       <h1>Create a new corpus</h1>
       <form>
@@ -161,7 +158,7 @@
         <fieldset id=corpusTextsSelector>
           <legend>Texts</legend>
         </fieldset>
-        <button id=createCorpusButton type=submit value='Create corpus'>Create corpus</button>
+        <button id=createCorpusButton type=button value='Create corpus'>Create corpus</button>
       </form>
     </div>
     
@@ -187,9 +184,10 @@
   </div>
   
   <script src=js/script.js></script>
-  <script src=js/database.js></sript>
+  <script src=js/database.js></script>
   <script src=js/common.js></script>
   <script src=js/base.js></script>
   <script src=js/app.js></script>
+  <script src=js/page.js></script>
 </body>
 </html>

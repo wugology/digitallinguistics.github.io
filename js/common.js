@@ -1,12 +1,10 @@
-/* functions used throughout the app that aren't part of domain-specific objects */
-
-
+/* Functions used throughout the app that aren't part of domain-specific objects */
 var Template = function(selector){
   var templateNode = document.querySelector(selector);
   if(!templateNode){
     throw new Error('Template selector unknown: ' + selector);
   }
-  var node = document.importNode(templateNode.content, true);
+  var newNode = templateNode.content.cloneNode(true);
 
   this.template = function(data){
     Object.keys(data)
@@ -15,7 +13,7 @@ var Template = function(selector){
         if(match){ match.textContent = data[key] }
       })
 
-    return node; 
+    return newNode; 
   }
 }
 

@@ -1,3 +1,5 @@
+// Contains site-wide scripts
+
 var page = {};
 
 page.nodes = {
