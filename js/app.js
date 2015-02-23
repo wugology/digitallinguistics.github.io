@@ -137,10 +137,29 @@ app.constructors = {
   }
 };
 
+// Gets the file from the file inpuut, converts it from an ELAN tsv export format to DLX JSON format, and returns the JSON object
+app.convert = function() {
+  var file = document.querySelector('#fileUpload').files[0];
+  var fileReader = new FileReader();
+  fileReader.onload = function(ev) {
+    var text = ev.target.result;
+    
+    // Below are the individual steps applied to the raw data to create the JSON object
+    text = text.trim(); // Removes leading or trailing whitespace
+    var lines = text.split(/\n/); // Turns each new line into an object in the array 'lines'
+    var header = lines[0]; // Gets the first row as the header row
+    var columnNames = header.split(/\t/);
+    // Text transformations complete
+    
+    console.log(columnNames);
+  };
+  fileReader.readAsText(file);
+};
+
 // Some of these were breaking while I was working on other things, so I commented them out for now [DWH]
 /*
 app.p = new Phrase({
-  transcription: 'me llamo wugbot', 
+  transcription: 'me llamo wugbot',
   translation: 'call me wugbot'
 });
 
