@@ -1,37 +1,37 @@
-Begin Time - ss.msec	End Time - ss.msec	Duration - ss.msec	Transcript	Notes	Translation	Phonemic	Phonetic	Description	
-0.295	1.583	1.288	§{⟦moganó ngóːchá inde⟧}₴	Is the final /o/ of mogano lengthened? If so, this would be a result of the following NC sequence. There's no initial /o/ on ómogano because the speaker is assuming the role of the story. Very slight pitch uptick and small intensity increase on the /ó/ of mogano. The last two tones are realized mostly as intensity increases rather than pitch. This appears to be how Kennedy made this sound monotone while still imparting tone: It *is* monotone - a nearly flat pitch - but has intensity fluctuations. GM: You usually drop the last sound of the word in elision, but here for some reason we're dropping the first sound of the following word. CGː Sounds like a syllabic /m/, possibly because of an initial downstep.	May I, Story, come?	moganó ngóːchá índe	moɣanó#ŋgóocháá#nde	
-1.583	3.645	2.062	(2.1)+(H)					
-3.645	4.231	0.586	§{⟦karɛ:‰	GM: agó kárɛ 'a long time ago' - how stories are typically started.	Long ago,	karɛ	kaɾɛ̰ː	
-4.231	5.231	1.0	(1.0)					
-5.231	6.23	0.999	^karɛ ^karɛ ^karɛ:⟧		long long long ago,	karɛ karɛ karɛ	kaɾɛ kaɾɛ kaɾɛ	
-6.23	7.502	1.272	(1.3)					
-7.502	8.35	0.848	⟦≤^ókangʼɔmbe	Keeps a high intensity on /o/ and across the word (and possibly a high pitch for his range).	Cow,	ókangʼɔmbe	ókaŋɔɔmbe	
-8.35	9.91	1.56	(H)+(1.6)					
-9.91	10.615	0.705	%n'ó:–		with,	n'ó–	n=óː	
-10.615	11.442	0.827	^ógansona	Increased intensity on the first /a/ (higher than the rest of the phrase), and a very very slight increase in pitch towards the end of the vowel. The final /a/ is higher intensity but not significantly higher pitch.	Flea,	ógansona	óɣaansona	
-11.442	13.324	1.882	(H)+(1.9)					
-13.324	14.38	1.056	^n'ó:kanda≥	Slightly higher pitch and notably higher intensity on the first /a/. Gives the impression of a sustained intensity throughout the word.	with Jigger,	n'ókanda	n=óːkaanda	
-14.38	15.616	1.236	(H)+(1.2)					
-15.616	16.557	0.941	‷bikagɛnda ɔ́bɔkɔ‴⟧}₴	GMː They're going to look for a suitor. DWH: See if you can characterize what's going on with the /k/ phonetically - maybe just a delayed VOT? on the /ɛ/ there's no noticeable pitch uptick or noticeably higher intensity than other vowels - good example of an unaccented NC sequence.	they set out to the in-laws.	bikagɛnda ɔ́bɔkɔ	βikaɣɛɛnd#ɔ́bɔkʰɔ	
-16.557	17.398	0.841	(0.8)					
-17.399	18.306	0.907	§{⟦≤^bikagɛnda⟧ ‥(0.1)	GM: Initial H tone is stressing the point. DWH: /i/ has the highest pitch and intensity for the phrase. The /ɛ/ stays relatively high intensity.	They walked,	bikagɛnda	βikaɣɛɛnda	
-18.306	19.523	1.217	⟦bikagɛnda⟧ ‥(0.3)	This one has the accented first syllable but not the sustained high intensity.	they walked,	bikagɛnda	βikaɣɛɛnda	
-19.523	20.76	1.237	⟦bikagɛnda≥⟧ ‥(0.5)	Same - accented first syllable but no sustained intensity.	they walked,	bikagɛnda	βikaɣɛɛnda	
-20.76	21.845	1.085	⟦‷bigaika ^áːsé `óroːche‴⟧}¤₴	[óroche̥]; The pitch on áːse is higher than the H on óroche, suggesting prosodic accent. Seems like Kennedy kept the final /a/ of bigaika rather than the initial of áːse, as evidenced by lack of lengthening or perception of falling pitch (though the pitch is falling in the spectrogram).	they reached a river.	bigaika áːsé óroːche	biɣaiká#s#óɾooche̥	
-21.847	23.667	1.82	(1.9)					
-23.667	24.944	1.277	§{⟦^ɛ́ngʼɔmbe egacháróka⟧‰	ɛ́ngʼombe is given a prosodic accent because it seems to start with a higher pitch than most of Kennedy's PPs. The /o/ has a continuously falling pitch but a high intensity for the phrase.	Cow jumped,	ɛ́ngʼɔmbe egacháróka	ɛ́ŋɔɔmbe eɣacháɾóka̰	
-24.944	25.364	0.42	(0.4)					
-25.364	26.18	0.816	⟦‷egaika ^mumbu‴⟧}¤₴	mumbu 'other side'; égaika 'he reached'; [mumpʰu̥] - phrase-final devoicing seems to be common. múmbu does show a very very slight increase in pitch and intensity on the first /u/.	reached the other side.	egaika mumbu	eɣaika muumpʰu̥	
-26.18	27.833	1.653	(1.7)					
-27.833	28.874	1.041	§{⟦ɛ́nda ^egacháróka⟧}‰	The initial /é/ on égacháróka appears to be the result of H spread from the /ɛ́/ on ɛ́nda (since the /a/ in ɛ́nda is elided). The same also appears to be true of the following PP. But, in PP19, égaseka also has an initial /é/ in the same context, but a H spread explanation fails to account for it. This is therefore likely just a word-initial prosodic accent.	Jigger jumped.	ɛ́nda egacháróka	ɛ́nd#eɣacháɾóka̰	
-28.874	29.328	0.454	(0.4)					
-29.328	30.615	1.287	{⟦‷ɛ́nda ^egachia gocháróka:‴⟧	-chia always (?) occurs as just -chi, even in contexts where elision isn't expected. It literally means 'go to', but is frequently translated as 'try'. The initial /é/ on égachia seems to be a prosodic accent, like bikagɛnda. ~ Despite th fact that Helen seems to have an initial H on infinitives that lack a preprefix, Kennedy does not - this one is definitely low.	When he tried to jump,	ɛ́nda egachia gocháróka	ɛ́nd#eɣachi ɣocháɾóka	
-30.615	30.851	0.236	(0.2)					
-30.851	31.685	0.834	⟦ekagwa ^óroːche⟧}₴	GM: This should be -kagwa 'drop'. ekagwa 'it fell'. DWH: -kagwa is listed in the dictionary as -kagwe.	he fell in the river.	ekagwa óroːche	ekaɣʷ#úrooche	
-31.685	32.694	1.009	(H)+(1.0)					
-32.694	34.305	1.611	§{⟦ɛ́nsona ≤^egaseka⟧	Prosodic accent on égaseka rather than an initial H	Flea laughed,	ɛ́nsona egaseka	ɛ́ɛnson#eɣaseka	
-34.305	35.984	1.679	⟦^egaseka⟧	Prosodic accent on égaseka rather than an initial H	laughed,	egaseka	e̤ɣa̤seka	
-35.984	37.884	1.9	⟦^egaseka≥⟧ (H)	Prosodic accent on égaseka rather than an initial H	laughed,	egaseka	ʔe̤ɣasekˀḁ	
-37.884	39.131	1.247	⟦<SWA>mpáka</SWA> ekabaroka ómonwa⟧}¤₴	mpáka < mpaka (Swa.) 'until'; It's possible that the initial /á/ on mpáka is actually prosodic accent. GM: goika 'until'	until his mouth burst.	mpáka ekabaroka ómonwa	m̥pák#ekaβaɾok#ómonwḁ	
-39.131	40.014	0.883	(0.9)					
-40.014	41.357	1.343	§{⟦‷mogano ɔ́nɛ n'abo óngʼana ígo‴⟧}¤₴	ómogano 'story'; ɔ́nɛ́ 'mine'; nabó 'is like that'; óngʼana 'that's how it reached'; igo 'like that'	That's how my story was.	mogano ɔ́nɛ n'abo óngʼana ígo	móoɣan#ɔ́nɛ#n=aβ#óŋana#íɣo̥	
+Begin Time - ss.msec	End Time - ss.msec	Duration - ss.msec	Transcript	Notes	Translation	Phonemic	Phonetic	
+0.295	1.583	1.288	§{⟦moganó ngóːchá inde⟧}₴	Is the final /o/ of mogano lengthened? If so, this would be a result of the following NC sequence. There's no initial /o/ on ómogano because the speaker is assuming the role of the story. Very slight pitch uptick and small intensity increase on the /ó/ of mogano. The last two tones are realized mostly as intensity increases rather than pitch. This appears to be how Kennedy made this sound monotone while still imparting tone: It *is* monotone - a nearly flat pitch - but has intensity fluctuations. GM: You usually drop the last sound of the word in elision, but here for some reason we're dropping the first sound of the following word. CGː Sounds like a syllabic /m/, possibly because of an initial downstep.	May I, Story, come?	moganó ngóːchá índe	moɣanó#ŋgóocháá#nde
+1.583	3.645	2.062	(2.1)+(H)				
+3.645	4.231	0.586	§{⟦karɛ:‰	GM: agó kárɛ 'a long time ago' - how stories are typically started.	Long ago,	karɛ	kaɾɛ̰ː
+4.231	5.231	1.0	(1.0)				
+5.231	6.23	0.999	^karɛ ^karɛ ^karɛ:⟧		long long long ago,	karɛ karɛ karɛ	kaɾɛ kaɾɛ kaɾɛ
+6.23	7.502	1.272	(1.3)				
+7.502	8.35	0.848	⟦≤^ókangʼɔmbe	Keeps a high intensity on /o/ and across the word (and possibly a high pitch for his range).	Cow,	ókangʼɔmbe	ókaŋɔɔmbe
+8.35	9.91	1.56	(H)+(1.6)				
+9.91	10.615	0.705	%n'ó:–		with,	n'ó–	n=óː
+10.615	11.442	0.827	^ógansona	Increased intensity on the first /a/ (higher than the rest of the phrase), and a very very slight increase in pitch towards the end of the vowel. The final /a/ is higher intensity but not significantly higher pitch.	Flea,	ógansona	óɣaansona
+11.442	13.324	1.882	(H)+(1.9)				
+13.324	14.38	1.056	^n'ó:kanda≥	Slightly higher pitch and notably higher intensity on the first /a/. Gives the impression of a sustained intensity throughout the word.	with Jigger,	n'ókanda	n=óːkaanda
+14.38	15.616	1.236	(H)+(1.2)				
+15.616	16.557	0.941	‷bikagɛnda ɔ́bɔkɔ‴⟧}₴	GMː They're going to look for a suitor. DWH: See if you can characterize what's going on with the /k/ phonetically - maybe just a delayed VOT? on the /ɛ/ there's no noticeable pitch uptick or noticeably higher intensity than other vowels - good example of an unaccented NC sequence.	they set out to the in-laws.	bikagɛnda ɔ́bɔkɔ	βikaɣɛɛnd#ɔ́bɔkʰɔ
+16.557	17.398	0.841	(0.8)				
+17.399	18.306	0.907	§{⟦≤^bikagɛnda⟧ ‥(0.1)	GM: Initial H tone is stressing the point. DWH: /i/ has the highest pitch and intensity for the phrase. The /ɛ/ stays relatively high intensity.	They walked,	bikagɛnda	βikaɣɛɛnda
+18.306	19.523	1.217	⟦bikagɛnda⟧ ‥(0.3)	This one has the accented first syllable but not the sustained high intensity.	they walked,	bikagɛnda	βikaɣɛɛnda
+19.523	20.76	1.237	⟦bikagɛnda≥⟧ ‥(0.5)	Same - accented first syllable but no sustained intensity.	they walked,	bikagɛnda	βikaɣɛɛnda
+20.76	21.845	1.085	⟦‷bigaika ^áːsé `óroːche‴⟧}¤₴	[óroche̥]; The pitch on áːse is higher than the H on óroche, suggesting prosodic accent. Seems like Kennedy kept the final /a/ of bigaika rather than the initial of áːse, as evidenced by lack of lengthening or perception of falling pitch (though the pitch is falling in the spectrogram).	they reached a river.	bigaika áːsé óroːche	biɣaiká#s#óɾooche̥
+21.847	23.667	1.82	(1.9)				
+23.667	24.944	1.277	§{⟦^ɛ́ngʼɔmbe egacháróka⟧‰	ɛ́ngʼombe is given a prosodic accent because it seems to start with a higher pitch than most of Kennedy's PPs. The /o/ has a continuously falling pitch but a high intensity for the phrase.	Cow jumped,	ɛ́ngʼɔmbe egacháróka	ɛ́ŋɔɔmbe eɣacháɾóka̰
+24.944	25.364	0.42	(0.4)				
+25.364	26.18	0.816	⟦‷egaika ^mumbu‴⟧}¤₴	mumbu 'other side'; égaika 'he reached'; [mumpʰu̥] - phrase-final devoicing seems to be common. múmbu does show a very very slight increase in pitch and intensity on the first /u/.	reached the other side.	egaika mumbu	eɣaika muumpʰu̥
+26.18	27.833	1.653	(1.7)				
+27.833	28.874	1.041	§{⟦ɛ́nda ^egacháróka⟧}‰	The initial /é/ on égacháróka appears to be the result of H spread from the /ɛ́/ on ɛ́nda (since the /a/ in ɛ́nda is elided). The same also appears to be true of the following PP. But, in PP19, égaseka also has an initial /é/ in the same context, but a H spread explanation fails to account for it. This is therefore likely just a word-initial prosodic accent.	Jigger jumped.	ɛ́nda egacháróka	ɛ́nd#eɣacháɾóka̰
+28.874	29.328	0.454	(0.4)				
+29.328	30.615	1.287	{⟦‷ɛ́nda ^egachia gocháróka:‴⟧	-chia always (?) occurs as just -chi, even in contexts where elision isn't expected. It literally means 'go to', but is frequently translated as 'try'. The initial /é/ on égachia seems to be a prosodic accent, like bikagɛnda. ~ Despite th fact that Helen seems to have an initial H on infinitives that lack a preprefix, Kennedy does not - this one is definitely low.	When he tried to jump,	ɛ́nda egachia gocháróka	ɛ́nd#eɣachi ɣocháɾóka
+30.615	30.851	0.236	(0.2)				
+30.851	31.685	0.834	⟦ekagwa ^óroːche⟧}₴	GM: This should be -kagwa 'drop'. ekagwa 'it fell'. DWH: -kagwa is listed in the dictionary as -kagwe.	he fell in the river.	ekagwa óroːche	ekaɣʷ#úrooche
+31.685	32.694	1.009	(H)+(1.0)				
+32.694	34.305	1.611	§{⟦ɛ́nsona ≤^egaseka⟧	Prosodic accent on égaseka rather than an initial H	Flea laughed,	ɛ́nsona egaseka	ɛ́ɛnson#eɣaseka
+34.305	35.984	1.679	⟦^egaseka⟧	Prosodic accent on égaseka rather than an initial H	laughed,	egaseka	e̤ɣa̤seka
+35.984	37.884	1.9	⟦^egaseka≥⟧ (H)	Prosodic accent on égaseka rather than an initial H	laughed,	egaseka	ʔe̤ɣasekˀḁ
+37.884	39.131	1.247	⟦<SWA>mpáka</SWA> ekabaroka ómonwa⟧}¤₴	mpáka < mpaka (Swa.) 'until'; It's possible that the initial /á/ on mpáka is actually prosodic accent. GM: goika 'until'	until his mouth burst.	mpáka ekabaroka ómonwa	m̥pák#ekaβaɾok#ómonwḁ
+39.131	40.014	0.883	(0.9)				
+40.014	41.357	1.343	§{⟦‷mogano ɔ́nɛ n'abo óngʼana ígo‴⟧}¤₴	ómogano 'story'; ɔ́nɛ́ 'mine'; nabó 'is like that'; óngʼana 'that's how it reached'; igo 'like that'	That's how my story was.	mogano ɔ́nɛ n'abo óngʼana ígo	móoɣan#ɔ́nɛ#n=aβ#óŋana#íɣo̥

@@ -88,7 +88,9 @@ var idb = {
   // Opens the Wugbot database (and creates it if it doesn't yet exist)
   // Also takes an optional callback function which will fire once the database is opened
   open: function(successCallback) {
-    var request = window.indexedDB.open('Wugbot', 1);
+    var response = confirm('Do you want to load the "Wugbot Dev" database?\n\n(Selecting "cancel" will load the regular "Wugbot" database instead.)');
+    var dbname = response ? 'WugbotDev' : 'Wugbot';
+    var request = window.indexedDB.open(dbname, 1);
 
     request.onsuccess = function() {
       idb.database = this.result;
