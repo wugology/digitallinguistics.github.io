@@ -55,7 +55,12 @@ page.render = function(view, rerender, callback) {
         break;
       case 'manageCorporaPopup':
         var renderTextsList = function(texts) {
+          page.nodes.corpusTextsSelector.innerHTML = '';
+          var legend = document.createElement('legend');
+          legend.textContent = 'Texts';
+          page.nodes.corpusTextsSelector.appendChild(legend);
           texts.forEach(function(text) {
+            console.log(text.titles);
             var newLabel = document.createElement('label');
             newLabel.htmlFor = 'text_' + text.id;
             var newInput = document.createElement('input');
@@ -64,7 +69,8 @@ page.render = function(view, rerender, callback) {
             newInput.name = 'corpusTextsList'
             newInput.value = text.id;
             var newText = document.createElement('p');
-            newText.textContent = text.title;
+            newText.classList.add('unicode');
+            newText.textContent = text.titles[0].titleText;
             newLabel.appendChild(newInput);
             newLabel.appendChild(newText);
             page.nodes.corpusTextsSelector.appendChild(newLabel);
@@ -118,12 +124,17 @@ page.render = function(view, rerender, callback) {
           newText.display();
         });
         page.nodes.importTextButton.addEventListener('click', function() {
-          app.convert();
+          var notify = function(text) {
+            text.addToTexts();
+            page.notify('Text successfully imported.');
+            idb.reconstruct(text).setAsCurrent();
+          };
+          app.convert(notify);
         });
         page.nodes.textTitles.addEventListener('input', function(ev) {
           if (ev.target.classList.contains('textTitle')) {
-            app.preferences.currentText.titles[ev.target.dataset.titleIndex].titleText = ev.target.value;
-            console.log(app.preferences.currentText.titles[0]);
+            var title = app.preferences.currentText.titles[parseInt(ev.target.dataset.titleIndex)];
+            title.titleText = ev.target.value;
           }
         });
         page.nodes.textTitles.addEventListener('blur', function(ev) {
@@ -134,7 +145,7 @@ page.render = function(view, rerender, callback) {
             idb.update(app.preferences.currentText.id, 'titles', app.preferences.currentText.titles, 'texts');
           }
           if (ev.keyCode === 27) {
-            ev.target.value = app.preferences.currentText.titles[ev.target.dataset.titleIndex].titleText;
+            ev.target.value = app.preferences.currentText.titles[parseInt(ev.target.dataset.titleIndex)].titleText;
           }
         });
         break;
@@ -153,6 +164,7 @@ page.render = function(view, rerender, callback) {
         } else {
           app.preferences = JSON.parse(localStorage.wugbotPreferences);
           app.preferences.currentCorpus = idb.reconstruct(app.preferences.currentCorpus);
+          app.preferences.currentText = idb.reconstruct(app.preferences.currentText);
         }
         
         if (app.preferences.currentCorpus === null) {
@@ -162,7 +174,7 @@ page.render = function(view, rerender, callback) {
           app.preferences.currentCorpus.setAsCurrent();
           page.nodes.corpusSelector.value = app.preferences.currentCorpus.name;
         }
-                
+        
         page.setWorkview(app.preferences.currentWorkview);
         break;
       default:

@@ -115,16 +115,18 @@ app.constructors = {
         page.nodes.textTitles = document.querySelector('#detailsPane .titles');
         page.nodes.phrases = document.querySelector('#detailsPane .phrases');
 
-        var makePlaceholder = function(i) {
+        var makePlaceholder = function() {
           var node = document.createElement('input');
-          node.dataset.titleIndex = i;
+          node.dataset.titleIndex = 0;
           node.classList.add('unicode');
           node.classList.add('textTitle');
           node.value = 'Click here to enter a title for this text';
           page.nodes.textTitles.appendChild(node);
         };
+        
+        page.nodes.textTitles.innerHTML = '';
 
-        if (titles.length === 0) {
+        if (this.titles.length === 0) {
           makePlaceholder();
         }
 
@@ -154,7 +156,7 @@ app.constructors = {
 
 // Gets the file from the file input, converts it from an ELAN tsv export format into a valid JSON format, and returns the JSON object
 // In the future, it may be good to make this function sufficiently robust that it can handle all the various settings in the ELAN export popup
-app.convert = function() {
+app.convert = function(callback) {
   var file = document.querySelector('#fileUpload').files[0];
   if (file === undefined) {
     page.notify('Please select a file below.');
@@ -205,10 +207,13 @@ app.convert = function() {
         delete phrase.translation;
         delete phrase.phonemic;
         delete phrase.phonetic;
+        delete phrase.duration;
       });
       
-      var text = new app.constructors.Text([], phrases, [], [], []);
-      text.addToTexts();
+      var text = new app.constructors.Text([], phrases, [], [], [{ orthography: null, titleText: '' }]);
+      if (typeof callback === 'function') {
+        callback(text);
+      }
     };
     fileReader.readAsText(file);
   }
