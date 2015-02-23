@@ -1,6 +1,21 @@
 // app.js
 var app = {};
 
+// Polyfill for the .startsWith() string method ( String.prototype.startsWith() )
+// See MDN for more details:
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith?redirectlocale=en-US&redirectslug=JavaScript%2FReference%2FGlobal_Objects%2FString%2FstartsWith
+if (!String.prototype.startsWith) {
+  Object.defineProperty(String.prototype, 'startsWith', {
+    enumerable: false,
+    configurable: false,
+    writable: false,
+    value: function(searchString, position) {
+      position = position || 0;
+      return this.lastIndexOf(searchString, position) === position;
+    }
+  });
+}
+
 // Constructors for linguistic/database objects
 app.constructors = {
   Corpus: function(name, documents, languages, lexicons, mediaFiles, texts) {
@@ -140,59 +155,63 @@ app.constructors = {
 // Gets the file from the file input, converts it from an ELAN tsv export format into a valid JSON format, and returns the JSON object
 // In the future, it may be good to make this function sufficiently robust that it can handle all the various settings in the ELAN export popup
 app.convert = function() {
-  var phrases = [];
   var file = document.querySelector('#fileUpload').files[0];
-  var fileReader = new FileReader();
-  fileReader.onload = function(ev) {
-    var text = ev.target.result;
+  if (file === undefined) {
+    page.notify('Please select a file below.');
+  } else {
+    var phrases = [];
+    var fileReader = new FileReader();
+    fileReader.onload = function(ev) {
+      var text = ev.target.result;
 
-    text = text.trim();
-    var lines = text.split(/\n/g);
-    var header = lines[0].trim();
-    var columnNames = header.split(/\t/g);
-    columnNames.forEach(function(columnName, i) {
-      columnName = columnName.startsWith('Begin Time') ? 'startTime' : columnName;
-      columnName = columnName.startsWith('End Time') ? 'endTime' : columnName;
-      columnName = columnName.startsWith('Duration') ? 'duration' : columnName;
-      columnName = columnName.startsWith('Transcript') ? 'transcript' : columnName;
-      columnName = columnName.startsWith('Notes') ? 'notes' : columnName;
-      columnName = columnName.startsWith('Translation') ? 'translation' : columnName;
-      columnName = columnName.startsWith('Transcription') ? 'transcription' : columnName;
-      columnName = columnName.startsWith('Phonemic') ? 'phonemic' : columnName;
-      columnName = columnName.startsWith('Phonetic') ? 'phonetic' : columnName;
-      columnName = columnName.replace(/[^\S]/g, '');
-      columnNames[i] = columnName;
-    });
-    var labelLine = function(line) {
-      var values = line.trim().split(/\t/g);
-      var phrase = {};
+      text = text.trim();
+      var lines = text.split(/\n/g);
+      var header = lines[0].trim();
+      var columnNames = header.split(/\t/g);
       columnNames.forEach(function(columnName, i) {
-        values[i] = values[i] === undefined ? null : values[i];
-        phrase[columnName] = values[i];
+        columnName = columnName.startsWith('Begin Time') ? 'startTime' : columnName;
+        columnName = columnName.startsWith('End Time') ? 'endTime' : columnName;
+        columnName = columnName.startsWith('Duration') ? 'duration' : columnName;
+        columnName = columnName.startsWith('Transcript') ? 'transcript' : columnName;
+        columnName = columnName.startsWith('Notes') ? 'notes' : columnName;
+        columnName = columnName.startsWith('Translation') ? 'translation' : columnName;
+        columnName = columnName.startsWith('Transcription') ? 'transcription' : columnName;
+        columnName = columnName.startsWith('Phonemic') ? 'phonemic' : columnName;
+        columnName = columnName.startsWith('Phonetic') ? 'phonetic' : columnName;
+        columnName = columnName.replace(/[^\S]/g, '');
+        columnNames[i] = columnName;
       });
-      phrases.push(phrase);
+      var labelLine = function(line) {
+        var values = line.trim().split(/\t/g);
+        var phrase = {};
+        columnNames.forEach(function(columnName, i) {
+          values[i] = values[i] === undefined ? null : values[i];
+          phrase[columnName] = values[i];
+        });
+        phrases.push(phrase);
+      };
+      lines.slice(1, lines.length).forEach(labelLine);
+      
+      phrases.forEach(function(phrase) {
+        phrase.startTime = parseFloat(phrase.startTime);
+        phrase.endTime = parseFloat(phrase.endTime);
+        phrase.transcripts = [{ transcript: phrase.transcript }];
+        phrase.translations = [{ type: 'free', translationText: phrase.translation, orthography: null }];
+        phrase.transcriptions = [
+          { type: 'phonemic', transcriptionText: phrase.phonemic, orthography: null },
+          { type: 'phonetic', transcriptionText: phrase.phonetic, orthography: null }
+        ];
+        delete phrase.transcript;
+        delete phrase.translation;
+        delete phrase.phonemic;
+        delete phrase.phonetic;
+      });
+      
+      var text = new app.constructors.Text([], phrases, [], [], []);
+      text.addToTexts();
     };
-    lines.slice(1, lines.length).forEach(labelLine);
-    
-    phrases.forEach(function(phrase) {
-      phrase.startTime = parseFloat(phrase.startTime);
-      phrase.endTime = parseFloat(phrase.endTime);
-      phrase.transcripts = [{ transcript: phrase.transcript }];
-      phrase.translations = [{ type: 'free', translationText: phrase.translation, orthography: null }];
-      phrase.transcriptions = [
-        { type: 'phonemic', transcriptionText: phrase.phonemic, orthography: null },
-        { type: 'phonetic', transcriptionText: phrase.phonetic, orthography: null }
-      ];
-      delete phrase.transcript;
-      delete phrase.translation;
-      delete phrase.phonemic;
-      delete phrase.phonetic;
-    });
-    
-    var text = new app.constructors.Text([], phrases, [], [], []);
-    text.addToTexts();
-  };
-  fileReader.readAsText(file);
+    fileReader.readAsText(file);
+  }
 };
 
 // Some of these were breaking while I was working on other things, so I commented them out for now [DWH]

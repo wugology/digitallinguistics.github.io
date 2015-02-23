@@ -117,7 +117,9 @@ page.render = function(view, rerender, callback) {
           newText.setAsCurrent();
           newText.display();
         });
-        page.nodes.importTextButton.addEventListener('click', function() {});
+        page.nodes.importTextButton.addEventListener('click', function() {
+          app.convert();
+        });
         page.nodes.textTitles.addEventListener('input', function(ev) {
           if (ev.target.classList.contains('textTitle')) {
             app.preferences.currentText.titles[ev.target.dataset.titleIndex].titleText = ev.target.value;
