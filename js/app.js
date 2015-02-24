@@ -182,9 +182,14 @@ app.initialize = function() {
   }
   
   if (app.preferences.currentWorkview !== null) {
-    page.views.render(app.preferences.currentWorkview, false);
+    page.render(app.preferences.currentWorkview);
+    
+    if (app.preferences.currentCorpus === null) {
+      page.popups.manageCorpora.render();
+    }
+  } else {
+    page.render();
   }
-  page.views.pageView.render(true);
 };
 
 app.savePreferences = function() {

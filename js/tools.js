@@ -1,8 +1,10 @@
 // Contains the script for things in the tools folder
+tools = {};
+
 
 // Gets the file from the file input, converts it from an ELAN tsv export format into a valid JSON format, and returns the JSON object
 // In the future, it may be good to make this function sufficiently robust that it can handle all the various settings in the ELAN export popup
-app.convert = function(callback) {
+tools.convert = function(callback) {
   var file = document.querySelector('#fileUpload').files[0];
   if (file === undefined) {
     page.notify('Please select a file below.');

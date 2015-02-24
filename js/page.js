@@ -1,78 +1,186 @@
-// Contains the 'views' functions, which all focus on display, render, and event listeners
-// The views object itself is created in script.js, since some of the page functions are site-wide
+// Contains the 'page' functions, which all focus on display, render, and event listeners
+// The page object itself is created in script.js, since some of the page functions are site-wide
 
 // There are several types of objects under the page hash, each given its own subclass
 // - page.nodes: DOM nodes that get referenced in more than one function
-// - page.views: These are given names following the pattern xView (e.g. 'textsView'), and can be thought of as interfaces, regions, workviews, or workspaces
-// - page.popups: These are given names following the pattern xPopup (e.g. 'settingsPopup')
+// - page.views: Can be thought of as interfaces, regions, workviews, or workspaces
+// - page.popups: Functionality tied to popup windows
 // - page.function(): general functions like page.display()
 
 page.views = {};
 page.popups = {};
 // page.nodes is instantiated in the script.js file
 
+// page.nodes
+page.nodes.addMediaFileButton = document.querySelector('#addMediaFileButton');
 page.nodes.addNewTextButton = document.querySelector('#addNewTextButton');
 page.nodes.boxIcon = document.querySelector('#boxIcon');
 page.nodes.createCorpusButton = document.querySelector('#createCorpusButton');
 page.nodes.desktopCSS = document.querySelector('#desktopCSS');
+page.nodes.fileUpload = document.querySelector('#fileUpload');
 page.nodes.importTextButton = document.querySelector('#importTextButton');
 page.nodes.mobileCSS = document.querySelector('#mobileCSS');
 page.nodes.newCorpusForm = document.querySelector('#newCorpusForm');
+page.nodes.processFileButton = document.querySelector('#processFileButton');
 page.nodes.popups = document.querySelector('#popups');
 page.nodes.settingsButton = document.querySelector('#settingsButton');
 page.nodes.switchLayoutButton = document.querySelector('#switchLayoutButton');
 page.nodes.textsList = document.querySelector('#textsList');
 page.nodes.textTitles = document.querySelector('.textsModule .titles');
 
-page.views.corpusSelector = {
-  el: document.querySelector('#corpusSelector'),
-  rerender: true,
+// page.function()
+// Renders the entire page, optionally specifying the workview to render
+page.render = function(view) {
+  if (app.preferences.currentCorpus === null) {
+    page.popups.manageCorpora.render(true);
+  }
   
-  render: function(rerender, callback) {
-    if (rerender === true) {
-      this.rerender = true;
-    }
-    
-    if (this.rerender === true) {
-      this.el.innerHTML = '';
-      var displayCorpora = function(corpora) {
-        corpora.sort(function(a, b) { if (a.name > b.name) { return 1; } });
-        
-        var createOption = function(id, text, value) {
-          var option = document.createElement('option');
-          option.dataset.id = id;
-          option.value = value;
-          option.textContent = text;
-          this.el.add(option);
-        }.bind(this);
-        
-        createOption('placeholder', 'Select a corpus', 'placeholder');
-        
-        corpora.forEach(function(corpus) {
-          createOption(corpus.id, corpus.name, corpus.id);
-        });
-        
-        createOption('manage', 'Manage corpora', 'manage');
+  page.views.corpusSelector.render();
+  
+  var navButtons = document.querySelectorAll('#appNav a');
+  for (var i=0; i<navButtons.length; i++) {
+    navButtons[i].classList.remove('underline');
+  }
 
-        if (app.preferences.currentCorpus !== null) {
-          this.el.value = app.preferences.currentCorpus.id;
-        }
-        
-        if (typeof callback === 'function') {
-          callback();
-        }
-      }.bind(this);
-      
-      idb.getAll('corpora', displayCorpora);
-    }
+  var workviews = document.querySelectorAll('.module');
+  for (var i=0; i<workviews.length; i++) {
+    page.hide(workviews[i]);
+  }
+
+  if (page.views[view] !== undefined) {    
+    page.views[view].render();
+    app.preferences.currentWorkview = view;
     
-    this.rerender = false;
+    for (var i=0; i<navButtons.length; i++) {
+      if (navButtons[i].textContent.toLowerCase() === view) {
+        navButtons[i].classList.add('underline');
+      }
+    }
+  }  
+};
+
+page.switchLayout = function() {
+  var small = '(min-width: 1000px)';
+  var large = '(max-width: 1000px)';
+  if (page.nodes.desktopCSS.media === small) {
+    page.nodes.desktopCSS.media = large;
+    page.nodes.mobileCSS.media = small;
+  } else {
+    page.nodes.desktopCSS.media = small;
+    page.nodes.mobileCSS.media = large;
   }
 };
 
-page.popups.manageCorporaPopup = {
+// page.views
+page.views.corpusSelector = {
+  el: document.querySelector('#corpusSelector'),
+  
+  render: function(callback) {    
+    this.el.innerHTML = '';
+    var displayCorpora = function(corpora) {
+      corpora.sort(function(a, b) { if (a.name > b.name) { return 1; } });
+      
+      var createOption = function(id, text, value) {
+        var option = document.createElement('option');
+        option.dataset.id = id;
+        option.value = value;
+        option.textContent = text;
+        this.el.add(option);
+      }.bind(this);
+      
+      createOption('placeholder', 'Select a corpus', 'placeholder');
+      
+      corpora.forEach(function(corpus) {
+        createOption(corpus.id, corpus.name, corpus.id);
+      });
+      
+      createOption('manage', 'Manage corpora', 'manage');
+
+      if (app.preferences.currentCorpus !== null) {
+        this.el.value = app.preferences.currentCorpus.id;
+      }
+      
+      if (typeof callback === 'function') {
+        callback();
+      }
+    }.bind(this);
+    
+    idb.getAll('corpora', displayCorpora);
+  }
+};
+
+page.views.media = {
+  els: document.querySelectorAll('.mediaModule'),
+  
+  hide: function() {
+    for (var i=0; i<this.els.length; i++) {
+      page.hide(this.els[i]);
+    }
+  },
+
+  render: function() {    
+    for (var i=0; i<this.els.length; i++) {
+      page.display(this.els[i]);
+    }
+  },
+  
+  toggleDisplay: function() {
+    for (var i=0; i<this.els.length; i++) {
+      page.toggleDisplay(this.els[i]);
+    }
+  }
+};
+
+page.views.texts = {
+  els: document.querySelectorAll('.textsModule'),
+  
+  hide: function() {
+    for (var i=0; i<this.els.length; i++) {
+      page.hide(this.els[i]);
+    }
+  },
+  
+  importText: function() {
+    var notify = function(text) {
+      text.addToTexts();
+      page.notify('Text successfully imported.');
+      idb.reconstruct(text).setAsCurrent();
+    };
+    tools.convert(notify);
+  },
+  
+  render: function() {    
+    for (var i=0; i<this.els.length; i++) {
+      page.display(this.els[i]);
+    }
+  },
+  
+  toggleDisplay: function() {
+    for (var i=0; i<this.els.length; i++) {
+      page.toggleDisplay(this.els[i]);
+    }
+  }
+};
+
+// page.popups
+page.popups.fileUpload = {
+  el: document.querySelector('#fileUploadPopup'),
+  
+  render: function(goButtonCallback) {
+    page.nodes.processFileButton.addEventListener('click', goButtonCallback);
+    page.nodes.processFileButton.addEventListener('click', function() {
+      page.nodes.processFileButton.removeEventListener('click', goButtonCallback);
+    });
+    page.display(this.el);
+  },
+  
+  toggleDisplay: function() {
+    page.toggleDisplay(this.el);
+  }
+};
+
+page.popups.manageCorpora = {
   el: document.querySelector('#manageCorporaPopup'),
-  rerender: true,
   
   selectedTextIDs: function() {
     var textIDs = [];
@@ -90,87 +198,47 @@ page.popups.manageCorporaPopup = {
     page.toggleDisplay(this.el);
   },
   
-  render: function(rerender, callback) {
-    if (rerender === true) {
-      this.rerender = true;
-    }
-    
-    if (this.rerender === true) {
-      var displayTexts = function(texts) {
-        var textsList = document.querySelector('#corpusTextsSelector');
-        textsList.innerHTML = '';
-        
-        var legend = document.createElement('legend');
-        legend.textContent = 'Texts';
-        textsList.appendChild(legend);
-        
-        texts.forEach(function(text) {
-          var label = document.createElement('label');
-          label.htmlFor = 'text_' + text.id;
-          
-          var input = document.createElement('input');
-          input.id = 'text_' + text.id;
-          input.dataset.id = text.id;
-          input.type = 'checkbox';
-          input.name = 'corpusTextsList';
-          input.value = text.id;
-          
-          var text = document.createElement('p');
-          text.classList.add('unicode');
-          text.textContent = text.titles[0].titleText;
-          
-          label.appendChild(input);
-          label.appendChild(text);
-          textsList.appendChild(label);
-        });
-      };
+  render: function(callback) {
+    var displayTexts = function(texts) {
+      var textsList = document.querySelector('#corpusTextsSelector');
+      textsList.innerHTML = '';
       
-      idb.getAll('texts', displayTexts);
-    }
+      var legend = document.createElement('legend');
+      legend.textContent = 'Texts';
+      textsList.appendChild(legend);
+      
+      texts.forEach(function(text) {
+        var label = document.createElement('label');
+        label.htmlFor = 'text_' + text.id;
+        
+        var input = document.createElement('input');
+        input.id = 'text_' + text.id;
+        input.dataset.id = text.id;
+        input.type = 'checkbox';
+        input.name = 'corpusTextsList';
+        input.value = text.id;
+        
+        var text = document.createElement('p');
+        text.classList.add('unicode');
+        text.textContent = text.titles[0].titleText;
+        
+        label.appendChild(input);
+        label.appendChild(text);
+        textsList.appendChild(label);
+      });
+      
+      page.display(this.el);
+    }.bind(this);
     
-    page.display(this.el);
-    this.rerender = false;
+    idb.getAll('texts', displayTexts);
   }
 };
 
-page.views.pageView = {
-  rerender: true,
-  
-  render: function(rerender) {
-    if (rerender === true) {
-      this.rerender = true;
-    }
-    
-    if (this.rerender === true) {
-      if (app.preferences.currentCorpus === null) {
-        page.popups.manageCorporaPopup.render(true);
-      }
-      
-      page.views.corpusSelector.render(true);
-      
-      if (app.preferences.currentWorkview !== null) {
-        page.views.render(app.preferences.currentWorkview, false);
-      }
-    }
-    
-    this.rerender = false;
-  }
-};
-
-page.popups.settingsPopup = {
+page.popups.settings = {
   el: document.querySelector('#settingsPopup'),
-  rerender: true,
   
   render: function() {
-    if (rerender === true) {
-      this.rerender = true;
-    }
-    
-    if (this.rerender === true) {
-      page.display(this.el);
-    }
-    
-    this.rerender = false;
+    page.display(this.el);
   },
   
   toggleDisplay: function() {
@@ -178,89 +246,14 @@ page.popups.settingsPopup = {
   }
 };
 
-page.views.textsWorkview = {
-  els:  document.querySelectorAll('.textsModule'),
-  rerender: true,
-  
-  importText: function() {
-    var notify = function(text) {
-      text.addToTexts();
-      page.notify('Text successfully imported.');
-      idb.reconstruct(text).setAsCurrent();
-    };
-    app.convert(notify);
-  },
-  
-  render: function(rerender) {
-    if (rerender === true) {
-      this.rerender = true;
-    }
-    
-    if (this.rerender === true) {
-      for (var i=0; i<this.els.length; i++) {
-        page.display(this.els[i]);
-      }
-    }
-    
-    this.rerender = false;
-  },
-  
-  toggleDisplay: function() {
-    for (var i=0; i<els.length; i++) {
-      page.toggleDisplay(els[i]);
-    }
-  }
-};
-
-page.switchLayout = function() {
-  var small = '(min-width: 1000px)';
-  var large = '(max-width: 1000px)';
-  if (page.nodes.desktopCSS.media === small) {
-    page.nodes.desktopCSS.media = large;
-    page.nodes.mobileCSS.media = small;
-  } else {
-    page.nodes.desktopCSS.media = small;
-    page.nodes.mobileCSS.media = large;
-  }
-};
-
-// Displays all the modules associated with a given workview
-// Ex. The 'lexicon' workview displays everything with class=lexiconModule on it
-// Acceptable inputs for the 'workview' argument in .render(workview): 'documents', 'lexicon', 'media', 'orthographies', 'tags', 'texts'
-page.views.render = function(view, rerender) {
-  page.views[view].render(rerender);
-  
-  var navButtons = document.querySelector('#appNav a');
-  for (var i=0; i<navButtons.length; i++) {
-    navButtons[i].classList.remove('underline');
-    if (navButtons[i].id === view + 'Nav') {
-      navButtons[i].classList.add('underline');
-    }
-  }
-  
-  app.preferences.currentWorkview = view;
-};
-
 // EVENT LISTENERS
-page.views.corpusSelector.el.addEventListener('change', function(ev){
-  switch (ev.target.value) {
-    case 'manage':
-      page.popups.manageCorporaPopup.render(true);
-      corpusSelector.selectedIndex = 0;
-      break;
-    case 'placeholder':
-      break;
-    default:
-      var selectedIndex = page.views.corpusSelector.el.selectedIndex;
-      var option = page.views.corpusSelector.el.options[selectedIndex];
-      var corpusID = Number(option.dataset.id);
-      var setCorpus = function(corpus) {
-        corpus.setAsCurrent();
-        app.savePreferences();
-      };
-      idb.get(corpusID, 'corpora', setCorpus);
-      break;
-  }
+page.nodes.addMediaFileButton.addEventListener('click', function() {
+  var addMediaFile = function() {
+    var files = page.nodes.fileUpload.files;
+    idb.add(files, 'mediaFiles');
+  };
+  
+  page.popups.fileUpload.render(addMediaFile);
 });
 
 page.nodes.addNewTextButton.addEventListener('click', function() {
@@ -273,7 +266,7 @@ page.nodes.addNewTextButton.addEventListener('click', function() {
 
 page.nodes.appNav.addEventListener('click', function(ev) {  
   if (ev.target.tagName === 'A') {
-    page.views.render(ev.target.id.replace('Nav', ''), false);
+    page.render(ev.target.textContent.toLowerCase());
   }
   
   page.nodes.appNav.classList.add('hideonMobile');
@@ -283,17 +276,17 @@ page.nodes.boxIcon.addEventListener('click', function() {
   page.toggleDisplay(page.nodes.appNav);
   page.hide(page.nodes.mainNav);
 });
-page.nodes.importTextButton.addEventListener('click', page.views.textsWorkview.importText);
+
+page.nodes.importTextButton.addEventListener('click', function(ev) {
+  page.popups.fileUpload.render();
+});
 
 page.nodes.newCorpusForm.addEventListener('submit', function(ev) {
   ev.preventDefault();
-  var corpus = new app.constructors.Corpus(document.querySelector('#corpusNameBox').value, [], [], [], [], page.popups.manageCorporaPopup.selectedTextIDs());
-  var renderCorpusSelector = function() {
-    page.views.corpusSelector.render(true);
-  };
+  var corpus = new app.constructors.Corpus(document.querySelector('#corpusNameBox').value, [], [], [], [], page.popups.manageCorpora.selectedTextIDs());
   corpus.setAsCurrent();
-  corpus.addToCorpora(renderCorpusSelector);
-  page.views.manageCorporaPopup.toggleDisplay();
+  corpus.addToCorpora(page.views.corpusSelector.render);
+  page.views.manageCorpora.toggleDisplay();
 });
 
 
@@ -305,12 +298,12 @@ page.nodes.popups.addEventListener('click', function(ev) {
 
 page.nodes.settingsButton.addEventListener('click', function() {
   page.toggleDisplay(settingsPopup);
-  page.popups.settingsPopup.render(false);
+  page.popups.settings.render();
 });
 
 page.nodes.switchLayoutButton.addEventListener('click', function() {
   page.switchLayout();
-  page.popups.settingsPopup.toggleDisplay();
+  page.popups.settings.toggleDisplay();
 });
 
 page.nodes.textTitles.addEventListener('input', function(ev) {
@@ -330,6 +323,27 @@ page.nodes.textTitles.addEventListener('keyup', function(ev) {
   }
   if (ev.keyCode === 27) {
     ev.target.value = app.preferences.currentText.titles[parseInt(ev.target.dataset.titleIndex)].titleText;
+  }
+});
+
+page.views.corpusSelector.el.addEventListener('change', function(ev){
+  switch (ev.target.value) {
+    case 'manage':
+      page.popups.manageCorpora.render();
+      page.views.corpusSelector.selectedIndex = 0;
+      break;
+    case 'placeholder':
+      break;
+    default:
+      var selectedIndex = page.views.corpusSelector.el.selectedIndex;
+      var option = page.views.corpusSelector.el.options[selectedIndex];
+      var corpusID = Number(option.dataset.id);
+      var setCorpus = function(corpus) {
+        corpus.setAsCurrent();
+        app.savePreferences();
+      };
+      idb.get(corpusID, 'corpora', setCorpus);
+      break;
   }
 });
 

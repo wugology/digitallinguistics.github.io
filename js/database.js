@@ -31,6 +31,7 @@ var idb = {
       'corpora',
       'languages',
       'lexicons',
+      'mediaFiles',
       'texts'
     ];
     
@@ -43,15 +44,21 @@ var idb = {
 
   // Deletes the entire Wugbot database
   deleteDatabase: function(dbname, successCallback) {
-    var request = window.indexedDB.deleteDatabase(dbname);
-    request.onsuccess = function() {
-      console.log('Database deleted.');
-      delete localStorage.wugbotPreferences;
-      delete app.preferences;
-      if (typeof successCallback === 'function') {
-        successCallback();
-      }
-    };
+    if (arguments.length === 0 || (arguments.length === 1 && typeof arguments[0] === 'function')) {
+      console.log('Please specify a database to delete.');
+    }
+    
+    if ((arguments.length === 1 && typeof arguments[0] === 'string') || arguments.length === 2) {      
+      var request = window.indexedDB.deleteDatabase(dbname);
+      request.onsuccess = function() {
+        delete localStorage.wugbotPreferences;
+        delete app.preferences;
+        console.log('Database deleted.');
+        if (typeof successCallback === 'function') {
+          successCallback();
+        }
+      };
+    }
   },
   
   // Takes a single ID for an object and returns that object from the database

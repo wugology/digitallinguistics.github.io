@@ -31,11 +31,11 @@
         </nav>
         <nav id=appNav class=hideonMobile>
           <ul>
-            <li><a id=documentsNav>Documents</a></li>
-            <li><a id=lexiconNav>Lexicon</a></li>
-            <li><a id=mediaNav>Media</a></li>
-            <li><a id=orthographiesNav>Orthographies</a></li>
-            <li><a id=tagsNav>Tags</a></li>
+            <li><a>Documents</a></li>
+            <li><a>Lexicon</a></li>
+            <li><a>Media</a></li>
+            <li><a>Orthographies</a></li>
+            <li><a>Tags</a></li>
             <li><a>Texts</a></li>
           </ul>
         </nav>
@@ -64,8 +64,7 @@
       </div>
       
       <div class='mediaModule module hideonDesktop hideonMobile'>
-        <p>This is a media module. This module will display the list of audiovisual media files associated with this corpus. Clicking a media file will display the details of the media item in the details pane.</p>
-        <ul id=mediaItems>Here is a <code>&lt;ul&gt;</code> with <code>id=mediaItems</code> for displaying the list of media items associated with this corpus. It may be necessary to have multiple <code>&lt;ul&gt;</code>’s for different types of media.</ul>
+        <button id=addMediaFileButton type=button value='Add media file'>Add media file</button>
       </div>
       
       <div class='orthographiesModule module hideonDesktop hideonMobile'>
@@ -85,7 +84,6 @@
           <button id=importTextButton type=button value='Import text' class=hideonMobile>Import text</button>
         </div>
         <ul id=textsList></ul>
-        <input id=fileUpload type=file>
       </div>
     </section>
     
@@ -120,7 +118,7 @@
       <div class='textsModule module hideonDesktop hideonMobile'>
         <header>
           <div class=titles spellcheck=false></div>
-        </header>        
+        </header>
         <ol class=phrases></ol>
       </div>
     </section>
@@ -146,7 +144,13 @@
     </label>
   </footer>
   
-  <div id=popups>  
+  <div id=popups>
+    <div id=fileUploadPopup class='hideonDesktop hideonMobile'>
+      <img src=img/close.svg alt='close this popup' class='icon'>
+      <input id=fileUpload type=file>
+      <button id=processFileButton type=button value='Go'>Go</button>
+    </div>
+    
     <div id=manageCorporaPopup class='hideonDesktop hideonMobile'>
       <img src=img/close.svg alt='close this popup' class='icon'>
       <h1>Create a new corpus</h1>
