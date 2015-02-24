@@ -46,12 +46,15 @@ app.constructors = {
     // Adds a JSON-only version of this corpus to the database and sets the ID for this corpus based on its database index
     // This function is NOT called automatically - remember to run it when you create a new Corpus
     Object.defineProperty(this, 'addToCorpora', {
-      value: function() {
+      value: function(successCallback) {
         var setID = function(indexes) {
           Object.defineProperty(this, 'id', {
             enumerable: true,
             value: indexes[0]
           });
+          if (typeof successCallback === 'function') {
+            successCallback();
+          }
         }.bind(this);
         idb.add([ this.toJSON() ], 'corpora', setID);
       }
@@ -59,8 +62,11 @@ app.constructors = {
 
     // Makes this corpus the current corpus
     Object.defineProperty(this, 'setAsCurrent', {
-      value: function() {
+      value: function(callback) {
         app.preferences.currentCorpus = this;
+        if (typeof callback === 'function') {
+          callback();
+        }
       }
     });
   },
@@ -154,69 +160,35 @@ app.constructors = {
   }
 };
 
-// Gets the file from the file input, converts it from an ELAN tsv export format into a valid JSON format, and returns the JSON object
-// In the future, it may be good to make this function sufficiently robust that it can handle all the various settings in the ELAN export popup
-app.convert = function(callback) {
-  var file = document.querySelector('#fileUpload').files[0];
-  if (file === undefined) {
-    page.notify('Please select a file below.');
-  } else {
-    var phrases = [];
-    var fileReader = new FileReader();
-    fileReader.onload = function(ev) {
-      var text = ev.target.result;
-
-      text = text.trim();
-      var lines = text.split(/\n/g);
-      var header = lines[0].trim();
-      var columnNames = header.split(/\t/g);
-      columnNames.forEach(function(columnName, i) {
-        columnName = columnName.startsWith('Begin Time') ? 'startTime' : columnName;
-        columnName = columnName.startsWith('End Time') ? 'endTime' : columnName;
-        columnName = columnName.startsWith('Duration') ? 'duration' : columnName;
-        columnName = columnName.startsWith('Transcript') ? 'transcript' : columnName;
-        columnName = columnName.startsWith('Notes') ? 'notes' : columnName;
-        columnName = columnName.startsWith('Translation') ? 'translation' : columnName;
-        columnName = columnName.startsWith('Transcription') ? 'transcription' : columnName;
-        columnName = columnName.startsWith('Phonemic') ? 'phonemic' : columnName;
-        columnName = columnName.startsWith('Phonetic') ? 'phonetic' : columnName;
-        columnName = columnName.replace(/[^\S]/g, '');
-        columnNames[i] = columnName;
-      });
-      var labelLine = function(line) {
-        var values = line.trim().split(/\t/g);
-        var phrase = {};
-        columnNames.forEach(function(columnName, i) {
-          values[i] = values[i] === undefined ? null : values[i];
-          phrase[columnName] = values[i];
-        });
-        phrases.push(phrase);
-      };
-      lines.slice(1, lines.length).forEach(labelLine);
-      
-      phrases.forEach(function(phrase) {
-        phrase.startTime = parseFloat(phrase.startTime);
-        phrase.endTime = parseFloat(phrase.endTime);
-        phrase.transcripts = [{ transcript: phrase.transcript }];
-        phrase.translations = [{ type: 'free', translationText: phrase.translation, orthography: null }];
-        phrase.transcriptions = [
-          { type: 'phonemic', transcriptionText: phrase.phonemic, orthography: null },
-          { type: 'phonetic', transcriptionText: phrase.phonetic, orthography: null }
-        ];
-        delete phrase.transcript;
-        delete phrase.translation;
-        delete phrase.phonemic;
-        delete phrase.phonetic;
-        delete phrase.duration;
-      });
-      
-      var text = new app.constructors.Text([], phrases, [], [], [{ orthography: null, titleText: '' }]);
-      if (typeof callback === 'function') {
-        callback(text);
-      }
+app.initialize = function() {
+  if (localStorage.wugbotPreferences === 'undefined' || localStorage.wugbotPreferences === undefined) {
+    app.preferences = {
+      currentCorpus: null,
+      currentText: null,
+      currentWorkview: 'texts'
     };
-    fileReader.readAsText(file);
+  } else {
+    app.preferences = JSON.parse(localStorage.wugbotPreferences);
   }
+  
+  if (app.preferences.currentCorpus !== null) {
+    app.preferences.currentCorpus = idb.reconstruct(app.preferences.currentCorpus);
+    app.preferences.currentCorpus.setAsCurrent();
+  }
+  
+  if (app.preferences.currentText !== null) {
+    app.preferences.currentText = idb.reconstruct(app.preferences.currentText);
+    app.preferences.currentText.setAsCurrent();
+  }
+  
+  if (app.preferences.currentWorkview !== null) {
+    page.views.render(app.preferences.currentWorkview, false);
+  }
+  page.views.pageView.render(true);
+};
+
+app.savePreferences = function() {
+  localStorage.wugbotPreferences = JSON.stringify(app.preferences, null, 2);
 };
 
 // Some of these were breaking while I was working on other things, so I commented them out for now [DWH]

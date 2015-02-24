@@ -10,6 +10,9 @@ var idb = {
     var objectStore = transaction.objectStore(objectStore);
     var indexes = [];
     array.forEach(function(item) {
+      if (item.toJSON) {
+        item = item.toJSON();
+      }
       var request = objectStore.add(item);
       request.onsuccess = function(ev) {
         indexes.push(request.result);
@@ -28,26 +31,27 @@ var idb = {
       'corpora',
       'languages',
       'lexicons',
-      'mediaFiles',
       'texts'
     ];
     
     objectStores.forEach(function(objectStore) {
       idb.database.createObjectStore(objectStore, defaults);
     });
+    
+    idb.database.createObjectStore('media', { autoIncrement: true });
   },
 
   // Deletes the entire Wugbot database
-  deleteDatabase: function() {
-    var response = confirm('Are you sure about that?');
-    if (response === true) {
-      var request = window.indexedDB.deleteDatabase('Wugbot');
-      request.onsuccess = function() {
-        console.log('Database deleted.');
-      };
+  deleteDatabase: function(dbname, successCallback) {
+    var request = window.indexedDB.deleteDatabase(dbname);
+    request.onsuccess = function() {
+      console.log('Database deleted.');
       delete localStorage.wugbotPreferences;
       delete app.preferences;
-    }
+      if (typeof successCallback === 'function') {
+        successCallback();
+      }
+    };
   },
   
   // Takes a single ID for an object and returns that object from the database
@@ -87,15 +91,13 @@ var idb = {
   
   // Opens the Wugbot database (and creates it if it doesn't yet exist)
   // Also takes an optional callback function which will fire once the database is opened
-  open: function(successCallback) {
-    var response = confirm('Do you want to load the "Wugbot Dev" database?\n\n(Selecting "cancel" will load the regular "Wugbot" database instead.)');
-    var dbname = response ? 'WugbotDev' : 'Wugbot';
+  open: function(dbname, successCallback) {
     var request = window.indexedDB.open(dbname, 1);
 
     request.onsuccess = function() {
       idb.database = this.result;
       if (typeof successCallback === 'function') {
-        successCallback();
+        successCallback(idb.database);
       }
     };
         
@@ -172,6 +174,35 @@ var idb = {
       };
     };
   },
+  
+  upgradeDatabase: function() {
+    var counter = 0;
+    var database = {};
+    
+    var populateDatabase = function() {
+      Object.keys(database).forEach(function(key, i) {
+        idb.add(database[key], key);
+      });
+    };
+
+    var saveRecords = function(records) {
+      var objectStoreName = idb.database.objectStoreNames[counter];
+      database[objectStoreName] = records;
+      counter += 1;
+      if (counter === idb.database.objectStoreNames.length) {
+        var opendb = function() {
+          idb.open(true, populateDatabase);
+        };
+        idb.deleteDatabase(opendb);
+      }
+    };
+    
+    var transaction = idb.database.transaction(idb.database.objectStoreNames);
+    for (var i=0; i<idb.database.objectStoreNames.length; i++) {
+      var objectStore = transaction.objectStore(idb.database.objectStoreNames[i]);
+      idb.getAll(idb.database.objectStoreNames[i], saveRecords);
+    }
+  }
 };
 
 idb.database = {};

@@ -31,11 +31,11 @@
         </nav>
         <nav id=appNav class=hideonMobile>
           <ul>
-            <li><a>Documents</a></li>
-            <li><a>Lexicon</a></li>
-            <li><a>Media</a></li>
-            <li><a>Orthographies</a></li>
-            <li><a>Tags</a></li>
+            <li><a id=documentsNav>Documents</a></li>
+            <li><a id=lexiconNav>Lexicon</a></li>
+            <li><a id=mediaNav>Media</a></li>
+            <li><a id=orthographiesNav>Orthographies</a></li>
+            <li><a id=tagsNav>Tags</a></li>
             <li><a>Texts</a></li>
           </ul>
         </nav>
@@ -150,14 +150,14 @@
     <div id=manageCorporaPopup class='hideonDesktop hideonMobile'>
       <img src=img/close.svg alt='close this popup' class='icon'>
       <h1>Create a new corpus</h1>
-      <form>
+      <form id=newCorpusForm>
         <label for=corpusNameBox>
           <p>Name for this corpus:</p>
           <input id=corpusNameBox type=text class=unicode>
         </label>
         <p>Would you like to add any preexisting resources to this corpus?</p>
         <fieldset id=corpusTextsSelector></fieldset>
-        <button id=createCorpusButton type=button value='Create corpus'>Create corpus</button>
+        <button id=createCorpusButton type=submit value='Create corpus'>Create corpus</button>
       </form>
     </div>
     
@@ -187,6 +187,7 @@
   <script src=js/common.js></script>
   <script src=js/base.js></script>
   <script src=js/app.js></script>
-  <script src=js/view.js></script>
+  <script src=js/page.js></script>
+  <script src=js/tools.js></script>
 </body>
 </html>
