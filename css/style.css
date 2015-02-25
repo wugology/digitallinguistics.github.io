@@ -70,7 +70,7 @@ a, a:hover, a:visited, a:active {
 #corpusSelector, #navbar, nav a, nav a:hover, nav a:visited, nav a:active {
   color: white; }
 
-button, #navbar img, #navbar nav ul li {
+button, #mediaFilesList li, #navbar img, #navbar nav ul li {
   cursor: pointer; }
 
 a, abbr, acronym, b, bdo, br, big, cite, code, del, dfn, em, i, img, input, ins, kbd, map, object, p, q, samp, select, s, small, span, strike, strong, sub, sup, textarea, tt, var {

@@ -83,36 +83,42 @@ var idb = {
     var request = idb.database.transaction(table).objectStore(table).get(id);
     request.onsuccess = function(ev) {
       if (table !== 'media') {
-        idb.result = idb.reconstruct(ev.target.result);
+        idb.result = idb.reconstruct(request.result);
+        if (typeof successCallback === 'function') {
+          successCallback(idb.reconstruct(request.result));
+        }
       } else {
-        idb.result = ev.target.result;
-      }
-      if (typeof successCallback === 'function') {
-        successCallback(idb.reconstruct(ev.target.result));
+        idb.result = request.result;
+        if (typeof successCallback === 'function') {
+          successCallback(request.result);
+        }
       }
     };
   },
   
   // Returns an array of every object in the specified object store (table)
   // Mozilla actually has a .getAll() function, but Chrome does not
-  // Also takes an optional callback function which takes the array of retrieved objects as its argument, and will execute when the .getAll() operation is successful
+  // Also takes an optional callback function which takes two arguments: the array of retrieved objects, and their keys in the database
   // Sets the idb.result argument equal to the result of database request
   getAll: function(table, successCallback) {
     var records = [];
+    var keys = [];
     var objectStore = idb.database.transaction(table).objectStore(table);
     objectStore.openCursor().onsuccess = function(ev) {
       var cursor = ev.target.result;
       if (cursor) {
         if (table !== 'media') {
           records.push(idb.reconstruct(cursor.value));
+          keys.push(cursor.key);
         } else {
           records.push(cursor.value);
+          keys.push(cursor.key);
         }
         cursor.continue();
       } else {
         idb.result = records;
         if (typeof successCallback === 'function') {
-          successCallback(records);
+          successCallback(records, keys);
         }
       }
     };
@@ -243,15 +249,4 @@ idb.database = {};
 
 idb.database.onerror = function(ev) {
   alert('Database error: ' + ev.target.errorCode);
-};
-
-var retrieveFile = function() {
-  var transaction = idb.database.transaction('media');
-  var objectStore = transaction.objectStore('media');
-  var request = objectStore.get(1);
-  request.onsuccess = function(ev) {
-    fileURL = URL.createObjectURL(request.result);
-    console.log(fileURL);
-    document.querySelector('#audioPlayer').src = fileURL;
-  };
 };

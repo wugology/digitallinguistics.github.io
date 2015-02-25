@@ -14,12 +14,14 @@ page.popups = {};
 // page.nodes
 page.nodes.addMediaFileButton = document.querySelector('#addMediaFileButton');
 page.nodes.addNewTextButton = document.querySelector('#addNewTextButton');
+page.nodes.audioPlayer = document.querySelector('#audioPlayer');
 page.nodes.boxIcon = document.querySelector('#boxIcon');
 page.nodes.corpusSelector = document.querySelector('#corpusSelector');
 page.nodes.createCorpusButton = document.querySelector('#createCorpusButton');
 page.nodes.desktopCSS = document.querySelector('#desktopCSS');
 page.nodes.fileUpload = document.querySelector('#fileUpload');
 page.nodes.importTextButton = document.querySelector('#importTextButton');
+page.nodes.mediaFilesList = document.querySelector('#mediaFilesList');
 page.nodes.mobileCSS = document.querySelector('#mobileCSS');
 page.nodes.newCorpusForm = document.querySelector('#newCorpusForm');
 page.nodes.processFileButton = document.querySelector('#processFileButton');
@@ -125,10 +127,28 @@ page.views.media = {
     }
   },
 
-  render: function() {    
+  render: function() {
+    var displayMediaList = function(media, keys) {
+      page.nodes.mediaFilesList.innerHTML = '';
+      media.forEach(function(file, i) {
+        var listItem = document.createElement('li');
+        listItem.dataset.id = keys[i];
+        listItem.textContent = file.name;
+        page.nodes.mediaFilesList.appendChild(listItem);
+      });
+    };
+    idb.getAll('media', displayMediaList);
+    
     for (var i=0; i<this.els.length; i++) {
       page.display(this.els[i]);
     }
+  },
+  
+  setMedia: function(mediaID) {
+    var loadPlayer = function(file) {
+      page.nodes.audioPlayer.src = URL.createObjectURL(file);
+    };
+    idb.get(mediaID, 'media', loadPlayer);
   },
   
   toggleDisplay: function() {
@@ -291,6 +311,12 @@ page.nodes.boxIcon.addEventListener('click', function() {
 
 page.nodes.importTextButton.addEventListener('click', function(ev) {
   page.popups.fileUpload.render();
+});
+
+page.nodes.mediaFilesList.addEventListener('click', function(ev) {
+  if (ev.target.tagName === 'LI') {
+    page.views.media.setMedia(Number(ev.target.dataset.id));
+  }
 });
 
 page.nodes.newCorpusForm.addEventListener('submit', function(ev) {
