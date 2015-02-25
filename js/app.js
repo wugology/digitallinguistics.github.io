@@ -120,11 +120,19 @@ app.constructors = {
       value: function(wrapper, index) {
         var template = document.querySelector('#phraseTemplate');
         template.content.querySelector('.phrase').dataset.index = index;
+        template.content.querySelector('.play').dataset.startTime = this.startTime;
+        template.content.querySelector('.play').dataset.endTime = this.endTime;
         template.content.querySelector('.transcript').textContent = this.transcripts[0].transcriptText;
         template.content.querySelector('.transcription').textContent = this.transcriptions[0].transcriptionText;
         template.content.querySelector('.translation').textContent = this.translations[0].translationText;
         var phrase = template.content.cloneNode(true);
         wrapper.appendChild(phrase);
+      }
+    });
+    
+    Object.defineProperty(this, 'play', {
+      value: function() {
+        app.audio.playSegment(this.startTime, this.endTime);
       }
     });
   },
@@ -221,8 +229,17 @@ app.constructors = {
           var displayAudio = function(file) {
             var player = document.createElement('audio');
             player.controls = true;
+            player.dataset.id = id;
             player.src = URL.createObjectURL(file);
             document.querySelector('#textAudio').appendChild(player);
+            player.addEventListener('timeupdate', function() {
+              var player = document.querySelector('#textAudio audio');
+              if (player.currentTime >= app.audio.endTime) {
+                console.log('the event listener paused the audio @ ' + app.audio.endTime);
+                player.pause();
+                app.audio.endTime = null;
+              }
+            });
           };
           
           idb.get(id, 'media', displayAudio);
@@ -269,6 +286,23 @@ app.initialize = function() {
     }
   } else {
     page.render();
+  }
+};
+
+app.audio = {
+  startTime: 0,
+  endTime: null,
+  
+  playSegment: function(startTime, endTime) {
+    console.log('playSegment function ran with these arguments:');
+    console.log('startTime: ' + startTime);
+    console.log('endTime ' + endTime);
+    this.startTime = startTime;
+    this.endTime = endTime;
+    // This only plays segments from the first audio file in the collection for now
+    var player = document.querySelector('#textAudio audio');
+    player.currentTime = startTime;
+    player.play();
   }
 };
 

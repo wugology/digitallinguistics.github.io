@@ -30,6 +30,7 @@ page.nodes.processFileButton = document.querySelector('#processFileButton');
 page.nodes.popups = document.querySelector('#popups');
 page.nodes.settingsButton = document.querySelector('#settingsButton');
 page.nodes.switchLayoutButton = document.querySelector('#switchLayoutButton');
+page.nodes.phraseDisplayArea = document.querySelector('#detailsPane .phrases');
 page.nodes.textsList = document.querySelector('#textsList');
 page.nodes.textTitles = document.querySelector('.textsModule .titles');
 
@@ -37,7 +38,7 @@ page.nodes.textTitles = document.querySelector('.textsModule .titles');
 // Renders the entire page, optionally specifying the workview to render
 page.render = function(view) {
   if (app.preferences.currentCorpus === null) {
-    page.popups.manageCorpora.render(true);
+    page.popups.manageCorpora.render();
   }
   
   var navButtons = document.querySelectorAll('#appNav a');
@@ -287,12 +288,12 @@ page.popups.manageCorpora = {
         input.name = 'corpusTextsList';
         input.value = text.id;
         
-        var text = document.createElement('p');
-        text.classList.add('unicode');
-        text.textContent = text.titles[0].titleText;
+        var item = document.createElement('p');
+        item.classList.add('unicode');
+        item.textContent = text.titles[0].titleText;
         
         label.appendChild(input);
-        label.appendChild(text);
+        label.appendChild(item);
         textsList.appendChild(label);
       });
       
@@ -400,6 +401,11 @@ page.nodes.newCorpusForm.addEventListener('submit', function(ev) {
   page.popups.manageCorpora.toggleDisplay();
 });
 
+page.nodes.phraseDisplayArea.addEventListener('click', function(ev) {
+  if (ev.target.tagName === 'IMG') {
+    app.audio.playSegment(Number(ev.target.dataset.startTime), Number(ev.target.dataset.endTime));
+  }
+});
 
 page.nodes.popups.addEventListener('click', function(ev) {
   if (ev.target.className === 'icon') {
