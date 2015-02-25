@@ -15,6 +15,7 @@ page.popups = {};
 page.nodes.addMediaFileButton = document.querySelector('#addMediaFileButton');
 page.nodes.addNewTextButton = document.querySelector('#addNewTextButton');
 page.nodes.boxIcon = document.querySelector('#boxIcon');
+page.nodes.corpusSelector = document.querySelector('#corpusSelector');
 page.nodes.createCorpusButton = document.querySelector('#createCorpusButton');
 page.nodes.desktopCSS = document.querySelector('#desktopCSS');
 page.nodes.fileUpload = document.querySelector('#fileUpload');
@@ -35,8 +36,6 @@ page.render = function(view) {
     page.popups.manageCorpora.render(true);
   }
   
-  page.views.corpusSelector.render();
-  
   var navButtons = document.querySelectorAll('#appNav a');
   for (var i=0; i<navButtons.length; i++) {
     navButtons[i].classList.remove('underline');
@@ -56,7 +55,9 @@ page.render = function(view) {
         navButtons[i].classList.add('underline');
       }
     }
-  }  
+  }
+  
+  page.views.corpusSelector.render();
 };
 
 page.switchLayout = function() {
@@ -73,10 +74,11 @@ page.switchLayout = function() {
 
 // page.views
 page.views.corpusSelector = {
-  el: document.querySelector('#corpusSelector'),
+  el: page.nodes.corpusSelector,
   
-  render: function(callback) {    
-    this.el.innerHTML = '';
+  render: function(callback) {
+    page.nodes.corpusSelector.innerHTML = '';
+    
     var displayCorpora = function(corpora) {
       corpora.sort(function(a, b) { if (a.name > b.name) { return 1; } });
       
@@ -85,8 +87,8 @@ page.views.corpusSelector = {
         option.dataset.id = id;
         option.value = value;
         option.textContent = text;
-        this.el.add(option);
-      }.bind(this);
+        page.nodes.corpusSelector.add(option);
+      }
       
       createOption('placeholder', 'Select a corpus', 'placeholder');
       
@@ -97,13 +99,18 @@ page.views.corpusSelector = {
       createOption('manage', 'Manage corpora', 'manage');
 
       if (app.preferences.currentCorpus !== null) {
-        this.el.value = app.preferences.currentCorpus.id;
+        page.nodes.corpusSelector.value = app.preferences.currentCorpus.id;
+      }
+      
+      // Chome automatically sets the selected index to -1, while Firefox sets it to 0
+      if (page.nodes.corpusSelector.selectedIndex === -1) {
+        page.nodes.corpusSelector.selectedIndex = 0;
       }
       
       if (typeof callback === 'function') {
         callback();
       }
-    }.bind(this);
+    }
     
     idb.getAll('corpora', displayCorpora);
   }
@@ -166,11 +173,16 @@ page.views.texts = {
 page.popups.fileUpload = {
   el: document.querySelector('#fileUploadPopup'),
   
+  hide: function() {
+    page.hide(this.el);
+  },
+  
   render: function(goButtonCallback) {
     page.nodes.processFileButton.addEventListener('click', goButtonCallback);
     page.nodes.processFileButton.addEventListener('click', function() {
       page.nodes.processFileButton.removeEventListener('click', goButtonCallback);
     });
+    page.nodes.processFileButton.addEventListener('click', this.hide.bind(this));
     page.display(this.el);
   },
   
@@ -250,7 +262,7 @@ page.popups.settings = {
 page.nodes.addMediaFileButton.addEventListener('click', function() {
   var addMediaFile = function() {
     var files = page.nodes.fileUpload.files;
-    idb.add(files, 'mediaFiles');
+    idb.add(files, 'media');
   };
   
   page.popups.fileUpload.render(addMediaFile);
@@ -286,7 +298,7 @@ page.nodes.newCorpusForm.addEventListener('submit', function(ev) {
   var corpus = new app.constructors.Corpus(document.querySelector('#corpusNameBox').value, [], [], [], [], page.popups.manageCorpora.selectedTextIDs());
   corpus.setAsCurrent();
   corpus.addToCorpora(page.views.corpusSelector.render);
-  page.views.manageCorpora.toggleDisplay();
+  page.popups.manageCorpora.toggleDisplay();
 });
 
 
@@ -348,7 +360,7 @@ page.views.corpusSelector.el.addEventListener('change', function(ev){
 });
 
 window.addEventListener('load', function() {
-  idb.open('WugbotDev', app.initialize);
+  idb.open(idb.currentDatabase, app.initialize);
 });
 
 window.addEventListener('unload', app.savePreferences);

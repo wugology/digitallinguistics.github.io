@@ -18,13 +18,13 @@ if (!String.prototype.startsWith) {
 
 // Constructors for linguistic/database objects
 app.constructors = {
-  Corpus: function(name, documents, languages, lexicons, mediaFiles, texts) {
+  Corpus: function(name, documents, languages, lexicons, media, texts) {
     // Populates corpus properties
     this.name = name;
     this.documents = documents;
     this.languages = languages;
     this.lexicons = lexicons;
-    this.mediaFiles = mediaFiles;
+    this.media = media;
     this.texts = texts;
     Object.defineProperty(this, 'model', {
       enumerable: true,
@@ -71,9 +71,9 @@ app.constructors = {
     });
   },
 
-  Text: function(mediaFiles, phrases, persons, tags, titles) {
+  Text: function(media, phrases, persons, tags, titles) {
     // Populates text properties
-    this.mediaFiles = mediaFiles;
+    this.media = media;
     this.phrases = phrases;
     this.persons = persons;
     this.tags = tags;
