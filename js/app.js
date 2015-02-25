@@ -217,6 +217,17 @@ app.constructors = {
           }
         });
         
+        this.media.forEach(function(id) {
+          var displayAudio = function(file) {
+            var player = document.createElement('audio');
+            player.controls = true;
+            player.src = URL.createObjectURL(file);
+            document.querySelector('#textAudio').appendChild(player);
+          };
+          
+          idb.get(id, 'media', displayAudio);
+        });
+        
         this.phrases.forEach(function(phrase, i) {
           phrase.display(document.querySelector('.phrases'), i);
         });
