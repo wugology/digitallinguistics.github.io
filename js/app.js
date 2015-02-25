@@ -16,6 +16,14 @@ if (!String.prototype.startsWith) {
   });
 }
 
+app.createOption = function(id, text, value, selector) {
+  var option = document.createElement('option');
+  option.dataset.id = id;
+  option.value = value;
+  option.textContent = text;
+  document.querySelector(selector).add(option);
+}
+
 // Constructors for linguistic/database objects
 app.constructors = {
   Corpus: function(name, documents, languages, lexicons, media, texts) {
@@ -240,10 +248,7 @@ app.initialize = function() {
     app.preferences.currentCorpus.setAsCurrent();
   }
   
-  if (app.preferences.currentText !== null) {
-    app.preferences.currentText = idb.reconstruct(app.preferences.currentText);
-    app.preferences.currentText.setAsCurrent();
-  }
+  app.preferences.currentText = null;
   
   if (app.preferences.currentWorkview !== null) {
     page.render(app.preferences.currentWorkview);

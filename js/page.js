@@ -14,7 +14,9 @@ page.popups = {};
 // page.nodes
 page.nodes.addMediaFileButton = document.querySelector('#addMediaFileButton');
 page.nodes.addNewTextButton = document.querySelector('#addNewTextButton');
+page.nodes.addTextMediaButton = document.querySelector('#addTextMediaButton');
 page.nodes.audioPlayer = document.querySelector('#audioPlayer');
+page.nodes.blankPopup = document.querySelector('#blankPopup');
 page.nodes.boxIcon = document.querySelector('#boxIcon');
 page.nodes.corpusSelector = document.querySelector('#corpusSelector');
 page.nodes.createCorpusButton = document.querySelector('#createCorpusButton');
@@ -84,21 +86,13 @@ page.views.corpusSelector = {
     var displayCorpora = function(corpora) {
       corpora.sort(function(a, b) { if (a.name > b.name) { return 1; } });
       
-      var createOption = function(id, text, value) {
-        var option = document.createElement('option');
-        option.dataset.id = id;
-        option.value = value;
-        option.textContent = text;
-        page.nodes.corpusSelector.add(option);
-      }
-      
-      createOption('placeholder', 'Select a corpus', 'placeholder');
+      app.createOption('placeholder', 'Select a corpus', 'placeholder', '#corpusSelector');
       
       corpora.forEach(function(corpus) {
-        createOption(corpus.id, corpus.name, corpus.id);
+        app.createOption(corpus.id, corpus.name, corpus.id, '#corpusSelector');
       });
       
-      createOption('manage', 'Manage corpora', 'manage');
+      app.createOption('manage', 'Manage corpora', 'manage', '#corpusSelector');
 
       if (app.preferences.currentCorpus !== null) {
         page.nodes.corpusSelector.value = app.preferences.currentCorpus.id;
@@ -162,7 +156,7 @@ page.views.texts = {
   els: document.querySelectorAll('.textsModule'),
   
   displayTextsList: function() {
-    textsList.innerHTML = '';
+    page.nodes.textsList.innerHTML = '';
     
     var display = function(texts, keys) {
       texts.forEach(function(text, i) {
@@ -215,6 +209,24 @@ page.views.texts = {
 };
 
 // page.popups
+// This popup is blank, and takes as its argument a function that renders content inside the popup
+// The function you pass to page.popups.blank() must take a single argument, displayArea,
+// which refers to the div where the content will be displayed
+page.popups.blank = {
+  el: page.nodes.blankPopup,
+  
+  hide: function() {
+    page.hide(this.el);
+  },
+  
+  render: function(renderer) {
+    var displayArea = document.querySelector('#blankPopupDisplayArea')
+    displayArea.innerHTML = '';
+    renderer(displayArea);
+    page.display(page.nodes.blankPopup);
+  }
+};
+
 page.popups.fileUpload = {
   el: document.querySelector('#fileUploadPopup'),
   
@@ -291,6 +303,37 @@ page.popups.manageCorpora = {
   }
 };
 
+page.popups.mediaSelector = {
+  render: function() {
+    page.popups.blank.render(function(displayArea) {
+      var header = document.createElement('h1');
+      header.textContent = 'Select a media file to add to this text';
+      displayArea.appendChild(header);
+      
+      var select = document.createElement('select');
+      select.id = 'mediaSelector';
+      displayArea.appendChild(select);
+      
+      var listMedia = function(mediaFiles, keys) {
+        mediaFiles.forEach(function(mediaFile, i) {
+          app.createOption(keys[i], mediaFile.name, keys[i], '#mediaSelector');
+        });
+      };
+      
+      idb.getAll('media', listMedia);
+      
+      var button = document.createElement('button');
+      button.textContent = 'Done';
+      displayArea.appendChild(button);
+      
+      button.addEventListener('click', function() {
+        app.preferences.currentText.media.push(Number(select.value));
+        page.popups.blank.hide();
+      });
+    });
+  }
+};
+
 page.popups.settings = {
   el: document.querySelector('#settingsPopup'),
   
@@ -319,6 +362,10 @@ page.nodes.addNewTextButton.addEventListener('click', function() {
   text.addToCorpus(app.preferences.currentCorpus.id, page.views.texts.displayTextsList);
   text.setAsCurrent();
   text.display();
+});
+
+page.nodes.addTextMediaButton.addEventListener('click', function() {
+  app.preferences.currentText === null ? page.notify('No text selected.') : page.popups.mediaSelector.render();
 });
 
 page.nodes.appNav.addEventListener('click', function(ev) {  

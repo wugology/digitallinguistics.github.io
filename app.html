@@ -120,6 +120,7 @@
         <header>
           <div class=titles spellcheck=false></div>
         </header>
+        <button id=addTextMediaButton type=button value='Add a media file to this text'>Add a media file to this text</button>
         <ol class=phrases></ol>
       </div>
     </section>
@@ -146,6 +147,11 @@
   </footer>
   
   <div id=popups>
+    <div id=blankPopup class='hideonDesktop hideonMobile'>
+      <img src=img/close.svg alt='close this popup' class='icon'>
+      <div id=blankPopupDisplayArea></div>
+    </div>
+    
     <div id=fileUploadPopup class='hideonDesktop hideonMobile'>
       <img src=img/close.svg alt='close this popup' class='icon'>
       <input id=fileUpload type=file>
@@ -165,7 +171,7 @@
         <button id=createCorpusButton type=submit value='Create corpus'>Create corpus</button>
       </form>
     </div>
-    
+        
     <div id=settingsPopup class='hideonDesktop hideonMobile'>
       <img src=img/close.svg alt='close this popup' class='icon'>
       <h1>Settings</h1>
