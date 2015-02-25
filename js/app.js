@@ -235,7 +235,6 @@ app.constructors = {
             player.addEventListener('timeupdate', function() {
               var player = document.querySelector('#textAudio audio');
               if (player.currentTime >= app.audio.endTime) {
-                console.log('the event listener paused the audio @ ' + app.audio.endTime);
                 player.pause();
                 app.audio.endTime = null;
               }
@@ -294,9 +293,6 @@ app.audio = {
   endTime: null,
   
   playSegment: function(startTime, endTime) {
-    console.log('playSegment function ran with these arguments:');
-    console.log('startTime: ' + startTime);
-    console.log('endTime ' + endTime);
     this.startTime = startTime;
     this.endTime = endTime;
     // This only plays segments from the first audio file in the collection for now
