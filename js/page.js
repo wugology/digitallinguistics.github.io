@@ -187,12 +187,14 @@ page.views.texts = {
   },
   
   importText: function() {
-    var notify = function(text) {
+    var add = function(text) {
       text.addToTexts();
       page.notify('Text successfully imported.');
-      idb.reconstruct(text).setAsCurrent();
+      text.setAsCurrent();
+      text.display();
+      page.views.texts.displayTextsList();
     };
-    tools.convert(notify);
+    tools.convert(add);
   },
   
   render: function() {
@@ -314,7 +316,7 @@ page.nodes.addMediaFileButton.addEventListener('click', function() {
 page.nodes.addNewTextButton.addEventListener('click', function() {
   var text = new app.constructors.Text([], [], [], [], [ { orthography: '', titleText: '' } ]);
   text.addToTexts();
-  text.addToCorpus(app.preferences.currentCorpus.id);
+  text.addToCorpus(app.preferences.currentCorpus.id, page.views.texts.displayTextsList);
   text.setAsCurrent();
   text.display();
 });
@@ -333,7 +335,7 @@ page.nodes.boxIcon.addEventListener('click', function() {
 });
 
 page.nodes.importTextButton.addEventListener('click', function(ev) {
-  page.popups.fileUpload.render();
+  page.popups.fileUpload.render(page.views.texts.importText);
 });
 
 page.nodes.mediaFilesList.addEventListener('click', function(ev) {

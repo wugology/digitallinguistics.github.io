@@ -70,6 +70,56 @@ app.constructors = {
       }
     });
   },
+  
+  Phrase: function(
+    speaker,
+    startTime,
+    endTime,
+    transcriptions,
+    transcripts,
+    translations,
+    tags,
+    words
+  ) {
+    this.speaker = speaker;
+    this.startTime = startTime;
+    this.endTime = endTime;
+    this.transcriptions = transcriptions;
+    this.transcripts = transcripts;
+    this.translations = translations;
+    this.tags = tags;
+    this.words = words;
+    
+    Object.defineProperty(this, 'model', {
+      enumerable: true,
+      value: 'Phrase'
+    });
+    
+    Object.defineProperty(this, 'toJSON', {
+      value: function() {
+        var jsonObj = {};
+        var keys = Object.keys(this);
+        keys.forEach(function(key) {
+          jsonObj[key] = this[key];
+        }.bind(this));
+        return jsonObj;
+      }
+    });
+    
+    Object.defineProperty(this, 'display', {
+      // The index argument will always be one of two things: the index of the phrase in the text's phrases array, or
+      // the index of the phrase in the search results / list of phrases being rendered
+      value: function(wrapper, index) {
+        var template = document.querySelector('#phraseTemplate');
+        template.content.querySelector('.phrase').dataset.index = index;
+        template.content.querySelector('.transcript').textContent = this.transcripts[0].transcriptText;
+        template.content.querySelector('.transcription').textContent = this.transcriptions[0].transcriptionText;
+        template.content.querySelector('.translation').textContent = this.translations[0].translationText;
+        var phrase = template.content.cloneNode(true);
+        wrapper.appendChild(phrase);
+      }
+    });
+  },
 
   Text: function(media, phrases, persons, tags, titles) {
     // Populates text properties
@@ -97,8 +147,8 @@ app.constructors = {
 
     // Adds this text to the specified corpus in the database and returns the ID of that corpus
     Object.defineProperty(this, 'addToCorpus', {
-      value: function(corpusID) {
-        idb.pushUpdate(corpusID, 'texts', this.id, 'corpora');
+      value: function(corpusID, callback) {
+        idb.pushUpdate(corpusID, 'texts', this.id, 'corpora', callback);
       }
     });
 
@@ -112,6 +162,7 @@ app.constructors = {
             value: indexes[0]
           });
         }.bind(this);
+        
         var textID = idb.add([ this.toJSON() ], 'texts', setID);
       }
     });
@@ -123,7 +174,6 @@ app.constructors = {
         
         var addBlurListener = function(node) {
           node.addEventListener('blur', function(ev) {
-            console.log('ran');
             idb.update(app.preferences.currentText.id, 'titles', app.preferences.currentText.titles, 'texts');
             page.views.texts.displayTextsList();
           });
@@ -157,6 +207,10 @@ app.constructors = {
             page.nodes.textTitles.appendChild(node);
             addBlurListener(node);
           }
+        });
+        
+        this.phrases.forEach(function(phrase, i) {
+          phrase.display(document.querySelector('.phrases'), i);
         });
       }
     });

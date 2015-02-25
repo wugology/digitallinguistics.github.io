@@ -171,9 +171,17 @@ var idb = {
   reconstruct: function(object) {
     var newObject = new app.constructors[object.model]();
     var keys = Object.keys(object);
+    
     keys.forEach(function(key) {
       newObject[key] = object[key];
     });
+    
+    if (newObject.model === 'Text') {
+      newObject.phrases.forEach(function(phrase, i) {
+        newObject.phrases[i] = idb.reconstruct(phrase);
+      });
+    }
+    
     return newObject;
   },
   

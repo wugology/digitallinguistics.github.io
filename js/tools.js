@@ -42,10 +42,10 @@ tools.convert = function(callback) {
       };
       lines.slice(1).forEach(labelLine);
       
-      phrases.forEach(function(phrase) {
+      phrases.forEach(function(phrase, i) {
         phrase.startTime = parseFloat(phrase.startTime);
         phrase.endTime = parseFloat(phrase.endTime);
-        phrase.transcripts = [{ transcript: phrase.transcript }];
+        phrase.transcripts = [{ transcriptText: phrase.transcript, orthography: null }];
         phrase.translations = [{ type: 'free', translationText: phrase.translation, orthography: null }];
         phrase.transcriptions = [
           { type: 'phonemic', transcriptionText: phrase.phonemic, orthography: null },
@@ -56,6 +56,17 @@ tools.convert = function(callback) {
         delete phrase.phonemic;
         delete phrase.phonetic;
         delete phrase.duration;
+        
+        phrases[i] = new app.constructors.Phrase(
+          null,
+          phrase.startTime,
+          phrase.endTime,
+          phrase.transcriptions,
+          phrase.transcripts,
+          phrase.translations,
+          [],
+          []
+        );
       });
       
       var text = new app.constructors.Text([], phrases, [], [], [{ orthography: null, titleText: '' }]);
