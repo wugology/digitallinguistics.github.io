@@ -120,6 +120,14 @@ app.constructors = {
       value: function() {
         page.nodes.textTitles = document.querySelector('#detailsPane .titles');
         page.nodes.phrases = document.querySelector('#detailsPane .phrases');
+        
+        var addBlurListener = function(node) {
+          node.addEventListener('blur', function(ev) {
+            console.log('ran');
+            idb.update(app.preferences.currentText.id, 'titles', app.preferences.currentText.titles, 'texts');
+            page.views.texts.displayTextsList();
+          });
+        };
 
         var makePlaceholder = function() {
           var node = document.createElement('input');
@@ -128,6 +136,7 @@ app.constructors = {
           node.classList.add('textTitle');
           node.value = 'Click here to enter a title for this text';
           page.nodes.textTitles.appendChild(node);
+          addBlurListener(node);
         };
         
         page.nodes.textTitles.innerHTML = '';
@@ -146,6 +155,7 @@ app.constructors = {
             node.classList.add('textTitle');
             node.value = title.titleText;
             page.nodes.textTitles.appendChild(node);
+            addBlurListener(node);
           }
         });
       }

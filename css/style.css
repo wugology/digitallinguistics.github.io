@@ -70,7 +70,7 @@ a, a:hover, a:visited, a:active {
 #corpusSelector, #navbar, nav a, nav a:hover, nav a:visited, nav a:active {
   color: white; }
 
-button, #mediaFilesList li, #navbar img, #navbar nav ul li {
+button, #mediaFilesList li, #navbar img, #navbar nav ul li, #textsList li {
   cursor: pointer; }
 
 a, abbr, acronym, b, bdo, br, big, cite, code, del, dfn, em, i, img, input, ins, kbd, map, object, p, q, samp, select, s, small, span, strike, strong, sub, sup, textarea, tt, var {
@@ -122,6 +122,9 @@ a, a:hover, a:visited, a:active {
   background: transparent;
   text-decoration: none: }
 
+audio {
+  height: 30px; }
+
 blockquote, q {
   quotes: none; }
 
@@ -144,6 +147,10 @@ input[type=text] {
 
 input[type=text]:focus {
   border-color: black; }
+
+.mainSection {
+  overflow: auto;
+  resize: horizontal; }
   
 table {
   border-spacing: 0;

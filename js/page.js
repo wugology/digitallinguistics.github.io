@@ -161,6 +161,25 @@ page.views.media = {
 page.views.texts = {
   els: document.querySelectorAll('.textsModule'),
   
+  displayTextsList: function() {
+    textsList.innerHTML = '';
+    
+    var display = function(texts, keys) {
+      texts.forEach(function(text, i) {
+        var listItem = document.createElement('li');
+        listItem.dataset.id = keys[i];
+        if (text.titles[0].titleText === '') {
+          listItem.textContent = '[no title]';
+        } else {
+          listItem.textContent = text.titles[0].titleText;
+        }
+        textsList.appendChild(listItem);
+      });
+    };
+    
+    idb.getAll('texts', display);
+  },
+  
   hide: function() {
     for (var i=0; i<this.els.length; i++) {
       page.hide(this.els[i]);
@@ -176,7 +195,11 @@ page.views.texts = {
     tools.convert(notify);
   },
   
-  render: function() {    
+  render: function() {
+    var textsList = page.nodes.textsList;
+    
+    this.displayTextsList();
+    
     for (var i=0; i<this.els.length; i++) {
       page.display(this.els[i]);
     }
@@ -344,6 +367,17 @@ page.nodes.switchLayoutButton.addEventListener('click', function() {
   page.popups.settings.toggleDisplay();
 });
 
+page.nodes.textsList.addEventListener('click', function(ev) {
+  if (ev.target.tagName === 'LI') {
+    var displayText = function(text) {
+      text.setAsCurrent();
+      text.display();
+    };
+    
+    idb.get(Number(ev.target.dataset.id), 'texts', displayText);
+  }
+});
+
 page.nodes.textTitles.addEventListener('input', function(ev) {
   if (ev.target.classList.contains('textTitle')) {
     var title = app.preferences.currentText.titles[parseInt(ev.target.dataset.titleIndex)];
@@ -351,16 +385,16 @@ page.nodes.textTitles.addEventListener('input', function(ev) {
   }
 });
 
-page.nodes.textTitles.addEventListener('blur', function(ev) {
-  idb.update(app.preferences.currentText.id, 'titles', app.preferences.currentText.titles, 'texts');
-});
-
 page.nodes.textTitles.addEventListener('keyup', function(ev) {
   if (ev.keyCode === 13) {
     idb.update(app.preferences.currentText.id, 'titles', app.preferences.currentText.titles, 'texts');
+    ev.target.blur();
+    page.views.texts.displayTextsList();
   }
   if (ev.keyCode === 27) {
     ev.target.value = app.preferences.currentText.titles[parseInt(ev.target.dataset.titleIndex)].titleText;
+    ev.target.blur();
+    page.views.texts.displayTextsList();
   }
 });
 
