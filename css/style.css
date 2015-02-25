@@ -176,7 +176,7 @@ thead {
 tr {
   display: table-row; }
 
-option, .unicode {
+option, #textsList li, .unicode {
   font-family: 'Gentium Plus';
   font-size: 120%; }
 
