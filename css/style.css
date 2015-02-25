@@ -34,7 +34,7 @@ article, aside, audio, canvas, details, embed, figure, figcaption, footer, heade
   vertical-align: baseline; }
 
 /* Styling by CSS rule(s) (alphabetical by CSS rule) */
-button, label, header {
+button, label, header, .phrase {
   -webkit-align-items: center;
   align-items: center; }
 
@@ -61,8 +61,11 @@ nav > ul > li > a, #navIcons {
 nav > ul > li a:hover, .underline {
   border-bottom: 1px solid white; }
 
-button, input[type=text], .titles > input {
-  border-radius: 5px; }
+button, input[type=text], .phrase, .titles > input {
+  border-radius: 10px; }
+
+.phrase:hover, .titles > input:focus {
+  box-shadow: 0px 0px 3px 0px #3F93F9; }
 
 a, a:hover, a:visited, a:active {
   color: #3F93F9; }
@@ -70,13 +73,13 @@ a, a:hover, a:visited, a:active {
 #corpusSelector, #navbar, nav a, nav a:hover, nav a:visited, nav a:active {
   color: white; }
 
-button, #mediaFilesList li, #navbar img, #navbar nav ul li, #textsList li {
+button, #mediaFilesList li, #navbar img, #navbar nav ul li, .play, #textsList li {
   cursor: pointer; }
 
 a, abbr, acronym, b, bdo, br, big, cite, code, del, dfn, em, i, img, input, ins, kbd, map, object, p, q, samp, select, s, small, span, strike, strong, sub, sup, textarea, tt, var {
   display: inline-block; }
 
-input[type=date], label, #navIcons {
+input[type=date], label, #navIcons, .phrase {
   -webkit-flex-direction: row;
   flex-direction: row; }
 
@@ -151,6 +154,10 @@ input[type=text]:focus {
 .mainSection {
   overflow: auto;
   resize: horizontal; }
+
+.phrase {
+  background-color: rgba(63, 147, 249, 0.10);
+  margin: 0.5rem 0; }
   
 table {
   border-spacing: 0;
@@ -165,9 +172,6 @@ td, th {
 	
 thead {
   display: table-header-group; }
-	
-.titles > input:focus {
-  box-shadow: 0px 0px 3px 0px #3F93F9; }
 
 tr {
   display: table-row; }
