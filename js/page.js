@@ -325,9 +325,10 @@ page.popups.mediaSelector = {
       var button = document.createElement('button');
       button.textContent = 'Done';
       displayArea.appendChild(button);
-      
+            
       button.addEventListener('click', function() {
         app.preferences.currentText.media.push(Number(select.value));
+        idb.pushUpdate(app.preferences.currentText.id, 'media', Number(select.value), 'texts');
         page.popups.blank.hide();
       });
     });
