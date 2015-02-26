@@ -202,6 +202,23 @@ page.views.texts = {
     }
   },
   
+  nextPhrase: function() {
+    app.preferences.currentPhrase += 1;
+    this.selectPhrase(app.preferences.currentPhrase);
+  },
+  
+  selectPhrase: function(index) {
+    var phraseList = document.querySelector('#detailsPane .phrases');
+    var phrases = phraseList.children;
+    for (var i=0; i<phrases.length; i++) {
+      phrases[i].classList.remove('selectedPhrase');
+    }
+    
+    var phrase = document.querySelector('#detailsPane .phrases #phrase_' + index);
+    phrase.classList.add('selectedPhrase');
+    phrase.focus();
+  },
+  
   toggleDisplay: function() {
     for (var i=0; i<this.els.length; i++) {
       page.toggleDisplay(this.els[i]);
@@ -404,6 +421,18 @@ page.nodes.newCorpusForm.addEventListener('submit', function(ev) {
 page.nodes.phraseDisplayArea.addEventListener('click', function(ev) {
   if (ev.target.tagName === 'IMG') {
     app.audio.playSegment(Number(ev.target.dataset.startTime), Number(ev.target.dataset.endTime));
+    app.preferences.currentPhrase = Number(ev.target.parentNode.dataset.index);
+    page.views.texts.selectPhrase(app.preferences.currentPhrase);
+  }
+  
+  if (ev.target.tagName === 'LI') {
+    app.preferences.currentPhrase = Number(ev.target.dataset.index);
+    page.views.texts.selectPhrase(app.preferences.currentPhrase);
+  }
+  
+  if (ev.target.tagName === 'P') {
+    app.preferences.currentPhrase = Number(ev.target.parentNode.parentNode.dataset.index);
+    page.views.texts.selectPhrase(app.preferences.currentPhrase);
   }
 });
 

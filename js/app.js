@@ -119,6 +119,7 @@ app.constructors = {
       // the index of the phrase in the search results / list of phrases being rendered
       value: function(wrapper, index) {
         var template = document.querySelector('#phraseTemplate');
+        template.content.querySelector('.phrase').id = 'phrase_' + index;
         template.content.querySelector('.phrase').dataset.index = index;
         template.content.querySelector('.play').dataset.startTime = this.startTime;
         template.content.querySelector('.play').dataset.endTime = this.endTime;
@@ -187,6 +188,7 @@ app.constructors = {
       value: function() {
         page.nodes.textTitles = document.querySelector('#detailsPane .titles');
         page.nodes.phrases = document.querySelector('#detailsPane .phrases');
+        page.nodes.phrases.innerHTML = '';
         
         var addBlurListener = function(node) {
           node.addEventListener('blur', function(ev) {
@@ -263,6 +265,7 @@ app.initialize = function() {
   if (localStorage.wugbotPreferences === 'undefined' || localStorage.wugbotPreferences === undefined) {
     app.preferences = {
       currentCorpus: null,
+      currentPhrase: null,
       currentText: null,
       currentWorkview: 'texts'
     };
@@ -276,6 +279,7 @@ app.initialize = function() {
   }
   
   app.preferences.currentText = null;
+  app.preferences.currentPhrase = null;
   
   if (app.preferences.currentWorkview !== null) {
     page.render(app.preferences.currentWorkview);
@@ -286,6 +290,20 @@ app.initialize = function() {
   } else {
     page.render();
   }
+
+  window.addEventListener('keydown', function(ev) {    
+    if (app.preferences.currentWorkview === 'texts' && app.preferences.currentPhrase !== null) {
+      if (ev.keyCode === 13) {
+        ev.preventDefault();
+        page.views.texts.nextPhrase();
+      }
+      
+      if (ev.keyCode === 9) {
+        ev.preventDefault();
+        app.preferences.currentText.phrases[app.preferences.currentPhrase].play();
+      }
+    }
+  });
 };
 
 app.audio = {

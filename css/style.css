@@ -64,7 +64,7 @@ nav > ul > li a:hover, .underline {
 button, input[type=text], .phrase, .titles > input {
   border-radius: 10px; }
 
-.phrase:hover, .titles > input:focus {
+.phrase:hover, .titles > input:focus, .selectedPhrase {
   box-shadow: 0px 0px 3px 0px #3F93F9; }
 
 a, a:hover, a:visited, a:active {
