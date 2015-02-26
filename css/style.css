@@ -158,7 +158,13 @@ input[type=text]:focus {
 .phrase {
   background-color: rgba(63, 147, 249, 0.10);
   margin: 0.5rem 0; }
-  
+
+.play {
+  max-height: 30px;
+  max-width: 30px;
+  min-height: 30px;
+  min-width: 30px; }
+
 table {
   border-spacing: 0;
   display: table; }

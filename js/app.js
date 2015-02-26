@@ -87,6 +87,7 @@ app.constructors = {
     transcripts,
     translations,
     tags,
+    notes,
     words
   ) {
     this.speaker = speaker;
@@ -96,6 +97,7 @@ app.constructors = {
     this.transcripts = transcripts;
     this.translations = translations;
     this.tags = tags;
+    this.notes = notes;
     this.words = words;
     
     Object.defineProperty(this, 'model', {
@@ -124,8 +126,10 @@ app.constructors = {
         template.content.querySelector('.play').dataset.startTime = this.startTime;
         template.content.querySelector('.play').dataset.endTime = this.endTime;
         template.content.querySelector('.transcript').textContent = this.transcripts[0].transcriptText;
-        template.content.querySelector('.transcription').textContent = this.transcriptions[0].transcriptionText;
+        template.content.querySelector('.phonemicTranscription').textContent = this.transcriptions[0].transcriptionText;
+        template.content.querySelector('.phoneticTranscription').textContent = this.transcriptions[1].transcriptionText;
         template.content.querySelector('.translation').textContent = this.translations[0].translationText;
+        template.content.querySelector('.notes').textContent = this.notes;
         var phrase = template.content.cloneNode(true);
         wrapper.appendChild(phrase);
       }
@@ -172,15 +176,20 @@ app.constructors = {
     // Adds a JSON-only version of this text to the database and sets the ID for this text based on its database index
     // This function is NOT run automatically - remember to run it when you create a new text
     Object.defineProperty(this, 'addToTexts', {
-      value: function() {
+      value: function(callback) {
         var setID = function(indexes) {
           Object.defineProperty(this, 'id', {
             enumerable: true,
             value: indexes[0]
           });
+
+          if (typeof callback === 'function') {
+            callback();
+          }
         }.bind(this);
         
         var textID = idb.add([ this.toJSON() ], 'texts', setID);
+        
       }
     });
 
@@ -192,8 +201,7 @@ app.constructors = {
         
         var addBlurListener = function(node) {
           node.addEventListener('blur', function(ev) {
-            idb.update(app.preferences.currentText.id, 'titles', app.preferences.currentText.titles, 'texts');
-            page.views.texts.displayTextsList();
+            idb.update(app.preferences.currentText.id, 'titles', app.preferences.currentText.titles, 'texts', page.views.texts.displayTextsList);
           });
         };
 
@@ -233,7 +241,9 @@ app.constructors = {
             player.controls = true;
             player.dataset.id = id;
             player.src = URL.createObjectURL(file);
-            document.querySelector('#textAudio').appendChild(player);
+            var audioArea = document.querySelector('#textAudio')
+            audioArea.innerHTML = '';
+            audioArea.appendChild(player);
             player.addEventListener('timeupdate', function() {
               var player = document.querySelector('#textAudio audio');
               if (player.currentTime >= app.audio.endTime) {

@@ -65,6 +65,7 @@ tools.convert = function(callback) {
           phrase.transcripts,
           phrase.translations,
           [],
+          phrase.notes,
           []
         );
       });

@@ -183,11 +183,10 @@ page.views.texts = {
   
   importText: function() {
     var add = function(text) {
-      text.addToTexts();
+      text.addToTexts(page.views.texts.displayTextsList);
       page.notify('Text successfully imported.');
       text.setAsCurrent();
       text.display();
-      page.views.texts.displayTextsList();
     };
     tools.convert(add);
   },
@@ -474,7 +473,6 @@ page.nodes.textTitles.addEventListener('keyup', function(ev) {
   if (ev.keyCode === 13) {
     idb.update(app.preferences.currentText.id, 'titles', app.preferences.currentText.titles, 'texts');
     ev.target.blur();
-    page.views.texts.displayTextsList();
   }
   if (ev.keyCode === 27) {
     ev.target.value = app.preferences.currentText.titles[parseInt(ev.target.dataset.titleIndex)].titleText;
