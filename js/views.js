@@ -140,15 +140,50 @@ views.popups = {
   el: document.querySelector('#popups')
 };
 
+// The file upload popup for users to select files
+// Generally try to use this rather than embedding a file upload in the HTML
+// The function .promptFile() renders the fileUpload popup,
+//   and takes a callback function that runs when the 'Go' button is clicked
+//   - The callback function is added as an event listener to the 'Go' button,
+//       the the event listener is removed after the function runs
 views.popups.fileUpload = {
   el: document.querySelector('#fileUploadPopup'),
+  goButton: document.querySelector('#fileUploadButton'),
+  input: document.querySelector('#fileUpload'),
+  
+  close: function() {
+    views.page.hide(this.el);
+  },
   
   promptFile: function(goButtonCallback) {
     views.page.display(this.el);
-    console.log('adding an event listener to the go button');
-    console.log("validating the file to make sure it's .wav or .mp3, then calling the goButtonCallback on it");
+
+    var goButton = function() {
+      if (typeof goButtonCallback === 'function') {
+        if (views.popups.fileUpload.file === undefined) {
+          alert('Please select a file.');
+        } else {
+          goButtonCallback(views.popups.fileUpload.file);
+          views.popups.fileUpload.goButton.removeEventListener('click', goButton);
+          views.popups.fileUpload.close();
+        }
+      }
+      
+    };
+    
+    views.popups.fileUpload.goButton.addEventListener('click', goButton);
   }
 };
+
+Object.defineProperty(views.popups.fileUpload, 'file', {
+  get: function() {
+    if (views.popups.fileUpload.input.files.length === 1) {
+      return views.popups.fileUpload.input.files[0];
+    }
+  },
+  
+  enumerable: true
+});
 
 views.popups.manageCorpora = {
   el: document.querySelector('#manageCorporaPopup'),

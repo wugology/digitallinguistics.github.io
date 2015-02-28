@@ -55,11 +55,12 @@ Corpus.create = function(name) {
   return corpus;
 };
 
-var Media = function() {};
-
-Media.add = function(file) {
-  console.log('Adding a media file to the database.');
+var Media = {
+  add: function(file) {
+    idb.add([file], 'media', views.workviews.media.render);
+  }
 };
+
 
 var Phrase = function() {};
 
