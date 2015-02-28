@@ -1,21 +1,6 @@
 // app.js
 var app = {};
 
-// Polyfill for the .startsWith() string method ( String.prototype.startsWith() )
-// See MDN for more details:
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith?redirectlocale=en-US&redirectslug=JavaScript%2FReference%2FGlobal_Objects%2FString%2FstartsWith
-if (!String.prototype.startsWith) {
-  Object.defineProperty(String.prototype, 'startsWith', {
-    enumerable: false,
-    configurable: false,
-    writable: false,
-    value: function(searchString, position) {
-      position = position || 0;
-      return this.lastIndexOf(searchString, position) === position;
-    }
-  });
-}
-
 app.createOption = function(id, text, value, selector) {
   var option = document.createElement('option');
   option.dataset.id = id;
