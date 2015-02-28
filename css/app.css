@@ -1,8 +1,10 @@
-/* Styling by CSS rule (alphabetical by CSS rule) */
+/* CSS specific to the app */
+
+/* Styling by CSS rule(s) (alphabetical by CSS rule) */
 footer, section {
   border: 1px solid lightgray; }
 
-/* Styling by class or element (alphabetical by class/element) */
+/* Styling by classes or element type (alphabetical by class/element) */
 img[src='img/close.svg'] {
   cursor: pointer;
   position: absolute;
@@ -13,6 +15,33 @@ img[src='img/close.svg'] {
 .mainSection {
   width: 33%; }
 
-/* Styling by DOM element (organized by DOM structure) */
+#popups > div {
+  padding: 1rem; }
+
+/* Styling by DOM elements (organized by DOM structure) */
+#corpusSelector {
+  background-color: #3F93F9;
+  border: 1px solid white;
+  color: white;
+  padding: 0 0.5rem;
+  text-align: center; }
+
 #corpusSelector:hover {
   box-shadow: 0 0 5px 0 white; }
+
+/* Temporary or placeholder styling */
+.documentsModule,
+.lexiconModule,
+.orthographiesModule,
+.tagsModule {
+  border: 1px solid black;
+  padding: 0.25rem; }
+
+.documentsModule ul,
+.lexiconModule ul,
+.mediaModule ul,
+.orthographiesModule ul,
+.tagsModule ul,
+#detailsPane .textsModule ul {
+  display: inline-block;
+  margin: 0.5rem; }

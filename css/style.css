@@ -1,3 +1,4 @@
+/* General stylesheet for the site */
 /* CSS reset */
 /* General elements */
 html, body, div, span, applet, object, iframe,
@@ -33,27 +34,29 @@ article, aside, audio, canvas, details, embed, figure, figcaption, footer, heade
   text-decoration: none;
   vertical-align: baseline; }
 
+a, abbr, acronym, b, bdo, br, big, cite, code, del, dfn, em, i, img, input, ins, kbd, map, object, p, q, samp, select, s, small, span, strike, strong, sub, sup, textarea, tt, var {
+  display: inline-block; }
+
 /* Styling by CSS rule(s) (alphabetical by CSS rule) */
-button, label, header, .phrase {
+button, label, header {
   -webkit-align-items: center;
   align-items: center; }
 
-input[type=checkbox], input[type=radio], label p + input {
+label[type=checkbox], input[type=radio], label p + input {
   -webkit-align-self: center;
-  align-self: center;
-  margin: 0 0.25rem; }
+  align-self: center; }
 
-#corpusSelector, #navbar {
+#navbar {
   background-color: #3F93F9; }
 
 body, button {
   background-color: white; }
 
+input[type=text] {
+  border: 1px solid #CCC; }
+
 button {
   border: 1px solid black; }
-
-#corpusSelector {
-  border: 1px solid white; }
 
 nav > ul > li > a, #navIcons {
   border-bottom: 1px solid #3F93F9; }
@@ -61,25 +64,31 @@ nav > ul > li > a, #navIcons {
 nav > ul > li a:hover, .underline {
   border-bottom: 1px solid white; }
 
-button, input[type=text], .phrase, .titles > input {
+input[type=text]:focus {
+  border-color: black; }
+
+button, input[type=text] {
   border-radius: 10px; }
 
-.phrase:hover, .titles > input:focus, .selectedPhrase {
-  box-shadow: 0px 0px 3px 0px #3F93F9; }
+input[type=text]:focus {
+  box-shadow: 0px 0px 3px 0px #CCC; }
+
+button:hover {
+  box-shadow: 0px 0px 3px 0px gray; }
+
+button:active {
+  box-shadow: 0px 0px 3px 0px black inset; }
 
 a, a:hover, a:visited, a:active {
   color: #3F93F9; }
 
-#corpusSelector, #navbar, nav a, nav a:hover, nav a:visited, nav a:active {
+#navbar, nav a, nav a:hover, nav a:visited, nav a:active {
   color: white; }
 
-button, #mediaFilesList li, #navbar img, #navbar nav ul li, .play, #textsList li {
+button, .icon, #navbar nav li {
   cursor: pointer; }
 
-a, abbr, acronym, b, bdo, br, big, cite, code, del, dfn, em, i, img, input, ins, kbd, map, object, p, q, samp, select, s, small, span, strike, strong, sub, sup, textarea, tt, var {
-  display: inline-block; }
-
-input[type=date], label, #navIcons, .phrase {
+input[type=date], label, #navIcons {
   -webkit-flex-direction: row;
   flex-direction: row; }
 
@@ -93,31 +102,34 @@ h1, h2 {
 legend, strong {
   font-weight: 400; }
 
+label[type=checkbox], input[type=radio], label p + input {
+  margin: 0 0.25rem; }
+
 button {
   margin: 0.25rem 0; }
 
-#corpusSelector, footer div, input[type=text] {
+footer div, input[type=text] {
   padding: 0 0.5rem; }
 
 button, nav > ul > li {
   padding: 0.5rem; }
-  
+
 form > * {
   padding: 0.5rem 0; }
 
 ul.bulletedList li {
   padding: 0.25rem 0; }
 
-.mainSection, #popups > div {
+.mainSection {
   padding: 1rem; }
 
 h1, h2, main p+p {
   padding-top: 0.5rem; }
 
-#corpusSelector, h1, th, .titles > input {
+h1, th {
   text-align: center; }
 
-#navbar, .titles {
+#navbar {
   width: 100%; }
 
 /* Styling by classes or element type (alphabetical by class/element) */
@@ -135,35 +147,9 @@ blockquote:before, blockquote:after, q:before, q:after {
   content: '';
   content: none; }
 
-button:hover {
-  box-shadow: 0px 0px 3px 0px gray; }
-
-button:active {
-  box-shadow: 0px 0px 3px 0px black inset; }
-
 code {
   font-family: 'DejaVu Sans Mono';
   white-space: pre; }
-
-input[type=text] {
-  border: 1px solid #CCC; }
-
-input[type=text]:focus {
-  border-color: black; }
-
-.mainSection {
-  overflow: auto;
-  resize: horizontal; }
-
-.phrase {
-  background-color: rgba(63, 147, 249, 0.10);
-  margin: 0.5rem 0; }
-
-.play {
-  max-height: 30px;
-  max-width: 30px;
-  min-height: 30px;
-  min-width: 30px; }
 
 table {
   border-spacing: 0;
@@ -182,7 +168,7 @@ thead {
 tr {
   display: table-row; }
 
-option, #textsList li, .unicode {
+.unicode {
   font-family: 'Gentium Plus';
   font-size: 120%; }
 
@@ -208,20 +194,3 @@ footer {
 
 footer img {
   margin: 0 0.5rem; }
-
-/* Temporary or placeholder styling */
-.documentsModule,
-.lexiconModule,
-.orthographiesModule,
-.tagsModule {
-  border: 1px solid black;
-  padding: 0.25rem; }
-
-.documentsModule ul,
-.lexiconModule ul,
-.mediaModule ul,
-.orthographiesModule ul,
-.tagsModule ul,
-#detailsPane .textsModule ul {
-  display: inline-block;
-  margin: 0.5rem; }

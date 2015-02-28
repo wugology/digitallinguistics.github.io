@@ -1,23 +1,20 @@
-// Contains the API for IndexedDB (abbreviated idb)
+// The API for IndexedDB
+// These functions will be used primarily (perhaps exclusively) by the Models
 
 var idb = {
-  // Adds an array of objects to the specified object store (table). Example usage:
-  // idb.add( [ text1, text2 ], 'texts'); <-- This adds the objects 'text1' and 'text2' to the 'texts' table
-  // Takes an optional callback function which fires after the data has been added to the database and has the array of indexes of the added items as its object
-  // Returns an array of indexes of the added objects
+  // Adds an array of objects to the specified table (object store)
+  // Takes an optional callback function that will be applied to the index of each newly-stored object
   add: function(array, table, successCallback) {
-    var transaction = idb.database.transaction(table, 'readwrite');
-    var objectStore = transaction.objectStore(table);
-    var indexes = [];
+    var objectStore = idb.database.transaction(table, 'readwrite').objectStore(table);
     
     var add = function(item) {
       var request = objectStore.add(item);
-      request.onsuccess = function(ev) {
-        indexes.push(request.result);
+      request.onsuccess = function() {
         if (typeof successCallback === 'function') {
-          successCallback(indexes);
+          idb.results = request.result;
+          successCallback(request.result);
         }
-      }      
+      };
     };
     
     if (table === 'media') {
@@ -32,11 +29,9 @@ var idb = {
         add(item);
       });
     }
-    
-    return indexes;
   },
   
-  // Creates a new Wugbot database and its objectStores (tables)
+  // Creates the database
   createDatabase: function() {
     var defaults = { keyPath: 'id', autoIncrement: true };
     var objectStores = [
@@ -53,10 +48,11 @@ var idb = {
     idb.database.createObjectStore('media', { autoIncrement: true });
   },
   
+  // Change this value to work with different databases
   currentDatabase: 'WugbotDev',
-
-  // Deletes the entire database
-  deleteDatabase: function(dbname, successCallback) {    
+  
+  // Deletes the specified database
+  deleteDatabase: function(dbname, successCallback) {
     if (arguments.length === 0 || (arguments.length === 1 && typeof arguments[0] === 'function')) {
       console.log('Please specify a database to delete.');
     }
@@ -71,38 +67,37 @@ var idb = {
         }
       };
       
-      delete localStorage.wugbotPreferences; // TODO
-      delete app.preferences;                // TODO
+      delete localStorage.wugbotPreferences;
+      delete app.preferences;
     }
   },
   
-  // Takes a single ID for an object and returns that object from the database
-  // Accepts a callback function which takes the returned object as its argument
-  // Sets the idb.result argument equal to the result of database request
+  // Gets an object from the specified table in the database, using the index provided
+  // Requires a callback function that has the returned object as its argument
   get: function(id, table, successCallback) {
     var request = idb.database.transaction(table).objectStore(table).get(id);
     request.onsuccess = function(ev) {
-      if (table !== 'media') {
-        idb.result = idb.reconstruct(request.result);
-        if (typeof successCallback === 'function') {
+      if (typeof successCallback === 'function') {
+        if (table !== 'media') {
+          idb.results = request.result;
           successCallback(idb.reconstruct(request.result));
-        }
-      } else {
-        idb.result = request.result;
-        if (typeof successCallback === 'function') {
+        } else {
           successCallback(request.result);
         }
       }
     };
   },
   
-  // Returns an array of every object in the specified object store (table)
+  // Retrieves an array of each object in te specified object store
   // Mozilla actually has a .getAll() function, but Chrome does not
-  // Also takes an optional callback function which takes two arguments: the array of retrieved objects, and their keys in the database
-  // Sets the idb.result argument equal to the result of database request
   getAll: function(table, successCallback) {
     var records = [];
     var keys = [];
+    idb.results = {
+      records: [],
+      keys: []
+    };
+    
     var objectStore = idb.database.transaction(table).objectStore(table);
     objectStore.openCursor().onsuccess = function(ev) {
       var cursor = ev.target.result;
@@ -110,55 +105,53 @@ var idb = {
         if (table !== 'media') {
           records.push(idb.reconstruct(cursor.value));
           keys.push(cursor.key);
+          idb.results.records.push(idb.reconstruct(cursor.value));
+          idb.results.keys.push(cursor.key);
         } else {
           records.push(cursor.value);
           keys.push(cursor.key);
+          idb.results.records.push(cursor.value);
+          idb.results.keys.push(cursor.key);
         }
         cursor.continue();
       } else {
-        idb.result = records;
         if (typeof successCallback === 'function') {
           successCallback(records, keys);
         }
       }
     };
-    return records;
   },
   
-  // Opens the Wugbot database (and creates it if it doesn't yet exist)
-  // Also takes an optional callback function which will fire once the database is opened
+  // Takes an optional callback function that has the database object as its argument
   open: function(dbname, successCallback) {
     var request = window.indexedDB.open(dbname, 1);
-
+    
     request.onsuccess = function() {
-      idb.database = this.result;
-      idb.database.onversionchange = function(ev) {
-        ev.target.close();
+      idb.database = request.result;
+      idb.onversionchange = function(ev) {
+        ev.target.close;
       };
+      
       if (typeof successCallback === 'function') {
         successCallback(idb.database);
       }
     };
-        
+    
     request.onupgradeneeded = function() {
-      idb.database = this.result;
+      idb.database = request.result;
       idb.createDatabase();
     };
   },
   
-  // Pushes an object onto the specified property of the specified record
-  // Takes an optional callback function, which has the ID of the updated record as its argument
   pushUpdate: function(id, property, objectToPush, table, successCallback) {
-    var objectStore = idb.database.transaction(table, 'readwrite').objectStore(table);
-    var request = objectStore.get(id);
-    
-    request.onsuccess = function(ev) {
-      var data = request.result;
+    var objectStore = idb.database.transaction(table, 'readwrite').objectStore(table).get(id).onsuccess = function(ev) {
+      var data = ev.target.result;
       data[property].push(objectToPush);
       
       var requestUpdate = objectStore.put(data);
       
       requestUpdate.onsuccess = function(ev) {
+        idb.results = ev.target.result;
         if (typeof successCallback === 'function') {
           successCallback(ev.target.result);
         }
@@ -169,7 +162,7 @@ var idb = {
   // Re-adds the methods that were removed from the object when it was added to the database
   // The 'model' argument is the name of the constructor which builds the object (e.g. 'Text', with initial Caps)
   reconstruct: function(object) {
-    var newObject = new app.constructors[object.model]();
+    var newObject = new window[object.model]();
     var keys = Object.keys(object);
     
     keys.forEach(function(key) {
@@ -184,14 +177,16 @@ var idb = {
     
     return newObject;
   },
-  
+
   // Deletes the specified array of indexes from the specified object store
   // Takes an optional callback function that fires once the object is deleted
   remove: function(array, table, successCallback) {
+    idb.results = [];
     var objectStore = idb.database.transaction(table, 'readwrite').objectStore(table);
     array.forEach(function(index) {
       var request = objectStore.delete(index);
       request.onsuccess = function() {
+        idb.results.push(request.result);
         if (typeof successCallback === 'function') {
           successCallback(request.result);
         }
@@ -199,7 +194,8 @@ var idb = {
     });
   },
   
-  result: null,
+  // Stores the results of each database transaction. Mostly used for development and debugging.
+  results: null,
   
   // Updates a single property within a single record (object)
   // Takes an optional callback function, which has the ID of the updated record as its argument
@@ -211,13 +207,14 @@ var idb = {
       var requestUpdate = objectStore.put(data);
       
       requestUpdate.onsuccess = function(ev) {
+        idb.results = ev.target.result;
         if (typeof successCallback === 'function') {
           successCallback(ev.target.result);
         }
       };
     };
   },
-  
+
   // Saves the data from the database, deletes it, and repopulates it
   upgradeDatabase: function() {
     var counter = 0;

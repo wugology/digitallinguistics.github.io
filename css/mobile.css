@@ -1,19 +1,30 @@
-/* Mobile CSS */
+/* Mobile-only CSS, for both the entire site and the app specifically */
+/* Anything with a class of .hideonMobile will not display unless this class is removed */
+
 /* Styling by CSS rule (alphabetical by CSS rule) */
-#corpusSelector, #navbar {
+nav {
+  -webkit-align-items: flex-start;
+  align-items: flex-start; }
+
+#navbar {
   -webkit-flex-direction: row;
   flex-direction: row; }
 
-#corpusSelector, footer div p {
+ul.bulletedList li {
+  margin-left: 2.5rem; }
+
+footer label {
+  margin-top: 0.5rem; }
+
+footer div p {
   text-align: center; }
 
 #banner, #corpusSelector, .mainSection, #navs {
   width: 100%; }
 
 /* Styling by class or element (alphabetical by class/element) */
-nav {
-  -webkit-align-items: flex-start;
-  align-items: flex-start; }
+body {
+  font-size: 2.5rem; }
 
 .hideonMobile {
   display: none; }
@@ -26,13 +37,7 @@ nav {
   border-bottom: 1px solid black;
   position: relative; }
 
-ul.bulletedList li {
-  margin-left: 2.5rem; }
-
 /* Styling by DOM structure (organized by DOM structure) */
-body {
-  font-size: 2.5rem; }
-
 body > header {
   -webkit-order: 1;
   order: 1; }
@@ -85,6 +90,3 @@ main #overviewPane {
 main #detailsPane {
   -webkit-order: 3;
   order: 3; }
-
-footer label {
-  margin-top: 0.5rem; }

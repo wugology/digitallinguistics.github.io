@@ -41,9 +41,9 @@
         </nav>
       </div>
       <select id=corpusSelector class=unicode></select>
-      <img id=settingsButton src=img/settings.svg alt='open settings' class=icon>
-    </div>
+      <img id=settingsIcon src=img/settings.svg alt='open settings' class=icon>
   </header>
+  
   <main>
     <section id=overviewPane class=mainSection>
       <header>
@@ -64,7 +64,7 @@
       </div>
       
       <div class='mediaModule module hideonDesktop hideonMobile'>
-        <button id=addMediaFileButton type=button value='Add media file'>Add media file</button>
+        <button id=addMediaButton type=button value='Add media file'>Add media file</button>
         <ul id=mediaFilesList></ul>
       </div>
       
@@ -118,7 +118,7 @@
       
       <div class='textsModule module hideonDesktop hideonMobile'>
         <header>
-          <div class=titles spellcheck=false></div>
+          <ul class=titles spellcheck=false></ul>
         </header>
         
         <div id=textAudio></div>
@@ -139,6 +139,7 @@
       <dl id=entries></dl>
     </section>
   </main>
+  
   <footer>
     <div>
       <p>&copy;2015 Wugbot</p>
@@ -151,17 +152,14 @@
   </footer>
   
   <div id=popups>
-    <div id=blankPopup class='hideonDesktop hideonMobile'>
-      <img src=img/close.svg alt='close this popup' class='icon'>
-      <div id=blankPopupDisplayArea></div>
-    </div>
+    <div id=blankPopup class='hideonDesktop hideonMobile'></div>
     
     <div id=fileUploadPopup class='hideonDesktop hideonMobile'>
       <img src=img/close.svg alt='close this popup' class='icon'>
       <input id=fileUpload type=file>
-      <button id=processFileButton type=button value='Go'>Go</button>
+      <button id=fileUploadButton type=button value='Go'>Go</button>
     </div>
-    
+     
     <div id=manageCorporaPopup class='hideonDesktop hideonMobile'>
       <img src=img/close.svg alt='close this popup' class='icon'>
       <h1>Create a new corpus</h1>
@@ -170,12 +168,10 @@
           <p>Name for this corpus:</p>
           <input id=corpusNameBox type=text class=unicode>
         </label>
-        <p>Would you like to add any preexisting resources to this corpus?</p>
-        <fieldset id=corpusTextsSelector></fieldset>
         <button id=createCorpusButton type=submit value='Create corpus'>Create corpus</button>
       </form>
     </div>
-        
+    
     <div id=settingsPopup class='hideonDesktop hideonMobile'>
       <img src=img/close.svg alt='close this popup' class='icon'>
       <h1>Settings</h1>
@@ -183,32 +179,13 @@
     </div>
   </div>
   
-  <div id=templates>
-    <template id=phraseTemplate>
-      <li class=phrase>
-        <img class='play icon' src=img/play.svg>
-        <div>
-          <p class='transcript unicode'></p>
-          <p class='phonemicTranscription unicode'></p>
-          <p class='phoneticTranscription unicode'></p>
-          <p class='translation unicode'></p>
-          <p class='notes unicode'></p>
-        </div>
-      </li>
-    </template>
-
-    <template id=wordTemplate>
-      <dt class=token></dt>
-      <dd class=gloss></dd>
-    </template>
-  </div>
+  <div id=templates></div>
   
   <script src=js/script.js></script>
   <script src=js/database.js></script>
-  <script src=js/common.js></script>
-  <script src=js/base.js></script>
+  <script src=js/data.js></script>
+  <script src=js/views.js></script>
   <script src=js/app.js></script>
-  <script src=js/page.js></script>
-  <script src=js/tools.js></script>
+  <script src=js/events.js></script>
 </body>
 </html>
