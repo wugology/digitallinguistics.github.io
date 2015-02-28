@@ -185,16 +185,15 @@ var idb = {
     return newObject;
   },
   
-  // Deletes the specified array of objects from the specified object store
+  // Deletes the specified array of indexes from the specified object store
   // Takes an optional callback function that fires once the object is deleted
-  remove: function(objects, table, successCallback) {
-    var transaction = idb.database.transaction(table, 'readwrite');
-    var objectStore = transaction.objectStore(table);
-    objects.forEach(function(object) {
-      var request = objectStore.delete(object.id);
-      request.onsuccess = function(ev) {
+  remove: function(array, table, successCallback) {
+    var objectStore = idb.database.transaction(table, 'readwrite').objectStore(table);
+    array.forEach(function(index) {
+      var request = objectStore.delete(index);
+      request.onsuccess = function() {
         if (typeof successCallback === 'function') {
-          successCallback(ev.target.result);
+          successCallback(request.result);
         }
       };
     });
@@ -205,11 +204,8 @@ var idb = {
   // Updates a single property within a single record (object)
   // Takes an optional callback function, which has the ID of the updated record as its argument
   update: function(id, property, newValue, table, successCallback) {
-    var objectStore = idb.database.transaction(table, 'readwrite').objectStore(table);
-    var request = objectStore.get(id);
-    
-    request.onsuccess = function(ev) {
-      var data = request.result;
+    var objectStore = idb.database.transaction(table, 'readwrite').objectStore(table).get(id).onsuccess = function(ev) {
+      var data = ev.target.result;
       data[property] = newValue;
       
       var requestUpdate = objectStore.put(data);
