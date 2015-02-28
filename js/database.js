@@ -71,8 +71,8 @@ var idb = {
         }
       };
       
-      delete localStorage.wugbotPreferences;
-      delete app.preferences;
+      delete localStorage.wugbotPreferences; // TODO
+      delete app.preferences;                // TODO
     }
   },
   
