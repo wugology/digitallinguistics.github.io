@@ -66,17 +66,17 @@ views.page.corpusSelector = {
   },
   
   // Accepts an optional value to set the dropdown to once it has finished rendering
-  render: function(value, callback) {
-    var render = function(results) {
+  render: function(value) {
+    var render = function(corpora, keys) {
       views.page.corpusSelector.el.innerHTML = '';
       
       var selectOption = views.page.createElement('option', { textContent: 'Select a corpus' });
       selectOption.dataset.id = 'select';
       views.page.corpusSelector.el.add(selectOption);
       
-      results.forEach(function(result, i) {
-        var option = views.page.createElement('option', { textContent: result.value.name });
-        option.dataset.id = result.index;
+      corpora.forEach(function(corpus, i) {
+        var option = views.page.createElement('option', { textContent: corpus.name });
+        option.dataset.id = keys[i];
         views.page.corpusSelector.el.add(option);
       });
       
@@ -90,10 +90,6 @@ views.page.corpusSelector = {
         views.page.corpusSelector.set(value);
       } else {
         views.page.corpusSelector.el.selectedIndex = 0;
-      }
-      
-      if (typeof callback === 'function') {
-        callback();
       }
     };
     
@@ -120,10 +116,8 @@ views.page.render = function() {
     
     idb.getAll('corpora', countCorpora);
   } else {
-    var setWorkview = function() {
-      views.workviews.setWorkview(app.preferences.currentWorkview);
-    };
-    views.page.corpusSelector.render(app.preferences.currentCorpus.name, setWorkview);
+    views.page.corpusSelector.render(app.preferences.currentCorpus.name);
+    views.workviews.setWorkview(app.preferences.currentWorkview);
   }
 };
 
@@ -235,31 +229,11 @@ views.workviews = {
   
   // The media workview
   media: {
-    audioPlayer: document.querySelector('#audioPlayer'),
     detailsPane: document.querySelector('#detailsPane .mediaModule'),
     overviewPane: document.querySelector('#overviewPane .mediaModule'),
-    list: document.querySelector('#mediaList'),
     
     render: function() {
-      var display = function(results) {
-        views.workviews.media.list.innerHTML = '';
-        
-        results.forEach(function(result) {
-          var item = views.page.createElement('li', {
-            textContent: result.value.name
-          });
-          
-          item.dataset.id = result.index;
-          views.workviews.media.list.appendChild(item);
-        });
-      };
-      
-      idb.getAll('media', display);
-    },
-    
-    setAudio: function(file) {
-      var url = URL.createObjectURL(file);
-      views.workviews.media.audioPlayer.src = url;
+      console.log('media rendering!');
     }
   },
   
