@@ -92,6 +92,7 @@ var Phrase = function(data) {
   Object.defineProperty(this, 'display', {
     value: function(index, wrapper) {
       var li = views.page.createElement('li', { id: 'phrase_' + index });
+      li.classList.add('phrase');
       li.dataset.startTime = this.startTime;
       li.dataset.endTime = this.endTime;
       
