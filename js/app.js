@@ -39,6 +39,8 @@ app.mediaEvent = function(ev) {
   }
   
   if (ev.target.tagName === 'LI') {
+    views.page.display(views.workviews.media.detailsPane);
+    
     var setAudio = function(file) {
       var url = URL.createObjectURL(file);
       views.workviews.media.audioPlayer.src = url;
@@ -96,13 +98,21 @@ app.savePreferences = function() {
 };
 
 app.textsEvent = function(ev) {
-  if (ev.target.id === 'addNewTextButton') {
+  if (ev.target.tagName === 'LI') {
+    var render = function(text) {
+      text.setAsCurrent();
+      text.display();
+    };
+    
+    idb.get(Number(ev.target.dataset.id), 'texts', render);
+  } else if (ev.target.id === 'addNewTextButton') {
     console.log('Adding a new text!');
   } else if (ev.target.id === 'importTextButton') {
     var convert = function() {
       var add = function(text) {
-        text.addToDatabase();
+        text.addToDatabase(views.workviews.texts.render);
       };
+      
       tools.convert(add);
     };
     views.popups.fileUpload.promptFile(convert);

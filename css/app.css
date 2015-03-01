@@ -4,12 +4,15 @@
 footer, section {
   border: 1px solid lightgray; }
   
-img[src='img/close.svg'], #mediaList li {
+img[src='img/close.svg'], #mediaList li, #textsList li {
   cursor: pointer; }
 
 /* Styling by classes or element type (alphabetical by class/element) */
 .audioPlayer {
   align-self: center; }
+  
+fieldset {
+  border: 1px solid black; }
   
 img[src='img/close.svg'] {
   position: absolute;
@@ -22,6 +25,11 @@ img[src='img/close.svg'] {
 
 #popups > div {
   padding: 1rem; }
+
+.titles input {
+  font-family: 'Gentium Plus';
+  font-size: 150%;
+  text-align: center; }
 
 /* Styling by DOM elements (organized by DOM structure) */
 #corpusSelector {

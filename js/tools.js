@@ -69,7 +69,10 @@ tools.convert = function(callback) {
         });
       });
       
-      var text = new Text({ phrases: phrases });
+      var text = new Text({
+        titles: [{ orthography: null, titleText: '[no title]' }],
+        phrases: phrases
+      });
       
       if (typeof callback === 'function') {
         callback(text);

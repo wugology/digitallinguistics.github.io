@@ -273,7 +273,7 @@ views.workviews = {
     }
     
     // Displays any element that has the class associated with the specified workview
-    var modules = document.querySelectorAll('.module');
+    var modules = document.querySelectorAll('#overviewPane .module');
     for (var i=0; i<modules.length; i++) {
       if (modules[i].classList.contains(workview + 'Module')) {
         views.page.display(modules[i]);
@@ -281,6 +281,12 @@ views.workviews = {
         views.page.hide(modules[i]);
       }
     }
+    
+    var details = document.querySelectorAll('#detailsPane .module');
+    for (var i=0; i<details.length; i++) {
+      views.page.hide(details[i]);
+    }
+    
     views.workviews[workview].render();
     
     app.preferences.currentWorkview = workview;
@@ -293,10 +299,38 @@ views.workviews = {
   },
   
   texts: {
+    detailsPane: document.querySelector('#detailsPane .textsModule'),
     overviewPane: document.querySelector('#overviewPane .textsModule'),
+    phraseWrapper: document.querySelector('#detailsPane .phrases'),
+    textsList: document.querySelector('#textsList'),
+    titleWrapper: document.querySelector('#detailsPane .titles'),
+    
+    displayText: function(text) {
+      views.workviews.texts.phraseWrapper.innerHTML = '';
+      views.workviews.texts.titleWrapper.innerHTML = '';
+      
+      text.titles.forEach(function(title) {
+        var input = views.page.createElement('input', { value: title.titleText });
+        views.workviews.texts.titleWrapper.appendChild(input);
+      });
+      
+      text.phrases.forEach(function(phrase, i) {
+        phrase.display(i, views.workviews.texts.phraseWrapper);
+      });
+      
+      views.page.display(views.workviews.texts.detailsPane);
+    },
     
     render: function() {
-      console.log('texts rendering!');
+      var list = function(results) {
+        views.workviews.texts.textsList.innerHTML = '';
+        results.forEach(function(result) {
+          var li = views.page.createElement('li', { textContent: result.value.titles[0].titleText });
+          li.dataset.id = result.value.id;
+          views.workviews.texts.textsList.appendChild(li);
+        });
+      };
+      idb.getAll('texts', list);
     }
   }
 };

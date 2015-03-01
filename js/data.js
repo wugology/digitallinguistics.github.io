@@ -89,6 +89,34 @@ var Phrase = function(data) {
     value: 'Phrase'
   });
   
+  Object.defineProperty(this, 'display', {
+    value: function(index, wrapper) {
+      var li = views.page.createElement('li', { id: 'phrase_' + index });
+      li.dataset.startTime = this.startTime;
+      li.dataset.endTime = this.endTime;
+      
+      var renderCollection = function(collection, itemName) { // (plural, singular)
+        this[collection].forEach(function(item) {
+          var line = views.page.createElement('p', { textContent: item[itemName + 'Text'] });
+          line.classList.add(itemName);
+          line.classList.add('unicode');
+          li.appendChild(line);
+        }.bind(this));
+      }.bind(this);
+      
+      renderCollection('transcripts', 'transcript');
+      renderCollection('transcriptions', 'transcription');
+      renderCollection('translations', 'translation');
+
+      var notes = views.page.createElement('p', { textContent: this.notes });
+      notes.classList.add('notes');
+      notes.classList.add('unicode');
+      li.appendChild(notes);
+      
+      wrapper.appendChild(li);
+    }
+  });
+  
   return this;
 };
 
@@ -122,6 +150,18 @@ var Text = function(data, callback) {
       }.bind(this);
       
       idb.add([this], 'texts', setID);
+    }
+  });
+  
+  Object.defineProperty(this, 'display', {
+    value: function() {
+      views.workviews.texts.displayText(this);
+    }
+  });
+  
+  Object.defineProperty(this, 'setAsCurrent', {
+    value: function() {
+      app.preferences.currentText = this;
     }
   });
   
