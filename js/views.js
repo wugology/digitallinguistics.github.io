@@ -50,7 +50,8 @@ views.page.corpusSelector = {
   
   // Handles the selection of an item from the corpusSelector dropdown
   menuEvent: function (ev) {
-    var id = ev.target.options[ev.target.selectedIndex].dataset.id
+    var id = ev.target.options[ev.target.selectedIndex].dataset.id;
+    
     switch (id) {
       case 'select':
         break;
@@ -67,16 +68,16 @@ views.page.corpusSelector = {
   
   // Accepts an optional value to set the dropdown to once it has finished rendering
   render: function(value) {
-    var render = function(corpora, keys) {
+    var render = function(results) {
       views.page.corpusSelector.el.innerHTML = '';
       
       var selectOption = views.page.createElement('option', { textContent: 'Select a corpus' });
       selectOption.dataset.id = 'select';
       views.page.corpusSelector.el.add(selectOption);
       
-      corpora.forEach(function(corpus, i) {
-        var option = views.page.createElement('option', { textContent: corpus.name });
-        option.dataset.id = keys[i];
+      results.forEach(function(result, i) {
+        var option = views.page.createElement('option', { textContent: result.value.name });
+        option.dataset.id = result.key;
         views.page.corpusSelector.el.add(option);
       });
       

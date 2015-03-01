@@ -37,14 +37,14 @@ var Corpus = function(data, callback) {
     });
     
     if (typeof callback === 'function') {
-      callback();
+      callback(id);
     }
-  };
+  }.bind(this);
   
-  idb.add([this], 'texts', setID);
+  idb.add([this], 'corpora', setID);
   
   return this;
-};
+}.bind(this);
 
 var Media = {
   add: function(file) {
@@ -75,6 +75,12 @@ var Phrase = function(data) {
   return this;
 };
 
+// A text should be initialized with the following properties, even if they are null or an empty array:
+// - media files (array)
+// - persons (array)
+// - tags (array)
+// - titles (array, with at least one title object)
+// - phrases (array)
 var Text = function(data, callback) {
   for (key in data) {
     this[key] = data[key];
@@ -86,7 +92,7 @@ var Text = function(data, callback) {
   });
 
   var setID = function(id) {
-    Object.defineProperty(corpus, 'id', {
+    Object.defineProperty(this, 'id', {
       enumerable: true,
       value: id
     });
@@ -94,11 +100,11 @@ var Text = function(data, callback) {
     if (typeof callback === 'function') {
       callback();
     }
-  };
+  }.bind(this);
   
   idb.add([this], 'texts', setID);
   
   return this;
-};
+}.bind(this);
 
 var Word = function() {};
