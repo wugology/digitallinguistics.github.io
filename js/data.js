@@ -26,7 +26,7 @@ if (!String.prototype.startsWith) {
 // - Lexicons (array)
 // - Media (array)
 // - Texts (array)
-var Corpus = function(data, callback) {
+var Corpus = function(data) {
   for (key in data) {
     this[key] = data[key];
   }
@@ -42,20 +42,24 @@ var Corpus = function(data, callback) {
       views.page.corpusSelector.set(this.name);
     }
   });
-
-  var setID = function(id) {
-    Object.defineProperty(this, 'id', {
-      enumerable: true,
-      value: id
-    });
-    
-    if (typeof callback === 'function') {
-      callback(id);
+  
+  Object.defineProperty(this, 'addToDatabase', {
+    value: function(callback) {
+      var setID = function(id) {
+        Object.defineProperty(this, 'id', {
+          enumerable: true,
+          value: id
+        });
+        
+        if (typeof callback === 'function') {
+          callback(id);
+        }
+      }.bind(this);
+      
+      idb.add([this], 'corpora', setID);    
     }
-  }.bind(this);
-  
-  idb.add([this], 'corpora', setID);
-  
+  });
+
   return this;
 }.bind(this);
 
@@ -103,19 +107,23 @@ var Text = function(data, callback) {
     enumerable: true,
     value: 'Text'
   });
-
-  var setID = function(id) {
-    Object.defineProperty(this, 'id', {
-      enumerable: true,
-      value: id
-    });
-    
-    if (typeof callback === 'function') {
-      callback(this);
-    }
-  }.bind(this);
   
-  idb.add([this], 'texts', setID);
+  Object.defineProperty(this, 'addToDatabase', {
+    value: function(callback) {
+      var setID = function(id) {
+        Object.defineProperty(this, 'id', {
+          enumerable: true,
+          value: id
+        });
+        
+        if (typeof callback === 'function') {
+          callback(this);
+        }
+      }.bind(this);
+      
+      idb.add([this], 'texts', setID);
+    }
+  });
   
   return this;
 }.bind(this);

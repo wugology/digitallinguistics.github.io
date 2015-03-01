@@ -62,7 +62,8 @@ app.popupEvent = function(ev) {
     var setCorpus = function() {
       views.page.corpusSelector.render(corpusName);
     };
-    var corpus = new Corpus({ name: corpusName }, setCorpus)
+    var corpus = new Corpus({ name: corpusName }, setCorpus);
+    corpus.addToDatabase(setCorpus);
     corpus.setAsCurrent();
     views.popups.manageCorpora.close();
   }
@@ -98,6 +99,12 @@ app.textsEvent = function(ev) {
   if (ev.target.id === 'addNewTextButton') {
     console.log('Adding a new text!');
   } else if (ev.target.id === 'importTextButton') {
-    views.popups.fileUpload.promptFile(tools.convert);
+    var convert = function() {
+      var add = function(text) {
+        text.addToDatabase();
+      };
+      tools.convert(add);
+    };
+    views.popups.fileUpload.promptFile(convert);
   }
 };
