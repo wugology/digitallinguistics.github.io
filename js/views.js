@@ -230,11 +230,25 @@ views.workviews = {
   
   // The media workview
   media: {
+    audioPlayer: document.querySelector('#detailsPane .audioPlayer'),
     detailsPane: document.querySelector('#detailsPane .mediaModule'),
+    mediaList: document.querySelector('#mediaList'),
     overviewPane: document.querySelector('#overviewPane .mediaModule'),
     
     render: function() {
-      console.log('media rendering!');
+      var list = function(results) {
+        views.workviews.media.mediaList.innerHTML = '';
+        
+        results.forEach(function(result) {
+          var li = views.page.createElement('li', {
+            textContent: result.value.name
+          });
+          li.dataset.id = result.key;
+          views.workviews.media.mediaList.appendChild(li);
+        });
+      };
+      
+      idb.getAll('media', list);
     }
   },
   

@@ -132,13 +132,17 @@ var idb = {
           };
           
           results.push(result);
+          
+          cursor.continue();
         } else {
           var result = {
             key: cursor.key,
             value: cursor.value
           };
           
-          results.push(result);          
+          results.push(result);
+          
+          cursor.continue();
         }
       }   
     };

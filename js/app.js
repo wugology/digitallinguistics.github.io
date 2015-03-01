@@ -37,6 +37,15 @@ app.mediaEvent = function(ev) {
   if (ev.target.id === 'addMediaButton') {
     views.popups.fileUpload.promptFile(Media.add);
   }
+  
+  if (ev.target.tagName === 'LI') {
+    var setAudio = function(file) {
+      var url = URL.createObjectURL(file);
+      views.workviews.media.audioPlayer.src = url;
+    };
+    
+    idb.get(Number(ev.target.dataset.id), 'media', setAudio);
+  }
 };
 
 // Handles popup events and calls the appropriate method and object functions for that event
