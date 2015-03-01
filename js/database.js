@@ -5,14 +5,21 @@ var idb = {
   // Adds an array of objects to the specified table (object store)
   // Takes an optional callback function that will be applied to the index of each newly-stored object
   add: function(array, table, successCallback) {
-    var objectStore = idb.database.transaction(table, 'readwrite').objectStore(table);
+    var transaction = idb.database.transaction(table, 'readwrite');
+    
+    transaction.oncomplete = function() {
+      if (typeof successCallback === 'function') {
+        successCallback(idb.results);
+      }
+    };
+    
+    var objectStore = transaction.objectStore(table);
     
     var add = function(item) {
       var request = objectStore.add(item);
       request.onsuccess = function() {
         if (typeof successCallback === 'function') {
           idb.results = request.result;
-          successCallback(request.result);
         }
       };
     };
@@ -75,14 +82,22 @@ var idb = {
   // Gets an object from the specified table in the database, using the index provided
   // Requires a callback function that has the returned object as its argument
   get: function(id, table, successCallback) {
-    var request = idb.database.transaction(table).objectStore(table).get(id);
-    request.onsuccess = function(ev) {
+    var transaction = idb.database.transaction(table);
+    
+    transaction.oncomplete = function() {
+      if (typeof successCallback === 'function') {
+        successCallback(idb.results);
+      }
+    };
+    
+    var request = transaction.objectStore(table).get(id);
+    
+    request.onsuccess = function() {
       if (typeof successCallback === 'function') {
         if (table !== 'media') {
-          idb.results = request.result;
-          successCallback(idb.reconstruct(request.result));
+          idb.results = idb.reconstruct(request.result);
         } else {
-          successCallback(request.result);
+          idb.results = request.result;
         }
       }
     };
@@ -91,33 +106,33 @@ var idb = {
   // Retrieves an array of each object in te specified object store
   // Mozilla actually has a .getAll() function, but Chrome does not
   getAll: function(table, successCallback) {
-    var records = [];
-    var keys = [];
-    idb.results = {
-      records: [],
-      keys: []
+    idb.results = [];
+    var transaction = idb.database.transaction(table);
+    
+    transaction.oncomplete = function() {
+      if (typeof successCallback === 'function') {
+        successCallback(idb.results);
+      }
     };
     
-    var objectStore = idb.database.transaction(table).objectStore(table);
+    var objectStore = transaction.objectStore(table);
+
     objectStore.openCursor().onsuccess = function(ev) {
+      var results = [];
       var cursor = ev.target.result;
       if (cursor) {
         if (table !== 'media') {
-          records.push(idb.reconstruct(cursor.value));
-          keys.push(cursor.key);
-          idb.results.records.push(idb.reconstruct(cursor.value));
-          idb.results.keys.push(cursor.key);
+          var result = {};
+          result.index = cursor.key;
+          result.value = idb.reconstruct(cursor.value);
+          idb.results.push(result);
         } else {
-          records.push(cursor.value);
-          keys.push(cursor.key);
-          idb.results.records.push(cursor.value);
-          idb.results.keys.push(cursor.key);
+          var result = {};
+          result.index = cursor.key;
+          result.value = cursor.value;
+          idb.results.push(result);
         }
         cursor.continue();
-      } else {
-        if (typeof successCallback === 'function') {
-          successCallback(records, keys);
-        }
       }
     };
   },
@@ -144,7 +159,15 @@ var idb = {
   },
   
   pushUpdate: function(id, property, objectToPush, table, successCallback) {
-    var objectStore = idb.database.transaction(table, 'readwrite').objectStore(table).get(id).onsuccess = function(ev) {
+    var transaction = idb.database.transaction(table, 'readwrite');
+    
+    transaction.oncomplete = function() {
+      if (typeof successCallback === 'function') {
+        successCallback(idb.results);
+      }
+    };
+    
+    transaction.objectStore(table).get(id).onsuccess = function(ev) {
       var data = ev.target.result;
       data[property].push(objectToPush);
       
@@ -152,9 +175,6 @@ var idb = {
       
       requestUpdate.onsuccess = function(ev) {
         idb.results = ev.target.result;
-        if (typeof successCallback === 'function') {
-          successCallback(ev.target.result);
-        }
       };
     };
   },
@@ -182,14 +202,21 @@ var idb = {
   // Takes an optional callback function that fires once the object is deleted
   remove: function(array, table, successCallback) {
     idb.results = [];
-    var objectStore = idb.database.transaction(table, 'readwrite').objectStore(table);
+    
+    var transaction = idb.database.transaction(table, 'readwrite');
+    
+    transaction.oncomplete = function() {
+      if (typeof successCallback === 'function') {
+        successCallback();
+      }
+    };
+    
+    var objectStore = transaction.objectStore(table);
+    
     array.forEach(function(index) {
       var request = objectStore.delete(index);
       request.onsuccess = function() {
         idb.results.push(request.result);
-        if (typeof successCallback === 'function') {
-          successCallback(request.result);
-        }
       };
     });
   },
@@ -200,7 +227,15 @@ var idb = {
   // Updates a single property within a single record (object)
   // Takes an optional callback function, which has the ID of the updated record as its argument
   update: function(id, property, newValue, table, successCallback) {
-    var objectStore = idb.database.transaction(table, 'readwrite').objectStore(table).get(id).onsuccess = function(ev) {
+    var transaction = idb.database.transaction(table, 'readwrite');
+    
+    transaction.oncomplete = function() {
+      if (typeof successCallback === 'function') {
+        successCallback(ev.target.result);
+      }
+    };
+    
+    var objectStore = transaction.objectStore(table).get(id).onsuccess = function(ev) {
       var data = ev.target.result;
       data[property] = newValue;
       
@@ -208,9 +243,6 @@ var idb = {
       
       requestUpdate.onsuccess = function(ev) {
         idb.results = ev.target.result;
-        if (typeof successCallback === 'function') {
-          successCallback(ev.target.result);
-        }
       };
     };
   },
