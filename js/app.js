@@ -98,12 +98,6 @@ app.textsEvent = function(ev) {
   if (ev.target.id === 'addNewTextButton') {
     console.log('Adding a new text!');
   } else if (ev.target.id === 'importTextButton') {
-    var convert = function() {
-      tools.convert(function(data) {
-        var text = Text.create();
-        
-      });
-    };
-    views.popups.fileUpload.promptFile(convert);
+    views.popups.fileUpload.promptFile(tools.convert);
   }
 };

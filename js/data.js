@@ -3,6 +3,19 @@
 
 //Dependencies: database.js
 
+// Polyfill for the String.prototype.startsWith() function
+if (!String.prototype.startsWith) {
+  Object.defineProperty(String.prototype, 'startsWith', {
+    enumerable: false,
+    configurable: false,
+    writable: false,
+    value: function(searchString, position) {
+      position = position || 0;
+      return this.lastIndexOf(searchString, position) === position;
+    }
+  });
+}
+
 
 // The Corpus model
 // A corpus should be initialized with all of the following properties, even if they consist of simply an empty array
@@ -98,7 +111,7 @@ var Text = function(data, callback) {
     });
     
     if (typeof callback === 'function') {
-      callback();
+      callback(this);
     }
   }.bind(this);
   

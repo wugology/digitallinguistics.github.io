@@ -69,8 +69,7 @@ tools.convert = function(callback) {
         });
       });
       
-      var text = Text.create();
-      text.phrases = phrases;
+      var text = new Text({ phrases: phrases });
       
       if (typeof callback === 'function') {
         callback(text);

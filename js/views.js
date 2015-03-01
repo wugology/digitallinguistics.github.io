@@ -114,7 +114,7 @@ views.page.render = function() {
         views.page.notify('Select a corpus to work on using the dropdown at the top of the page.');
       }
     };
-    
+
     idb.getAll('corpora', countCorpora);
   } else {
     views.page.corpusSelector.render(app.preferences.currentCorpus.name);
