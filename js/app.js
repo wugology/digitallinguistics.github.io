@@ -58,13 +58,12 @@ app.popupEvent = function(ev) {
   } else if (ev.type === 'submit') {
     ev.preventDefault();
     var corpusName = views.popups.manageCorpora.input.value;
-    var corpus = Corpus.create(corpusName);
-    corpus.setAsCurrent();
-    views.popups.manageCorpora.close();
     var setCorpus = function() {
       views.page.corpusSelector.render(corpusName);
     };
-    window.setTimeout(setCorpus, 1000);
+    var corpus = new Corpus({ name: corpusName }, setCorpus)
+    corpus.setAsCurrent();
+    views.popups.manageCorpora.close();
   }
 };
 
@@ -92,4 +91,18 @@ app.preferences = {
 
 app.savePreferences = function() {
   localStorage.wugbotPreferences = JSON.stringify(app.preferences, null, 2);
+};
+
+app.textsEvent = function(ev) {
+  if (ev.target.id === 'addNewTextButton') {
+    console.log('Adding a new text!');
+  } else if (ev.target.id === 'importTextButton') {
+    var convert = function() {
+      tools.convert(function(data) {
+        var text = Text.create();
+        
+      });
+    };
+    views.popups.fileUpload.promptFile(convert);
+  }
 };

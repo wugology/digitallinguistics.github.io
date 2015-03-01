@@ -13,7 +13,7 @@
 // - Lexicons (array)
 // - Media (array)
 // - Texts (array)
-var Corpus = function(data) {
+var Corpus = function(data, callback) {
   for (key in data) {
     this[key] = data[key];
   }
@@ -29,30 +29,21 @@ var Corpus = function(data) {
       views.page.corpusSelector.set(this.name);
     }
   });
-};
 
-// For now, the Corpus.create() method takes just one function, the name of the new corpus
-// Takes an optional callback that has the new corpus as its argument
-Corpus.create = function(name) {
-  var corpus = new Corpus({
-    name: name,
-    documents: [],
-    languages: [],
-    lexicons: [],
-    media: [],
-    texts: []
-  });
-  
   var setID = function(id) {
-    Object.defineProperty(corpus, 'id', {
+    Object.defineProperty(this, 'id', {
       enumerable: true,
       value: id
     });
+    
+    if (typeof callback === 'function') {
+      callback();
+    }
   };
   
-  idb.add([corpus], 'corpora', setID);
+  idb.add([this], 'texts', setID);
   
-  return corpus;
+  return this;
 };
 
 var Media = {
@@ -61,9 +52,53 @@ var Media = {
   }
 };
 
+// A Phrase should be initialized with the following properties, even if they are null or empty arrays
+// - speaker (string)
+// - startTime (number in ss.ms)
+// - endTime (number in ss.ms)
+// - transcriptions (array)
+// - transcripts (array)
+// - translations (array)
+// - tags (array)
+// - words (array)
+// - notes (string)
+var Phrase = function(data) {
+  for (key in data) {
+    this[key] = data[key];
+  }
+  
+  Object.defineProperty(this, 'model', {
+    enumerable: true,
+    value: 'Phrase'
+  });
+  
+  return this;
+};
 
-var Phrase = function() {};
+var Text = function(data, callback) {
+  for (key in data) {
+    this[key] = data[key];
+  }
+  
+  Object.defineProperty(this, 'model', {
+    enumerable: true,
+    value: 'Text'
+  });
 
-var Text = function() {};
+  var setID = function(id) {
+    Object.defineProperty(corpus, 'id', {
+      enumerable: true,
+      value: id
+    });
+    
+    if (typeof callback === 'function') {
+      callback();
+    }
+  };
+  
+  idb.add([this], 'texts', setID);
+  
+  return this;
+};
 
 var Word = function() {};

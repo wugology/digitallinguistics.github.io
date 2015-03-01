@@ -113,8 +113,8 @@ views.page.render = function() {
         views.popups.manageCorpora.render();
       } else {
         views.page.corpusSelector.render();
-        views.page.notify('Select a corpus to work on using the dropdown at the top of the page.');
         views.page.corpusSelector.el.selectedIndex = 0;
+        views.page.notify('Select a corpus to work on using the dropdown at the top of the page.');
       }
     };
     
@@ -304,6 +304,8 @@ views.workviews = {
   },
   
   texts: {
+    overviewPane: document.querySelector('#overviewPane .textsModule'),
+    
     render: function() {
       console.log('texts rendering!');
     }
