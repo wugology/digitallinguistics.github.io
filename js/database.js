@@ -180,10 +180,12 @@ var idb = {
       }
     };
     
-    var objectStore = transaction.objectStore(table).get(id).onsuccess = function(ev) {
+    var objectStore = transaction.objectStore(table);
+    
+    objectStore.get(id).onsuccess = function(ev) {
       var data = ev.target.result;
       data[property].push(objectToPush);
-      
+            
       var requestUpdate = objectStore.put(data);
       
       requestUpdate.onsuccess = function(ev) {

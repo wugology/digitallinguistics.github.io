@@ -30,6 +30,8 @@ views.workviews.media.overviewPane.addEventListener('click', app.mediaEvent);
 
 views.workviews.texts.overviewPane.addEventListener('click', app.textsEvent);
 
+views.workviews.texts.detailsPane.addEventListener('click', app.textsEvent);
+
 window.addEventListener('load', app.initialize);
 
 window.addEventListener('unload', app.savePreferences);

@@ -141,6 +141,26 @@ views.popups = {
   el: document.querySelector('#popups')
 };
 
+// A blank popup that can be automatically populated with the .render() function
+views.popups.blank = {
+  el: document.querySelector('#blankPopup'),
+  displayArea: document.querySelector('#blankPopup .displayArea'),
+  
+  close: function() {
+    views.page.hide(this.el);
+  },
+  
+  render: function(render) {
+    this.displayArea.innerHTML = '';
+    
+    if (typeof render === 'function') {
+      render(this.displayArea);
+    }
+    
+    views.page.display(this.el);
+  }
+};
+
 // The file upload popup for users to select files
 // Generally try to use this rather than embedding a file upload in the HTML
 // The function .promptFile() renders the fileUpload popup,
@@ -319,6 +339,29 @@ views.workviews = {
       });
       
       views.page.display(views.workviews.texts.detailsPane);
+    },
+    
+    promptMedia: function(displayArea) {
+      var h1 = views.page.createElement('h1', { textContent: 'Select a media file to add' });
+      displayArea.appendChild(h1);
+      
+      var select = views.page.createElement('select', { id: 'selectMedia' });
+      displayArea.appendChild(select);
+      
+      var list = function(results) {
+        results.forEach(function(result) {
+          var option = views.page.createElement('option', { textContent: result.value.name, value: result.key });
+          option.dataset.id = result.key;
+          select.appendChild(option);
+        });
+      };
+      
+      var button = views.page.createElement('button', { id: 'addMediaToTextButton', textContent: 'Add selected media' });
+      displayArea.appendChild(button);
+      
+      button.addEventListener('click', app.textsEvent);
+      
+      idb.getAll('media', list);
     },
     
     render: function() {

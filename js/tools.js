@@ -70,8 +70,11 @@ tools.convert = function(callback) {
       });
       
       var text = new Text({
-        titles: [{ orthography: null, titleText: '[no title]' }],
-        phrases: phrases
+        media: [],
+        persons: [],
+        phrases: phrases,
+        tags: [],
+        titles: [{ orthography: null, titleText: '[no title]' }]
       });
       
       if (typeof callback === 'function') {
