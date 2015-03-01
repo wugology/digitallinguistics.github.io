@@ -319,6 +319,7 @@ views.workviews = {
   },
   
   texts: {
+    mediaArea: document.querySelector('#detailsPane .textsModule .media'),
     detailsPane: document.querySelector('#detailsPane .textsModule'),
     overviewPane: document.querySelector('#overviewPane .textsModule'),
     phraseWrapper: document.querySelector('#detailsPane .phrases'),
@@ -328,10 +329,22 @@ views.workviews = {
     displayText: function(text) {
       views.workviews.texts.phraseWrapper.innerHTML = '';
       views.workviews.texts.titleWrapper.innerHTML = '';
+      views.workviews.texts.mediaArea.innerHTML = '';
       
       text.titles.forEach(function(title) {
         var input = views.page.createElement('input', { value: title.titleText });
         views.workviews.texts.titleWrapper.appendChild(input);
+      });
+      
+      text.media.forEach(function(id) {
+        var render = function(file) {
+          var audio = views.page.createElement('audio', { controls: true });
+          var url = URL.createObjectURL(file);
+          audio.src = url;
+          views.workviews.texts.mediaArea.appendChild(audio);
+        };
+        
+        idb.get(id, 'media', render);
       });
       
       text.phrases.forEach(function(phrase, i) {

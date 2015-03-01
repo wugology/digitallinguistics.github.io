@@ -110,12 +110,13 @@ app.textsEvent = function(ev) {
   } else if (ev.target.id === 'addTextMediaButton') {
     views.popups.blank.render(views.workviews.texts.promptMedia);
   } else if (ev.target.id === 'addMediaToTextButton') {
-    var mediaID = document.querySelector('#blankPopup select').value;
+    var mediaID = Number(document.querySelector('#blankPopup select').value);
     if (mediaID !== '') {
       app.preferences.currentText.media.push(mediaID);
     }
     idb.pushUpdate(app.preferences.currentText.id, 'media', mediaID, 'texts');
     views.popups.blank.close();
+    views.workviews.texts.render();
   } else if (ev.target.id === 'importTextButton') {
     var convert = function() {
       var add = function(text) {
