@@ -331,9 +331,12 @@ views.workviews = {
       views.workviews.texts.titleWrapper.innerHTML = '';
       views.workviews.texts.mediaArea.innerHTML = '';
       
-      text.titles.forEach(function(title) {
+      text.titles.forEach(function(title, i) {
         var input = views.page.createElement('input', { value: title.titleText });
+        input.dataset.id = i;
+        input.classList.add('title');
         views.workviews.texts.titleWrapper.appendChild(input);
+        input.addEventListener('blur', app.textsEvent);
       });
       
       text.media.forEach(function(id) {

@@ -32,6 +32,10 @@ views.workviews.texts.overviewPane.addEventListener('click', app.textsEvent);
 
 views.workviews.texts.detailsPane.addEventListener('click', app.textsEvent);
 
+views.workviews.texts.detailsPane.addEventListener('input', app.textsEvent);
+
+views.workviews.texts.detailsPane.addEventListener('keyup', app.textsEvent);
+
 window.addEventListener('load', app.initialize);
 
 window.addEventListener('unload', app.savePreferences);

@@ -250,7 +250,9 @@ var idb = {
       }
     };
     
-    transaction.objectStore(table).get(id).onsuccess = function(ev) {
+    var objectStore = transaction.objectStore(table);
+    
+    objectStore.get(id).onsuccess = function(ev) {
       var data = ev.target.result;
       data[property] = newValue;
       

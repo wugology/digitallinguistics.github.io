@@ -98,33 +98,74 @@ app.savePreferences = function() {
 };
 
 app.textsEvent = function(ev) {
-  if (ev.target.tagName === 'LI') {
-    var render = function(text) {
-      text.setAsCurrent();
-      text.display();
+  if (ev.type === 'input') {
+    if (ev.target.dataset.id.startsWith('title')) {
+      var titleIndex = Number(ev.target.dataset.id);
+      var titleText = ev.target.value;
+      app.preferences.currentText.titles[titleIndex].titleText = titleText;
     };
-    
-    idb.get(Number(ev.target.dataset.id), 'texts', render);
-  } else if (ev.target.id === 'addNewTextButton') {
-    console.log('Adding a new text!');
-  } else if (ev.target.id === 'addTextMediaButton') {
-    views.popups.blank.render(views.workviews.texts.promptMedia);
-  } else if (ev.target.id === 'addMediaToTextButton') {
-    var mediaID = Number(document.querySelector('#blankPopup select').value);
-    if (mediaID !== '') {
-      app.preferences.currentText.media.push(mediaID);
+  }
+  
+  if (ev.type === 'blur') {
+    idb.update(app.preferences.currentText.id, 'titles', app.preferences.currentText.titles, 'texts', views.workviews.texts.render);
+  }
+  
+  if (ev.type === 'keyup') {
+    if (ev.keyCode === 13) {
+      if (ev.target.classList.contains('title')) {
+        var titleIndex = Number(ev.target.dataset.id);
+        var titleText = ev.target.value;
+        app.preferences.currentText.titles[titleIndex].titleText = titleText;
+      }
+      
+      ev.target.blur();
+    } else if (ev.keyCode === 27) {
+      if (ev.target.classList.contains('title')) {
+        var titleIndex = Number(ev.target.dataset.id);
+        var titleText = ev.target.value;
+        app.preferences.currentText.titles[titleIndex].titleText = titleText;
+      }
+      
+      ev.target.blur();
     }
-    idb.pushUpdate(app.preferences.currentText.id, 'media', mediaID, 'texts');
-    views.popups.blank.close();
-    views.workviews.texts.render();
-  } else if (ev.target.id === 'importTextButton') {
-    var convert = function() {
-      var add = function(text) {
-        text.addToDatabase(views.workviews.texts.render);
+  }
+  
+  if (ev.type === 'click') {
+    if (ev.target.tagName === 'LI') {
+      var render = function(text) {
+        text.setAsCurrent();
+        text.display();
       };
       
-      tools.convert(add);
-    };
-    views.popups.fileUpload.promptFile(convert);
+      idb.get(Number(ev.target.dataset.id), 'texts', render);
+    }
+    
+    switch (ev.target.id) {
+      case 'addNewTextButton':
+        console.log('Adding a new text!');
+        break;
+      case 'addTextMediaButton':
+        views.popups.blank.render(views.workviews.texts.promptMedia);
+        break;
+      case 'addMediaToTextButton':
+        var mediaID = Number(document.querySelector('#blankPopup select').value);
+        if (mediaID !== '') {
+          app.preferences.currentText.media.push(mediaID);
+        }
+        idb.pushUpdate(app.preferences.currentText.id, 'media', mediaID, 'texts');
+        views.popups.blank.close();
+        views.workviews.texts.render();
+      case 'importTextButton':
+        var convert = function() {
+          var add = function(text) {
+            text.addToDatabase(views.workviews.texts.render);
+          };
+          
+          tools.convert(add);
+        };
+        views.popups.fileUpload.promptFile(convert);
+        break;
+      default:
+    }
   }
 };
