@@ -1,13 +1,16 @@
 /* CSS specific to the app */
 
 /* Styling by CSS rule(s) (alphabetical by CSS rule) */
+audio, .play {
+  align-self: center; }
+  
 footer, section {
   border: 1px solid lightgray; }
 
 .phrase:hover, .titles input:focus, .titles input:hover {
   box-shadow: 0px 0px 5px 0px #3F93F9; }
 
-img[src='img/close.svg'], #mediaList li, #textsList li {
+#mediaList li, icon, #textsList li {
   cursor: pointer; }
 
 audio, .phrase {
@@ -17,9 +20,6 @@ audio, .phrase {
   padding: 1rem; }
 
 /* Styling by classes or element type (alphabetical by class/element) */
-audio {
-  align-self: center; }
-  
 img[src='img/close.svg'] {
   position: absolute;
   top: 0.5rem;
@@ -31,7 +31,15 @@ img[src='img/close.svg'] {
 
 .phrase {
   background-color: rgba(63, 147, 249, 0.25);
-  border-radius: 10px; }
+  border-radius: 10px;
+  -webkit-flex-direction: row;
+  flex-direction: row; }
+
+.play {
+  max-height: 45px;
+  max-width: 45px;
+  min-height: 45px;
+  min-width: 45px; }
 
 .titles input {
   font-family: 'Gentium Plus';

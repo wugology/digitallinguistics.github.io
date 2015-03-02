@@ -4,6 +4,7 @@
 //Dependencies: database.js
 
 // Polyfill for the String.prototype.startsWith() function
+// MDN says it's supported in Chrome and Firefox, but it doesn't seem to be working in Chrome
 if (!String.prototype.startsWith) {
   Object.defineProperty(String.prototype, 'startsWith', {
     enumerable: false,
@@ -93,17 +94,19 @@ var Phrase = function(data) {
     value: function(index, wrapper) {
       var template = document.querySelector('#phraseTemplate');
       var li = template.content.querySelector('.phrase');
-      li.innerHTML = '';
       li.id = 'phrase_' + index;
       li.dataset.startTime = this.startTime;
       li.dataset.endTime = this.endTime;
+            
+      var contentWrapper = template.content.querySelector('.wrapper');
+      contentWrapper.innerHTML = '';
       
       var renderCollection = function(collection, itemName) { // (plural, singular)
         this[collection].forEach(function(item) {
           var line = views.page.createElement('p', { textContent: item[itemName + 'Text'] });
           line.classList.add(itemName);
           line.classList.add('unicode');
-          li.appendChild(line);
+          contentWrapper.appendChild(line);
         }.bind(this));
       }.bind(this);
       
@@ -114,7 +117,7 @@ var Phrase = function(data) {
       var notes = views.page.createElement('p', { textContent: this.notes });
       notes.classList.add('notes');
       notes.classList.add('unicode');
-      li.appendChild(notes);
+      contentWrapper.appendChild(notes);
       
       var phrase = template.content.cloneNode(true);
       wrapper.appendChild(phrase);

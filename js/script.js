@@ -47,7 +47,7 @@ views.page = {
   toggleMenu: function(ev) {
     var clickedMenu = ev.target.id === 'boxIcon' ? 'appNav' : 'mainNav';
     views.page.toggleDisplay(app.nodes[clickedMenu]);
-    if (app.nodes.appNav !== null) {
+    if (app.nodes.appNav) {
       var otherMenu = ev.target.id === 'boxIcon' ? 'mainNav' : 'appNav';
       views.page.hide(app.nodes[otherMenu]);
     }
