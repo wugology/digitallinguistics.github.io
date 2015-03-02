@@ -345,6 +345,7 @@ views.workviews = {
           var url = URL.createObjectURL(file);
           audio.src = url;
           views.workviews.texts.mediaArea.appendChild(audio);
+          audio.addEventListener('timeupdate', app.textsEvent);
         };
         
         idb.get(id, 'media', render);

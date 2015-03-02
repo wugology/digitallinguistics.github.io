@@ -94,9 +94,7 @@ var Phrase = function(data) {
     value: function(index, wrapper) {
       var template = document.querySelector('#phraseTemplate');
       var li = template.content.querySelector('.phrase');
-      li.id = 'phrase_' + index;
-      li.dataset.startTime = this.startTime;
-      li.dataset.endTime = this.endTime;
+      li.dataset.id = index;
             
       var contentWrapper = template.content.querySelector('.wrapper');
       contentWrapper.innerHTML = '';
@@ -121,6 +119,17 @@ var Phrase = function(data) {
       
       var phrase = template.content.cloneNode(true);
       wrapper.appendChild(phrase);
+    }
+  });
+  
+  Object.defineProperty(this, 'play', {
+    value: function() {
+      var players = views.workviews.texts.mediaArea.children;
+      for (var i=0; i<players.length; i++) {
+        players[i].currentTime = this.startTime;
+        app.media.endTime = this.endTime;
+        players[i].play();
+      }
     }
   });
   

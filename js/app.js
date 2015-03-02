@@ -8,6 +8,11 @@
 
 // Dependencies: script.js, data.js
 
+// A media node for storing information about current media playback
+app.media = {
+  endTime: null
+};
+
 // Loads the preferences from local storage and opens a database connection
 app.initialize = function() {
   // If no wugbotPreferences exist in local storage, set to defaults
@@ -98,6 +103,12 @@ app.savePreferences = function() {
 };
 
 app.textsEvent = function(ev) {
+  if (ev.type === 'timeupdate') {
+    if (ev.srcElement.currentTime > app.media.endTime) {
+      ev.srcElement.pause();
+    }
+  }
+  
   if (ev.type === 'input') {
     if (ev.target.dataset.id.startsWith('title')) {
       var titleIndex = Number(ev.target.dataset.id);
@@ -138,6 +149,11 @@ app.textsEvent = function(ev) {
       };
       
       idb.get(Number(ev.target.dataset.id), 'texts', render);
+    }
+    
+    if (ev.target.classList.contains('play')) {
+      var index = ev.target.parentNode.dataset.id;
+      app.preferences.currentText.phrases[index].play();
     }
     
     switch (ev.target.id) {
