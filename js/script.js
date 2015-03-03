@@ -5,10 +5,7 @@
 
 var views = {};
 
-views.page = {
-    appNav: document.querySelector('#appNav'),
-    menuIcon: document.querySelector('#menuIcon'),
-  
+views.page = {  
   // Displays a DOM element that was previously hidden
   // The optional media argument specifies whether you would only like to display the element on desktop or mobile
   display: function(el, media) {
@@ -41,10 +38,10 @@ views.page = {
   // Displays or hides the appNav or mainNav as appropriate when the user clicks either of the nav icons
   toggleMenu: function(ev) {
     var clickedMenu = ev.target.id === 'boxIcon' ? 'appNav' : 'mainNav';
-    views.page.toggleDisplay(app.nodes[clickedMenu]);
+    views.page.toggleDisplay(views.page.nodes[clickedMenu]);
     if (views.page.appNav) {
       var otherMenu = ev.target.id === 'boxIcon' ? 'mainNav' : 'appNav';
-      views.page.hide(app.nodes[otherMenu]);
+      views.page.hide(views.page.nodes[otherMenu]);
     }
   },
   
@@ -55,5 +52,10 @@ views.page = {
   }
 };
 
+views.page.nodes = {
+  appNav: document.querySelector('#appNav'),
+  menuIcon: document.querySelector('#menuIcon'),
+};
+
 /* EVENT LISTENERS */
-views.page.menuIcon.addEventListener('click', views.page.toggleMenu);
+views.page.nodes.menuIcon.addEventListener('click', views.page.toggleMenu);

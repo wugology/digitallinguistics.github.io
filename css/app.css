@@ -7,6 +7,9 @@ audio, .play {
 footer, section {
   border: 1px solid lightgray; }
 
+#sideNav a, #toolbarNav a {
+  border: none; }
+
 .phrase:hover, .titles input:focus, .titles input:hover {
   box-shadow: 0px 0px 5px 0px #3F93F9; }
 
@@ -19,10 +22,10 @@ audio, .phrase {
 .phrase, #popups > div{
   padding: 1rem; }
 
-#sideNav, img[src='img/close.svg'], #collapseRight {
+#sideNav, img[src='img/close.svg'], #toolbarNav {
   position: absolute; }
 
-#sideNav, #collapseRight {
+#sideNav, #toolbarNav {
   top: 0; }
 
 /* Styling by classes or element type (alphabetical by class/element) */
@@ -49,7 +52,7 @@ img[src='img/close.svg'] {
   min-height: 45px;
   min-width: 45px; }
 
-#sideNav li {
+#sideNav li, #toolbarNav li {
   padding: 0; }
 
 .titles input {
@@ -61,7 +64,7 @@ img[src='img/close.svg'] {
 #sideNav {
   left: 0; }
 
-#collapseRight {
+#toolbarNav {
   right: 0; }
 
 #corpusSelector {
@@ -73,9 +76,6 @@ img[src='img/close.svg'] {
 
 #corpusSelector:hover {
   box-shadow: 0 0 5px 0 white; }
-
-#sideNav a {
-  border: none; }
 
 /* Temporary or placeholder styling */
 .module:not(.textsModule) {

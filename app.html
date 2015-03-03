@@ -46,9 +46,9 @@
   
   <main>
     <section id=overviewPane class=mainSection>
-      <nav id=sideNav>
+      <nav id=sideNav class=hideonMobile>
         <ul>
-          <li><a><img id=collapseLeft src=img/collapseLeft.svg alt='close the overview pane' class=icon></a></li>
+          <li class=hideonMobile><a><img id=collapseLeft src=img/collapseLeft.svg alt='open/close the overview pane' class=icon></a></li>
           <li class='hideonDesktop hideonMobile'><a><img id=documentsNav src=img/pages.svg alt='open the documents module' class=icon></a></li>
           <li class='hideonDesktop hideonMobile'><a><img id=lexiconNav src=img/bookSide.svg alt='open the lexicon module' class=icon></a></li>
           <li class='hideonDesktop hideonMobile'><a><img id=mediaNav src=img/headphones.svg alt='open the media module' class=icon></a></li>
@@ -138,15 +138,22 @@
     </section>
     
     <section id=toolbar class=mainSection>
-      <img id=collapseRight src=img/collapseRight.svg alt='close the toolbar pane' class=icon>
+      <nav id=toolbarNav class=hideonMobile>
+        <ul>
+          <li><a><img id=collapseRight src=img/collapseRight.svg alt='open/close the toolbar pane' class=icon></a></li>
+          <li class='hideonDesktop hideonMobile'><a><img id=toolsNav src=img/tools.svg alt='open/close the toolbar pane' class=icon></a></li>
+        </ul>
+      </nav>
       
-      <header>
-        <h1>Toolbar</h1>
-      </header>
-      
-      <p>This is the toolbar. It will contain various tools that the user is likely to need regardless of the particular view they’re working in, such as quick searching, the save button, the character palette, and certain types of lists that users may need while working (e.g. a list of tags that users can click to apply to the item they’re working on).</p>
-      
-      <dl id=entries></dl>
+      <div id=toolbarArea>
+        <header>
+          <h1>Toolbar</h1>
+        </header>
+        
+        <p>This is the toolbar. It will contain various tools that the user is likely to need regardless of the particular view they’re working in, such as quick searching, the save button, the character palette, and certain types of lists that users may need while working (e.g. a list of tags that users can click to apply to the item they’re working on).</p>
+        
+        <dl id=entries></dl>
+      </div>
     </section>
   </main>
   

@@ -152,7 +152,7 @@ views.page.panes = {
           views.page.hide(this.modules[i]);
         }
         for (var i=0; i<this.sideNavButtons.length; i++) {
-          views.page.display(this.sideNavButtons[i]);
+          views.page.display(this.sideNavButtons[i], 'desktop');
         }
         this.currentDisplayState = 'closed';
       } else {
@@ -161,7 +161,7 @@ views.page.panes = {
         for (var i=0; i<this.sideNavButtons.length; i++) {
           views.page.hide(this.sideNavButtons[i]);
         }
-        views.page.display(document.querySelector('#sideNav li:first-child'));
+        views.page.display(document.querySelector('#sideNav li:first-child'), 'desktop');
         views.workviews.setWorkview(app.preferences.currentWorkview);
         this.currentDisplayState = 'open';
       }
@@ -173,7 +173,28 @@ views.page.panes = {
   },
   
   toolbar: {
-    el: document.querySelector('#toolbar')
+    el: document.querySelector('#toolbar'),
+    collapse: document.querySelector('#collapseRight'),
+    toolbarArea: document.querySelector('#toolbarArea'),
+    toolsNav: document.querySelector('#toolbarNav li:last-child'),
+    
+    currentDisplayState: 'open',
+    
+    toggleDisplay: function() {
+      if (this.currentDisplayState === 'open') {
+        this.el.style.maxWidth = '2.5rem';
+        this.collapse.src = 'img/collapseLeft.svg';
+        views.page.hide(this.toolbarArea);
+        views.page.display(this.toolsNav, 'desktop');
+        this.currentDisplayState = 'closed';
+      } else {
+        this.el.style.maxWidth = '100%';
+        this.collapse.src = 'img/collapseRight.svg';
+        views.page.hide(this.toolsNav);
+        views.page.display(this.toolbarArea);
+        this.currentDisplayState = 'open';
+      }
+    }
   }
 };
 

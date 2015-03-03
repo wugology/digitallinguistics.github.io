@@ -61,6 +61,10 @@ app.pageEvent = function(ev) {
   if (ev.target.id === 'collapseLeft') {
     views.page.panes.overviewPane.toggleDisplay();
   }
+  
+  if (ev.target.id === 'collapseRight') {
+    views.page.panes.toolbar.toggleDisplay();
+  }
 };
 
 // Handles popup events and calls the appropriate method and object functions for that event
