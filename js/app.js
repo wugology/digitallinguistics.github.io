@@ -9,6 +9,8 @@
 // Dependencies: script.js, data.js
 
 // A media node for storing information about current media playback
+app = {};
+
 app.media = {
   endTime: null
 };
@@ -52,6 +54,12 @@ app.mediaEvent = function(ev) {
     };
     
     idb.get(Number(ev.target.dataset.id), 'media', setAudio);
+  }
+};
+
+app.pageEvent = function(ev) {
+  if (ev.target.id === 'collapseLeft') {
+    views.page.panes.overviewPane.toggleDisplay();
   }
 };
 

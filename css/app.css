@@ -19,14 +19,22 @@ audio, .phrase {
 .phrase, #popups > div{
   padding: 1rem; }
 
+#sideNav, img[src='img/close.svg'], #collapseRight {
+  position: absolute; }
+
+#sideNav, #collapseRight {
+  top: 0; }
+
 /* Styling by classes or element type (alphabetical by class/element) */
 img[src='img/close.svg'] {
-  position: absolute;
   top: 0.5rem;
   right: 0.5rem;
   transform: translate(25%, -25%); }
 
 .mainSection {
+  position: relative;
+  max-width: 100%;
+  transition: max-width 1s;
   width: 33%; }
 
 .phrase {
@@ -41,12 +49,21 @@ img[src='img/close.svg'] {
   min-height: 45px;
   min-width: 45px; }
 
+#sideNav li {
+  padding: 0; }
+
 .titles input {
   font-family: 'Gentium Plus';
   font-size: 150%;
   text-align: center; }
 
 /* Styling by DOM elements (organized by DOM structure) */
+#sideNav {
+  left: 0; }
+
+#collapseRight {
+  right: 0; }
+
 #corpusSelector {
   background-color: #3F93F9;
   border: 1px solid white;
@@ -57,8 +74,11 @@ img[src='img/close.svg'] {
 #corpusSelector:hover {
   box-shadow: 0 0 5px 0 white; }
 
+#sideNav a {
+  border: none; }
+
 /* Temporary or placeholder styling */
-.module {
+.module:not(.textsModule) {
   margin-top: 1rem; }
   
 .documentsModule,

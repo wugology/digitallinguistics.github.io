@@ -8,18 +8,22 @@
 // DOM NODES (if any need to be defined in the global namespace - most are properties of specific views)
 
 // EVENT LISTENERS
-app.nodes.appNav.addEventListener('click', function(ev) {
+views.page.appNav.addEventListener('click', function(ev) {
   if (ev.target.tagName === 'A') {
     views.workviews.setWorkview(ev.target.textContent.toLowerCase());
   }
   
-  views.page.hide(app.nodes.appNav, 'mobile');
+  views.page.hide(views.page.appNav, 'mobile');
 });
 
 views.page.boxIcon.addEventListener('click', views.page.toggleMenu);
 
+// This should trigger an app.pageEvent
 views.page.corpusSelector.el.addEventListener('change', views.page.corpusSelector.menuEvent);
 
+views.page.panes.overviewPane.el.addEventListener('click', app.pageEvent);
+
+// This should trigger an app.popupEvent
 views.page.settingsIcon.addEventListener('click', views.popups.settings.toggleDisplay);
 
 views.popups.el.addEventListener('click', app.popupEvent);

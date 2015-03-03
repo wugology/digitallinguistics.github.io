@@ -46,12 +46,17 @@
   
   <main>
     <section id=overviewPane class=mainSection>
-      <header>
-        <h1>Overview Pane</h1>
-      </header>
-      
-      <p>This is the overview pane. This will primarily display lists and summary details for different types of data in the corpus. Clicking on items here will generally display the details for that item in the details pane.</p>
-      <p>Each of the modules in this section will be hidden unless the user has selected the relevant view from the navigation menu at the top of the page.</p>
+      <nav id=sideNav>
+        <ul>
+          <li><a><img id=collapseLeft src=img/collapseLeft.svg alt='close the overview pane' class=icon></a></li>
+          <li class='hideonDesktop hideonMobile'><a><img id=documentsNav src=img/pages.svg alt='open the documents module' class=icon></a></li>
+          <li class='hideonDesktop hideonMobile'><a><img id=lexiconNav src=img/bookSide.svg alt='open the lexicon module' class=icon></a></li>
+          <li class='hideonDesktop hideonMobile'><a><img id=mediaNav src=img/headphones.svg alt='open the media module' class=icon></a></li>
+          <li class='hideonDesktop hideonMobile'><a><img id=orthographiesNav src=img/letters.svg alt='open the orthographies module' class=icon></a></li>
+          <li class='hideonDesktop hideonMobile'><a><img id=tagsNav src=img/tag.svg alt='open the tags module' class=icon></a></li>
+          <li class='hideonDesktop hideonMobile'><a><img id=textsNav src=img/openBook.svg alt='open the texts module' class=icon></a></li>
+        </ul>
+      </nav>
       
       <div class='documentsModule module hideonDesktop hideonMobile'>
         <p>This is a documents module. This module will display a list of documents associated with this corpus, such as scans of field notes or archival documents, copies of consent forms, etc. Clicking a document will display the document details in the details pane.</p>
@@ -133,6 +138,8 @@
     </section>
     
     <section id=toolbar class=mainSection>
+      <img id=collapseRight src=img/collapseRight.svg alt='close the toolbar pane' class=icon>
+      
       <header>
         <h1>Toolbar</h1>
       </header>
