@@ -21,6 +21,10 @@ app.initialize = function() {
   if (!localStorage.wugbotPreferences) {
     app.preferences.currentCorpus = null;
     app.preferences.currentWorkview = 'texts';
+    app.preferences.displayState = {
+      overviewPane: 'open',
+      toolbar: 'open'
+    };
   }
   
   // If wugbotPreferences does exist in local storage, set app.preferences to them
@@ -32,6 +36,7 @@ app.initialize = function() {
     }
     
     app.preferences.currentWorkview = JSON.parse(localStorage.wugbotPreferences).currentWorkview;
+    app.preferences.displayState = JSON.parse(localStorage.wugbotPreferences).displayState;
   }
   
   // Open the database, and once it's open, render the page

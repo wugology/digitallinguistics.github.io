@@ -119,6 +119,14 @@ views.page.render = function() {
   } else {
     views.page.corpusSelector.render(app.preferences.currentCorpus.name);
     views.workviews.setWorkview(app.preferences.currentWorkview);
+    
+    if (views.page.panes.overviewPane.currentDisplayState !== app.preferences.displayState.overviewPane) {
+      views.page.panes.overviewPane.toggleDisplay();
+    }
+    
+    if (views.page.panes.toolbar.currentDisplayState !== app.preferences.displayState.toolbar) {
+      views.page.panes.toolbar.toggleDisplay();
+    }
   }
 };
 
@@ -155,6 +163,7 @@ views.page.panes = {
           views.page.display(this.sideNavButtons[i], 'desktop');
         }
         this.currentDisplayState = 'closed';
+        app.preferences.displayState.overviewPane = 'closed';
       } else {
         this.el.style.maxWidth = '100%';
         this.collapse.src = 'img/collapseLeft.svg';
@@ -164,6 +173,7 @@ views.page.panes = {
         views.page.display(document.querySelector('#sideNav li:first-child'), 'desktop');
         views.workviews.setWorkview(app.preferences.currentWorkview);
         this.currentDisplayState = 'open';
+        app.preferences.displayState.overviewPane = 'open';
       }
     }
   },
@@ -187,12 +197,14 @@ views.page.panes = {
         views.page.hide(this.toolbarArea);
         views.page.display(this.toolsNav, 'desktop');
         this.currentDisplayState = 'closed';
+        app.preferences.displayState.toolbar = 'closed';
       } else {
         this.el.style.maxWidth = '100%';
         this.collapse.src = 'img/collapseRight.svg';
         views.page.hide(this.toolsNav);
         views.page.display(this.toolbarArea);
         this.currentDisplayState = 'open';
+        app.preferences.displayState.toolbar = 'open';
       }
     }
   }
