@@ -16,8 +16,15 @@ footer, section {
 #mediaList li, icon, #textsList li {
   cursor: pointer; }
 
+.phrase, #searchForm {
+  -webkit-flex-direction: row;
+  flex-direction: row; }
+
 audio, .phrase {
   margin-top: 1rem; }
+
+#corpusSelector {
+  padding: 0 0.5rem; }
 
 .phrase, #popups > div{
   padding: 1rem; }
@@ -42,9 +49,7 @@ img[src='img/close.svg'] {
 
 .phrase {
   background-color: rgba(63, 147, 249, 0.25);
-  border-radius: 10px;
-  -webkit-flex-direction: row;
-  flex-direction: row; }
+  border-radius: 10px; }
 
 .play {
   max-height: 45px;
@@ -61,6 +66,13 @@ img[src='img/close.svg'] {
   text-align: center; }
 
 /* Styling by DOM elements (organized by DOM structure) */
+#searchBox {
+  -webkit-flex-grow: 1;
+  flex-grow: 1; }
+
+#searchForm {
+  align-items: center; }
+
 #sideNav {
   left: 0; }
 
@@ -71,7 +83,6 @@ img[src='img/close.svg'] {
   background-color: #3F93F9;
   border: 1px solid white;
   color: white;
-  padding: 0 0.5rem;
   text-align: center; }
 
 #corpusSelector:hover {

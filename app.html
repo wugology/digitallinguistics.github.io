@@ -150,9 +150,12 @@
           <h1>Toolbar</h1>
         </header>
         
-        <p>This is the toolbar. It will contain various tools that the user is likely to need regardless of the particular view they’re working in, such as quick searching, the save button, the character palette, and certain types of lists that users may need while working (e.g. a list of tags that users can click to apply to the item they’re working on).</p>
+        <form id=searchForm>
+          <input id=searchBox type=text placeholder='Enter text or a regular expression to search'>
+          <button id=searchButton type=submit value=Search>Search</button>
+        </form>
         
-        <dl id=entries></dl>
+        <ul id=results></ul>
       </div>
     </section>
   </main>
