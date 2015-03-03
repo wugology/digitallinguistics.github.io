@@ -5,7 +5,7 @@ tools = {};
 // In the future, it may be good to make this function sufficiently robust that it can handle all the various settings in the ELAN export popup
 tools.convert = function(callback) {
   var file = views.popups.fileUpload.file;
-  if (file === undefined) {
+  if (!file) {
     page.notify('Please select a file below.');
   } else {
     var phrases = [];
@@ -34,7 +34,7 @@ tools.convert = function(callback) {
         var values = line.trim().split(/\t/g);
         var phrase = {};
         columnNames.forEach(function(columnName, i) {
-          values[i] = values[i] === undefined ? null : values[i];
+          values[i] = !values[i] ? null : values[i];
           phrase[columnName] = values[i];
         });
         phrases.push(phrase);

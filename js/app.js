@@ -16,16 +16,16 @@ app.media = {
 // Loads the preferences from local storage and opens a database connection
 app.initialize = function() {
   // If no wugbotPreferences exist in local storage, set to defaults
-  if (localStorage.wugbotPreferences === undefined || localStorage.wugbotPreferences === 'undefined') {
+  if (!localStorage.wugbotPreferences) {
     app.preferences.currentCorpus = null;
     app.preferences.currentWorkview = 'texts';
   }
   
   // If wugbotPreferences does exist in local storage, set app.preferences to them
-  if (localStorage.wugbotPreferences !== undefined && localStorage.wugbotPreferences !== 'undefined') {
+  if (localStorage.wugbotPreferences) {
     // If there's a setting for currentCorpus in local storage, set app.preferences.currentCorpus equal to it
     // Otherwise, leave it as null
-    if (app.preferences.currentCorpus !== null) {
+    if (!app.preferences.currentCorpus) {
       app.preferences.currentCorpus = JSON.parse(localStorage.wugbotPreferences).currentCorpus;
     }
     
@@ -165,7 +165,7 @@ app.textsEvent = function(ev) {
         break;
       case 'addMediaToTextButton':
         var mediaID = Number(document.querySelector('#blankPopup select').value);
-        if (mediaID !== '') {
+        if (mediaID) {
           app.preferences.currentText.media.push(mediaID);
         }
         idb.pushUpdate(app.preferences.currentText.id, 'media', mediaID, 'texts');

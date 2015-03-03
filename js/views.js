@@ -104,9 +104,9 @@ views.page.corpusSelector = {
 
 // Renders the app, and calls more local rendering methods on other views
 views.page.render = function() {
-  if (app.preferences.currentCorpus === null) {
+  if (!app.preferences.currentCorpus) {
     var countCorpora = function(corpora) {
-      if (corpora.length === 0) {
+      if (!corpora.length) {
         views.popups.manageCorpora.render();
       } else {
         views.page.corpusSelector.render();
@@ -181,7 +181,7 @@ views.popups.fileUpload = {
 
     var goButton = function() {
       if (typeof goButtonCallback === 'function') {
-        if (views.popups.fileUpload.file === undefined) {
+        if (!views.popups.fileUpload.file) {
           alert('Please select a file.');
         } else {
           goButtonCallback(views.popups.fileUpload.file);
@@ -198,9 +198,7 @@ views.popups.fileUpload = {
 
 Object.defineProperty(views.popups.fileUpload, 'file', {
   get: function() {
-    if (views.popups.fileUpload.input.files.length === 1) {
-      return views.popups.fileUpload.input.files[0];
-    }
+    return views.popups.fileUpload.input.files[0];
   },
   
   enumerable: true
