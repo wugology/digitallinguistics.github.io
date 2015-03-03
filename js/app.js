@@ -104,8 +104,8 @@ app.savePreferences = function() {
 
 app.textsEvent = function(ev) {
   if (ev.type === 'timeupdate') {
-    if (ev.srcElement.currentTime > app.media.endTime) {
-      ev.srcElement.pause();
+    if (ev.target.currentTime > app.media.endTime) {
+      ev.target.pause();
     }
   }
   
