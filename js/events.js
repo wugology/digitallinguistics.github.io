@@ -8,7 +8,12 @@
 // DOM NODES (if any need to be defined in the global namespace - most are properties of specific views)
 
 // EVENT LISTENERS
+// This should trigger an app.pageEvent
 views.page.nodes.appNav.addEventListener('click', function(ev) {
+  if (app.preferences.displayState.overviewPane === 'closed') {
+    views.page.panes.overviewPane.toggleDisplay();
+  }
+
   if (ev.target.tagName === 'A') {
     views.workviews.setWorkview(ev.target.textContent.toLowerCase());
   }

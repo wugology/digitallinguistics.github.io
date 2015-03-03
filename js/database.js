@@ -66,7 +66,7 @@ var idb = {
     }
     
     if ((arguments.length === 1 && typeof arguments[0] === 'string') || arguments.length === 2) {      
-      var request = window.indexedDB.deleteDatabase(dbname);
+      var request = indexedDB.deleteDatabase(dbname);
       request.onsuccess = function() {
         console.log('Database deleted.');
         
@@ -150,7 +150,7 @@ var idb = {
   
   // Takes an optional callback function that has the database object as its argument
   open: function(dbname, successCallback) {
-    var request = window.indexedDB.open(dbname, 1);
+    var request = indexedDB.open(dbname, 1);
     
     request.onsuccess = function() {
       idb.database = request.result;
