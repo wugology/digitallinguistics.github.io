@@ -239,12 +239,12 @@ var idb = {
   
   // searchText should be a regular expression object
   search: function(searchText, tier, orthography, successCallback) {
-    var results = [];
+    idb.results = [];
     var transaction = idb.database.transaction('texts');
     
     transaction.oncomplete = function() {
-      if (successCallback === 'function') {
-        successCallback(results);
+      if (typeof successCallback === 'function') {
+        successCallback(idb.results);
       }
     };
     
@@ -255,12 +255,19 @@ var idb = {
       
       if (cursor) {
         cursor.value.phrases.forEach(function(phrase) {
-          var ortho = phrase[tier].filter(function(ortho) {
-            return ortho.orthography === orthography;
-          })[0];
-                    
-          if (ortho.text && ortho.text.search(searchText) !== -1) {
-            results.push(phrase);
+          var text;
+          
+          if (typeof phrase[tier] === 'array') {
+            var ortho = phrase[tier].filter(function(ortho) {
+              return ortho.orthography === orthography;
+            })[0];
+            text = ortho.text;
+          } else {
+            text = phrase[tier]
+          }
+          
+          if (text && text.search(searchText) !== -1) {
+            idb.results.push(idb.reconstruct(phrase));
           }
         });
         cursor.continue();

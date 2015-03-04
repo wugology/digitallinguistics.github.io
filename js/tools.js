@@ -57,6 +57,7 @@ tools.convert = function(callback) {
         delete phrase.duration;
         
         phrases[i] = new Phrase({
+          breadcrumb: null,
           speaker: null,
           startTime: phrase.startTime,
           endTime: phrase.endTime,

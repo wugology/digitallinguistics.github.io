@@ -145,14 +145,35 @@
         </ul>
       </nav>
       
-      <div id=toolbarArea>
+      <div id=toolbarContent>
         <header>
           <h1>Toolbar</h1>
         </header>
         
         <form id=searchForm>
-          <input id=searchBox type=text placeholder='Enter text or a regular expression to search'>
-          <button id=searchButton type=submit value=Search>Search</button>
+          <div id=searchField>
+            <input id=searchBox type=text placeholder='Enter text or a regular expression to search' class=unicode>
+            <button id=searchButton type=submit value=Search>Search</button>
+          </div>
+          <fieldset>
+            <legend>Select a tier</legend>
+            <label for=transcriptOption>
+              <input id=transcriptOption type=radio name=selectTier value=transcripts>
+              <p>Transcript</p>
+            </label>
+            <label for=transcriptionOption>
+              <input id=transcriptionOption type=radio name=selectTier value=transcriptions checked>
+              <p>Transcription</p>
+            </label>
+            <label for=translationOption>
+              <input id=translationOption type=radio name=selectTier value=translations>
+              <p>Translation</p>
+            </label>
+            <label for=notesOption>
+              <input id=notesOption type=radio name=selectTier value=notes>
+              <p>Notes</p>
+            </label>
+          </fieldset>
         </form>
         
         <ul id=results></ul>

@@ -16,7 +16,7 @@ footer, section {
 #mediaList li, icon, #textsList li {
   cursor: pointer; }
 
-.phrase, #searchForm {
+.phrase, #searchField {
   -webkit-flex-direction: row;
   flex-direction: row; }
 
@@ -40,6 +40,9 @@ img[src='img/close.svg'] {
   top: 0.5rem;
   right: 0.5rem;
   transform: translate(25%, -25%); }
+
+legend {
+  font-weight: bold; }
 
 .mainSection {
   position: relative;
@@ -70,7 +73,7 @@ img[src='img/close.svg'] {
   -webkit-flex-grow: 1;
   flex-grow: 1; }
 
-#searchForm {
+#searchField {
   align-items: center; }
 
 #sideNav {

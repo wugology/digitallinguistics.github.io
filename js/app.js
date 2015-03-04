@@ -29,27 +29,30 @@ app.initialize = function() {
   
   // If wugbotPreferences does exist in local storage, set app.preferences to them
   if (localStorage.wugbotPreferences) {
+    var preferences = JSON.parse(localStorage.wugbotPreferences);
+    
     // If there's a setting for currentCorpus in local storage, set app.preferences.currentCorpus equal to it
     // Otherwise, leave it as null
-    if (!app.preferences.currentCorpus) {
-      app.preferences.currentCorpus = JSON.parse(localStorage.wugbotPreferences).currentCorpus;
+    if (!preferences.currentCorpus) {
+      app.preferences.currentCorpus = null;
+    } else {
+      app.preferences.currentCorpus = preferences.currentCorpus;
     }
     
-    if (!app.preferences.currentWorkview) {
+    if (!preferences.currentWorkview) {
       app.preferences.currentWorkview = 'texts';
     } else {
-      app.preferences.currentWorkview = JSON.parse(localStorage.wugbotPreferences).currentWorkview;
+      app.preferences.currentWorkview = preferences.currentWorkview;
     }
     
-    if (!app.preferences.displayState) {
+    if (!preferences.displayState) {
       app.preferences.displayState = {
         overviewPane: 'open',
         toolbar: 'open'
       };
     } else {
-      app.preferences.displayState = JSON.parse(localStorage.wugbotPreferences).displayState;
+      app.preferences.displayState = preferences.displayState;
     }
-    
   }
   
   // Open the database, and once it's open, render the page
@@ -79,8 +82,12 @@ app.pageEvent = function(ev) {
   if (ev.type === 'submit') {
     ev.preventDefault();
     var input = views.page.panes.toolbar.searchBox.value;
-    var searchText = new RegExp(input);
-    idb.search(searchText);
+    // Escapes regex special characters (taken from MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions?redirectlocale=en-US&redirectslug=JavaScript%2FGuide%2FRegular_Expressions#Using_Special_Characters)
+    input = input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    var searchText = new RegExp(input, "g");
+    var tier = views.page.panes.toolbar.selectedTier;
+    //Orthography is always null for now, since all orthographies are automatically set to null for the time being
+    idb.search(searchText, tier, null, views.page.panes.toolbar.displayResults);
   }
   
   if (ev.target.id === 'collapseLeft') {
@@ -149,8 +156,8 @@ app.textsEvent = function(ev) {
   if (ev.type === 'input') {
     if (ev.target.dataset.id.startsWith('title')) {
       var titleIndex = Number(ev.target.dataset.id);
-      var titleText = ev.target.value;
-      app.preferences.currentText.titles[titleIndex].titleText = titleText;
+      var text = ev.target.value;
+      app.preferences.currentText.titles[titleIndex].text = text;
     };
   }
   
@@ -162,16 +169,16 @@ app.textsEvent = function(ev) {
     if (ev.keyCode === 13) {
       if (ev.target.classList.contains('title')) {
         var titleIndex = Number(ev.target.dataset.id);
-        var titleText = ev.target.value;
-        app.preferences.currentText.titles[titleIndex].titleText = titleText;
+        var text = ev.target.value;
+        app.preferences.currentText.titles[titleIndex].text = text;
       }
       
       ev.target.blur();
     } else if (ev.keyCode === 27) {
       if (ev.target.classList.contains('title')) {
         var titleIndex = Number(ev.target.dataset.id);
-        var titleText = ev.target.value;
-        app.preferences.currentText.titles[titleIndex].titleText = titleText;
+        var text = ev.target.value;
+        app.preferences.currentText.titles[titleIndex].text = text;
       }
       
       ev.target.blur();

@@ -57,6 +57,9 @@ var Media = {
 };
 
 // A Phrase should be initialized with the following properties, even if they are null or empty arrays
+// - breadcrumb (format: 'text0_phrase0_word0_morpheme0')
+//   - Each number following the word is the index for that item (e.g. phrase12 is the 13th phrase in the phrases array for that text)
+//   - The number following the text, however, is the index in IndexedDB
 // - speaker (string)
 // - startTime (number in ss.ms)
 // - endTime (number in ss.ms)
@@ -77,10 +80,10 @@ var Phrase = function(data) {
   });
   
   Object.defineProperty(this, 'display', {
-    value: function(index, wrapper) {
+    value: function(wrapper) {
       var template = document.querySelector('#phraseTemplate');
       var li = template.content.querySelector('.phrase');
-      li.dataset.id = index;
+      li.dataset.id = this.breadcrumb;
             
       var contentWrapper = template.content.querySelector('.wrapper');
       contentWrapper.innerHTML = '';
@@ -144,6 +147,10 @@ var Text = function(data, callback) {
         Object.defineProperty(this, 'id', {
           enumerable: true,
           value: id
+        });
+        
+        this.phrases.forEach(function(phrase, i) {
+          phrase.breadcrumb = 'text' + this.id + '_phrase' + i;
         });
         
         if (typeof callback === 'function') {
