@@ -18,17 +18,15 @@ app.media = {
 // Loads the preferences from local storage and opens a database connection
 app.initialize = function() {
   // If no wugbotPreferences exist in local storage, set to defaults
-  if (!localStorage.wugbotPreferences) {
+  // This conditional statment matches on a string, because local storage stores undefined as a string
+  if (localStorage.wugbotPreferences === 'undefined') {
     app.preferences.currentCorpus = null;
     app.preferences.currentWorkview = 'texts';
     app.preferences.displayState = {
       overviewPane: 'open',
       toolbar: 'open'
     };
-  }
-  
-  // If wugbotPreferences does exist in local storage, set app.preferences to them
-  if (localStorage.wugbotPreferences) {
+  } else {
     var preferences = JSON.parse(localStorage.wugbotPreferences);
     
     // If there's a setting for currentCorpus in local storage, set app.preferences.currentCorpus equal to it

@@ -77,6 +77,10 @@ var idb = {
           successCallback();
         }
       };
+      
+      request.onblocked = function() {
+        idb.database.close();
+      };
     }
   },
   
