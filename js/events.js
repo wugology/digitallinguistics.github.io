@@ -30,6 +30,8 @@ views.page.panes.overviewPane.el.addEventListener('click', app.pageEvent);
 
 views.page.panes.toolbar.el.addEventListener('click', app.pageEvent);
 
+views.page.panes.toolbar.searchForm.addEventListener('submit', app.pageEvent);
+
 // This should trigger an app.popupEvent
 views.page.settingsIcon.addEventListener('click', views.popups.settings.toggleDisplay);
 

@@ -35,8 +35,21 @@ app.initialize = function() {
       app.preferences.currentCorpus = JSON.parse(localStorage.wugbotPreferences).currentCorpus;
     }
     
-    app.preferences.currentWorkview = JSON.parse(localStorage.wugbotPreferences).currentWorkview;
-    app.preferences.displayState = JSON.parse(localStorage.wugbotPreferences).displayState;
+    if (!app.preferences.currentWorkview) {
+      app.preferences.currentWorkview = 'texts';
+    } else {
+      app.preferences.currentWorkview = JSON.parse(localStorage.wugbotPreferences).currentWorkview;
+    }
+    
+    if (!app.preferences.displayState) {
+      app.preferences.displayState = {
+        overviewPane: 'open',
+        toolbar: 'open'
+      };
+    } else {
+      app.preferences.displayState = JSON.parse(localStorage.wugbotPreferences).displayState;
+    }
+    
   }
   
   // Open the database, and once it's open, render the page
@@ -63,6 +76,13 @@ app.mediaEvent = function(ev) {
 };
 
 app.pageEvent = function(ev) {
+  if (ev.type === 'submit') {
+    ev.preventDefault();
+    var input = views.page.panes.toolbar.searchBox.value;
+    var searchText = new RegExp(input);
+    idb.search(searchText);
+  }
+  
   if (ev.target.id === 'collapseLeft') {
     views.page.panes.overviewPane.toggleDisplay();
   }

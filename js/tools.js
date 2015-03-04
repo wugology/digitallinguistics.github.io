@@ -44,11 +44,11 @@ tools.convert = function(callback) {
       phrases.forEach(function(phrase, i) {
         phrase.startTime = parseFloat(phrase.startTime);
         phrase.endTime = parseFloat(phrase.endTime);
-        phrase.transcripts = [{ transcriptText: phrase.transcript, orthography: null }];
-        phrase.translations = [{ type: 'free', translationText: phrase.translation, orthography: null }];
+        phrase.transcripts = [{ text: phrase.transcript, orthography: null }];
+        phrase.translations = [{ type: 'free', text: phrase.translation, orthography: null }];
         phrase.transcriptions = [
-          { type: 'phonemic', transcriptionText: phrase.phonemic, orthography: null },
-          { type: 'phonetic', transcriptionText: phrase.phonetic, orthography: null }
+          { type: 'phonemic', text: phrase.phonemic, orthography: null },
+          { type: 'phonetic', text: phrase.phonetic, orthography: null }
         ];
         delete phrase.transcript;
         delete phrase.translation;
@@ -74,7 +74,7 @@ tools.convert = function(callback) {
         persons: [],
         phrases: phrases,
         tags: [],
-        titles: [{ orthography: null, titleText: '[no title]' }]
+        titles: [{ orthography: null, text: '[no title]' }]
       });
       
       if (typeof callback === 'function') {

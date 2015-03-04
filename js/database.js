@@ -65,7 +65,10 @@ var idb = {
       console.log('Please specify a database to delete.');
     }
     
-    if ((arguments.length === 1 && typeof arguments[0] === 'string') || arguments.length === 2) {      
+    if ((arguments.length === 1 && typeof arguments[0] === 'string') || arguments.length === 2) {
+      delete localStorage.wugbotPreferences;
+      delete app.preferences;
+      
       var request = indexedDB.deleteDatabase(dbname);
       request.onsuccess = function() {
         console.log('Database deleted.');
@@ -74,9 +77,6 @@ var idb = {
           successCallback();
         }
       };
-      
-      delete localStorage.wugbotPreferences;
-      delete app.preferences;
     }
   },
   
@@ -236,6 +236,37 @@ var idb = {
   
   // Stores the results of each database transaction. Mostly used for development and debugging.
   results: null,
+  
+  // searchText should be a regular expression object
+  search: function(searchText, tier, orthography, successCallback) {
+    var results = [];
+    var transaction = idb.database.transaction('texts');
+    
+    transaction.oncomplete = function() {
+      if (successCallback === 'function') {
+        successCallback(results);
+      }
+    };
+    
+    var objectStore = transaction.objectStore('texts');
+    
+    objectStore.openCursor().onsuccess = function(ev) {
+      var cursor = ev.target.result;
+      
+      if (cursor) {
+        cursor.value.phrases.forEach(function(phrase) {
+          var ortho = phrase[tier].filter(function(ortho) {
+            return ortho.orthography === orthography;
+          })[0];
+                    
+          if (ortho.text && ortho.text.search(searchText) !== -1) {
+            results.push(phrase);
+          }
+        });
+        cursor.continue();
+      }
+    };
+  },
   
   // Updates a single property within a single record (object)
   // Takes an optional callback function, which has the ID of the updated record as its argument

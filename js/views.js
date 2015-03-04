@@ -16,8 +16,6 @@
 // - page: General page-level rendering functions, such as page.display(element) or page.render() (for when the page initializes)
 //         The views.page namespace is initialized in script.js, and contains a handful of useful site-wide functions
 
-// Dependencies: views.js
-
 
 // Collection views
 views.collections = {};
@@ -185,6 +183,8 @@ views.page.panes = {
   toolbar: {
     el: document.querySelector('#toolbar'),
     collapse: document.querySelector('#collapseRight'),
+    searchBox: document.querySelector('#searchBox'),
+    searchForm: document.querySelector('#searchForm'),
     toolbarArea: document.querySelector('#toolbarArea'),
     toolsNav: document.querySelector('#toolbarNav li:last-child'),
     
@@ -379,7 +379,7 @@ views.workviews = {
     for (var i=0; i<details.length; i++) {
       views.page.hide(details[i]);
     }
-    
+
     views.workviews[workview].render();
     
     app.preferences.currentWorkview = workview;
@@ -458,7 +458,7 @@ views.workviews = {
       var list = function(results) {
         views.workviews.texts.textsList.innerHTML = '';
         results.forEach(function(result) {
-          var li = views.page.createElement('li', { textContent: result.value.titles[0].titleText });
+          var li = views.page.createElement('li', { textContent: result.value.titles[0].text });
           li.dataset.id = result.value.id;
           views.workviews.texts.textsList.appendChild(li);
         });
