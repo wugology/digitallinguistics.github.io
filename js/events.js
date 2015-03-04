@@ -1,3 +1,9 @@
+// Might be good to refactor events into an event registry, like so:
+//  {
+//    click: [fn1, fn2, fn3],
+//    dblclick: [fn4, fn5]
+//  }
+
 // This page consists of 2 parts:
 //   1. A list of nodes, under the app.nodes namespace
 //   2. The events registry for the app (i.e. a list of event listeners)
@@ -44,6 +50,8 @@ views.workviews.media.overviewPane.addEventListener('click', app.mediaEvent);
 views.workviews.texts.overviewPane.addEventListener('click', app.textsEvent);
 
 views.workviews.texts.detailsPane.addEventListener('click', app.textsEvent);
+
+views.workviews.texts.detailsPane.addEventListener('click', app.pageEvent);
 
 views.workviews.texts.detailsPane.addEventListener('input', app.textsEvent);
 

@@ -87,7 +87,7 @@ var idb = {
   // Gets an object from the specified table in the database, using the index provided
   // Requires a callback function that has the returned object as its argument
   get: function(id, table, successCallback) {
-    idb.results = [];
+    idb.results = null;
     
     var transaction = idb.database.transaction(table);
     
@@ -233,7 +233,7 @@ var idb = {
     array.forEach(function(index) {
       var request = objectStore.delete(index);
       request.onsuccess = function() {
-        idb.results.push(request.result);
+        idb.results.push(idb.reconstruct(request.result));
       };
     });
   },
@@ -257,23 +257,35 @@ var idb = {
     objectStore.openCursor().onsuccess = function(ev) {
       var cursor = ev.target.result;
       
+      
       if (cursor) {
+        var text;
         cursor.value.phrases.forEach(function(phrase) {
-          var text;
-          
-          if (typeof phrase[tier] === 'array') {
-            var ortho = phrase[tier].filter(function(ortho) {
-              return ortho.orthography === orthography;
-            })[0];
-            text = ortho.text;
-          } else {
-            text = phrase[tier]
-          }
-          
-          if (text && text.search(searchText) !== -1) {
-            idb.results.push(idb.reconstruct(phrase));
+          var checkText = function(text) {
+            if (text.search(searchText) !== -1) {
+              idb.results.push(idb.reconstruct(phrase));
+            }
+          };
+
+          if (phrase[tier]) {
+            if (typeof phrase[tier] === 'string') {
+              checkText(phrase[tier]);
+            } else {
+              orthographies = phrase[tier].filter(function(ortho) {
+                if (ortho.orthography === orthography) {
+                  return true;
+                }
+              });
+              
+              orthographies.forEach(function(ortho) {
+                if (ortho.text) {
+                  checkText(ortho.text);
+                }
+              });
+            }
           }
         });
+
         cursor.continue();
       }
     };

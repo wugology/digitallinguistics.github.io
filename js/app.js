@@ -88,6 +88,15 @@ app.pageEvent = function(ev) {
     idb.search(searchText, tier, null, views.page.panes.toolbar.displayResults);
   }
   
+  if (ev.target.classList.contains('play')) {
+    var textID = Number(ev.target.parentNode.dataset.breadcrumb.match(/text[0-9]+/)[0].replace('text', ''));
+    var phraseIndex = Number(ev.target.parentNode.dataset.breadcrumb.match(/phrase[0-9]+/)[0].replace('phrase', ''));
+    
+    idb.get(textID, 'texts', function(text) {
+      text.phrases[phraseIndex].play();
+    });
+  }
+  
   if (ev.target.id === 'collapseLeft') {
     views.page.panes.overviewPane.toggleDisplay();
   }
@@ -191,11 +200,6 @@ app.textsEvent = function(ev) {
       };
       
       idb.get(Number(ev.target.dataset.id), 'texts', render);
-    }
-    
-    if (ev.target.classList.contains('play')) {
-      var index = ev.target.parentNode.dataset.id;
-      app.preferences.currentText.phrases[index].play();
     }
     
     switch (ev.target.id) {

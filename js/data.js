@@ -83,7 +83,7 @@ var Phrase = function(data) {
     value: function(wrapper) {
       var template = document.querySelector('#phraseTemplate');
       var li = template.content.querySelector('.phrase');
-      li.dataset.id = this.breadcrumb;
+      li.dataset.breadcrumb = this.breadcrumb;
             
       var contentWrapper = template.content.querySelector('.wrapper');
       contentWrapper.innerHTML = '';
@@ -113,12 +113,20 @@ var Phrase = function(data) {
   
   Object.defineProperty(this, 'play', {
     value: function() {
-      var players = views.workviews.texts.mediaArea.children;
-      for (var i=0; i<players.length; i++) {
-        players[i].currentTime = this.startTime;
-        app.media.endTime = this.endTime;
-        players[i].play();
-      }
+      var textID = Number(this.breadcrumb.match(/text[0-9]+/)[0].replace('text', ''));
+      
+      var getMedia = function(text) {
+        idb.get(text.media[0], 'media', getSrc);
+      };
+      
+      var getSrc = function(file) {
+        var url = URL.createObjectURL(file);
+        var a = new Audio(url + '#t=' + this.startTime + ',' + this.endTime);
+        a.play();
+      }.bind(this);
+      
+      idb.get(textID, 'texts', getMedia);
+      
     }
   });
   
@@ -151,11 +159,14 @@ var Text = function(data, callback) {
         
         this.phrases.forEach(function(phrase, i) {
           phrase.breadcrumb = 'text' + this.id + '_phrase' + i;
-        });
+        }.bind(this));
         
-        if (typeof callback === 'function') {
-          callback(this);
-        }
+        idb.update(id, 'phrases', this.phrases, 'texts', function() {
+          if (typeof callback === 'function') {
+            callback(this);
+          }
+        }.bind(this));
+        
       }.bind(this);
       
       idb.add([this], 'texts', setID);
