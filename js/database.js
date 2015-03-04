@@ -217,25 +217,20 @@ var idb = {
     return newObject;
   },
 
-  // Deletes the specified array of indexes from the specified object store
+  // Deletes an object from the specified object store
   // Takes an optional callback function that fires once the object is deleted
-  remove: function(array, table, successCallback) {
+  remove: function(objectToRemove, table, callback) {
     idb.results = [];
     
-    var transaction = idb.database(table, 'readwrite');
+    var transaction = idb.database.transaction(table, 'readwrite');
     
     transaction.oncomplete = function() {
-      successCallback(request.result);
+      callback(request.result);
     };
     
     var objectStore = transaction.objectStore(table);
     
-    array.forEach(function(index) {
-      var request = objectStore.delete(index);
-      request.onsuccess = function() {
-        idb.results.push(idb.reconstruct(request.result));
-      };
-    });
+    var request = objectStore.delete(objectToRemove.id);
   },
   
   // Stores the results of each database transaction. Mostly used for development and debugging.

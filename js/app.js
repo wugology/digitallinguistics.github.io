@@ -217,6 +217,18 @@ app.textsEvent = function(ev) {
         idb.pushUpdate(app.preferences.currentText.id, 'media', mediaID, 'texts');
         views.popups.blank.close();
         views.workviews.texts.render();
+        break;
+      case 'deleteTextButton':
+        var response = confirm('Are you sure you want to delete this text? Have you made a backup first?');
+        if (response) {
+          var rerender = function() {
+            app.preferences.currentText = null;
+            views.page.hide(views.workviews.texts.detailsPane);
+            views.workviews.texts.render();
+          };
+          app.preferences.currentText.delete(rerender);
+        }
+        break;
       case 'importTextButton':
         var convert = function() {
           var add = function(text) {

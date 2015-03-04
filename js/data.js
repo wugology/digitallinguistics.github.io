@@ -173,6 +173,12 @@ var Text = function(data, callback) {
     }
   });
   
+  Object.defineProperty(this, 'delete', {
+    value: function(callback) {
+      idb.remove(this, 'texts', callback);
+    }
+  });
+  
   Object.defineProperty(this, 'display', {
     value: function() {
       views.workviews.texts.displayText(this);
