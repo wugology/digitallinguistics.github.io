@@ -1,4 +1,12 @@
 // MODELS
+// - Corpus
+// - Language
+// - Text
+// - Phrase
+// - Word
+// - Lexeme
+// - Construction
+// - Tag
 
 var Corpus = function() {
 };
@@ -8,15 +16,28 @@ var Language = function() {
 };
 
 // Abbr: t
-var Text = function() {
+var Text = function(data) {
+  Model.call(this, data);
+  
+  this.phrases = this.phrases.map(function(phraseData) {
+    return new Phrase(phraseData);
+  });
 };
 
 // Abbr: p
-var Phrase = function() {
+var Phrase = function(data) {
+  Model.call(this, data);
+  
+  this.words = this.words.map(function(wordData) {
+    return new Word(wordData);
+  });
 };
 
 // Abbr: w
-var Word = function() {
+var Word = function(data) {
+  Model.call(this, data);
+  
+  // Do we need a hydrate function for morphemes (actually lexemes)?
 };
 
 // Abbr: lex

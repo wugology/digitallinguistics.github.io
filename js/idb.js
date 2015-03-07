@@ -1,2 +1,2 @@
 // INDEXEDDB
-// IndexedDB functionality, used as a mixin on the models
+// IndexedDB functionality, used as a mix-in on the models
