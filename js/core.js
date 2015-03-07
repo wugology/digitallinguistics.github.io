@@ -2,8 +2,8 @@
 // Core functionality on which the rest of the app functionality depends
 
 
-// Base Functions
-// DOM selector
+// BASE FUNCTIONS
+// DOM selector - returns a single node or an array of nodes (not a node list)
 var $ = function(selector) {
   var
     nodeList = document.querySelectorAll(selector),
@@ -13,6 +13,7 @@ var $ = function(selector) {
   return selected;
 }.bind(document);
 
+// Adds all the enumerable keys of one object (the source) to another (the destination)
 var augment = function(destination, source) {
   Object.keys(source).forEach(function(key) {
     destination[key] = source[key];
@@ -22,44 +23,60 @@ var augment = function(destination, source) {
 };
 
 
-// Event System
+// EVENT SYSTEM
 var ObserverList = function() {
-  this.observers = [];
-  
-  this.observers.add = function(observer, action) {
-    var sub = {
-      action: action,
-      observer: observer
-    };
+  Object.defineProperties(this, {
+    "observers": {
+      value: [],
+      writable: true
+    },
     
-    this.observers.push(sub);
-  }.bind(this);
-  
-  this.observers.remove = function(observer, action) {
-    this.observers.forEach(function(sub, i, arr) {
-      if (sub.observer == observer && sub.action == action) {
-        arr.splice(i, 1);
-      }
-    });
-  }.bind(this);
-  
-  this.notify = function(action, data) {
-    var subs = this.observers.filter(function(sub) {
-      return sub.action == action;
-    });
+    "notify": {
+      value: function(action, data) {
+        var subs = this.observers.filter(function(sub) {
+          return sub.action == action;
+        });
 
-    this.observers.forEach(function(sub) {
-      sub.observer.update(sub.action, data);
-    });
-  }.bind(this);
+        this.observers.forEach(function(sub) {
+          sub.observer.update(sub.action, data);
+        });
+      }.bind(this)
+    },
+    
+    "update": {
+      value: function(action, data) {
+        console.log('No update function has been set for this object yet.');
+        // Overwrite this function with model- or view-specific update functions
+      },
+      writable: true
+    }
+  });
   
-  this.update = function(action, data) {
-    console.log('No update function has been set for this object yet.');
-    // Overwrite this function with model- or view-specific update functions
-  };
+  Object.defineProperties(this.observers, {
+    "add": {
+      value: function(observer, action) {
+        var sub = {
+          action: action,
+          observer: observer
+        };
+        
+        this.observers.push(sub);
+      }.bind(this)
+    },
+    
+    "remove": {
+      value: function(observer, action) {
+        this.observers.forEach(function(sub, i, arr) {
+          if (sub.observer == observer && sub.action == action) {
+            arr.splice(i, 1);
+          }
+        });
+      }.bind(this)
+    }
+  });
 };
 
-// Base Model
+// BASE MODEL
 // General model methods:
 // - search
 // - event system mixin
