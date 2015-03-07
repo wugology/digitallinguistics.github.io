@@ -33,7 +33,7 @@ var ObserverList = function() {
     };
     
     this.observers.push(sub);
-  };
+  }.bind(this);
   
   this.observers.remove = function(observer, action) {
     this.observers.forEach(function(sub, i, arr) {
@@ -41,21 +41,23 @@ var ObserverList = function() {
         arr.splice(i, 1);
       }
     });
-  };
+  }.bind(this);
   
   this.notify = function(action, data) {
     var subs = this.observers.filter(function(sub) {
       return sub.action == action;
     });
-    
-    this.subs.forEach(funtion(sub) {
+
+    this.observers.forEach(function(sub) {
       sub.observer.update(sub.action, data);
     });
+  }.bind(this);
+  
+  this.update = function(action, data) {
+    console.log('No update function has been set for this object yet.');
+    // Overwrite this function with model- or view-specific update functions
   };
 };
-
-
-
 
 // Base Model
 // General model methods:
@@ -65,3 +67,30 @@ var ObserverList = function() {
 // - breadcrumb
 
 // Base View
+
+
+
+var input = $('#toolbar input')[0];
+
+ObserverList.call(input);
+
+var Observer = function() {
+  ObserverList.call(this);
+};
+
+var observer = new Observer();
+
+input.observers.add(observer, 'typing');
+
+input.observers.add(observer, 'keyup');
+
+input.addEventListener('input', function(ev) {
+  var value = ev.target.value;
+  input.notify('typing', value);
+});
+
+observer.update = function(action, data) {
+  if (action == 'typing') {
+    console.log(data);
+  }
+};
