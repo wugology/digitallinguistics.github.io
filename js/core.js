@@ -55,6 +55,27 @@ var Breadcrumb = {
   }
 };
 
+// IDB MIX-Infinity
+var idbObj = function() {
+  Object.defineProperties(this, {
+    // Accepts an optional callback function
+    'delete': {
+      configurable: true,
+      value: function(callback) {
+        idb.remove(this.id, idb.getTable(this.model), callback);
+      }.bind(this)
+    },
+
+    // Accepts an optional callback function that has the ID of the record saved to as its argument
+    'save': {
+      configurable: true,
+      value: function(callback) {
+        idb.update(this, idb.getTable(this.model), callback);
+      }.bind(this)
+    }
+  });
+};
+
 
 // EVENT SYSTEM
 var ObserverList = function() {
@@ -111,6 +132,7 @@ var ObserverList = function() {
 
 // BASE MODEL
 var Model = function(data) {
+  idbObj.call(this);
   ObserverList.call(this);
   
   augment(this, data);

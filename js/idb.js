@@ -29,6 +29,27 @@ var idb = {
     }
   },
   
+  // Checks to see whether the record(s) with the given ID(s) exists in the specified table
+  // The ids argument may either be a single numeric ID, or an array of numeric IDs
+  // Requires a callback function which has a boolean as its argument
+  checkid: function(id, table, callback) {
+    var result;
+    
+    var transaction = idb.database.transaction(table);
+    
+    transaction.oncomplete = function() { callback(result); };
+    
+    transaction.objectStore(table).openCursor(id).onsuccess = function(ev) {
+      var cursor = ev.target.result;
+      
+      if (cursor) {
+        result = true;
+      } else {
+        result = false;
+      }
+    };
+  },
+  
   // Creates the object stores (tables) for the database (the database itself is created on .open())
   createStores: function() {
     var
@@ -69,11 +90,15 @@ var idb = {
   // - null: returns all the records in the table
   // - single ID: returns just the record with that index
   // - array of IDs: returns all the records with those indexes
+  // The ids argument may also take a breadcrumb or array of breadcrumbs (as a string)
+  // - This will return the object for that breadcrumb, even if it's not a top-level object
   // Takes a required callback function that has the returned results as its argument
   get: function(ids, table, callback) {
     var
-      results,
+      results [];
       transaction = idb.database.transaction(table);
+    
+    if (typeof ids == 'number' || typeof ids == 'string') { ids = new Array(ids); }
       
     transaction.oncomplete = function() {
       if (typeof callback == 'function') { callback(results); }
@@ -81,7 +106,7 @@ var idb = {
     
     var objectStore = transaction.objectStore(table);
     
-    if (ids == null) { // Get all records in the table; Mozilla actually has a getAll() function, but Chrome does not
+    if (ids == null) { // Get all records in the table
       objectStore.openCursor().onsuccess = function(ev) {
         var cursor = ev.target.result;
         
@@ -97,44 +122,54 @@ var idb = {
         }
       };
       
-    } else if (typeof ids == 'number') { // Get a single record
-      var request = objectStore.get(id);
-      request.onsuccess = function(ev) { results = idb.reconstruct(request.result); };
-      
-    } else { // Get only the provided IDs
+    } else if (typeof ids[0] == 'number') { // Get records by ID
       ids.forEach(function(id) {
         var request = objectStore.get(id);
         request.onsuccess = function(ev) { results.push(idb.reconstruct(request.result)); };
       });
+      
+    } else if (typeof ids[0] == 'string') { // Get objects by breadcrumb
+      ids.forEach(function(breadcrumb) {
+        var indexes = Breadcrumb.parse(breadcrumb);
+
+        var getData = function(text) {
+          if (!indexes.phrase) {
+            results.push(text);
+          } else if (!indexes.word) {
+            results.push(text.phrases[indexes.phrase]);
+          } else if (!indexes.morpheme) {
+            results.push(text.phrases[indexes.phrase].words[indexes.word]);
+          } else {
+            results.push(text.phrases[indexes.phrase].words[indexes.word].morphemes[indexes.morpheme]);
+          }
+        };
+        
+        idb.get(indexes.text, 'texts', getData);
+      });
     }
   },
   
-  // Accepts either a single breadcrumb or an array of breadcrumbs
-  // Requires a callback function that takes the search results as its argument
-  getBreadcrumb: function(breadcrumbs, callback) {
-    var results = [];
-    
-    if (typeof breadcrumbs == 'string') { breadcrumbs = new Array(breadcrumbs); }
-    
-    breadcrumbs.forEach(function(breadcrumb) {
-      var indexes = Breadcrumb.parse(breadcrumb);
-      
-      var getData = function(text) {
-        if (!indexes.phrase) {
-          results.push(text);
-        } else if (!indexes.word) {
-          results.push(text.phrases[indexes.phrase]);
-        } else if (!indexes.morpheme) {
-          results.push(text.phrases[indexes.phrase].words[indexes.word]);
-        } else {
-          results.push(text.phrases[indexes.phrase].words[indexes.word].morphemes[indexes.morpheme]);
-        }
-        
-        if (typeof callback == 'function') { callback(results); }
-      };
-      
-      idb.get(indexes.text, 'texts', getData);
-    });
+  // Returns the table that is associated with a given model
+  getTable: function(model) {
+    switch(model) {
+      case 'Corpus':
+        return 'corpora';
+        break;
+      case 'Language':
+        return 'languages';
+        break;
+      case 'Lexicon':
+        return 'lexicons';
+        break;
+      case 'Media':
+        return 'media';
+        break;
+      case 'Text':
+        return 'texts';
+        break;
+      default:
+        return none;
+    }
   },
   
   // Opens the db, and creates a new one if the db name doesn't exist
@@ -172,7 +207,7 @@ var idb = {
   remove: function(ids, table, callback) {
     var
       results,
-      transaction = idb.database.transaction(table);
+      transaction = idb.database.transaction(table, 'readwrite');
       
     transaction.oncomplete = function() {
       if (typeof callback == 'function') { callback(results); }
@@ -201,7 +236,7 @@ var idb = {
     // 3. the callback function, which takes the search results as an argument
   // Currently requires searchText to be a regular expression object
   search: function(searchText, tier, orthography, callback) {
-    results = [];
+    var results = [];
     
     var transaction = idb.database.transaction('texts');
     
@@ -242,16 +277,38 @@ var idb = {
     };
   },
   
-  // Updates a property within a single record
-  // Can specify whether you want to apply the change to 1 record, multiple records, or all records in a table
-    // - 1 record: ids = number
-    // - multiple records: ids = array of numbers
-    // - entire table: ids = null
-  // Takes a required 'push' argument specifying whether you want the new value to replace the old one (push = true),
-    // or be pushed onto the existing array for that property (push = false)
-  // Takes an optional callback function, which has the ID of the updated record as its argument
-  update: function(ids, property, newValue, table, push, callback) {
-    results = [];
+  // Updates a single record (by replacing it entirely with the new object), or creates one if none exists
+  // Accepts an optional callback which has the IDs of the updated records as its argument
+  update: function(newValues, table, callback) {
+    var results = [];
+    
+    if (newValues.length == undefined) { newValues = new Array(newValues); }
+    
+    var transaction = idb.database.transaction(table);
+    
+    transaction.oncomplete = function() {
+      if (typeof callback == 'function') { callback(results); }
+    };
+    
+    newValues.forEach(function(newValue) {
+      var request = transaction.objectStore(table).put(newValue);
+      
+      request.onsuccess = function() {
+        results.push(request.result);
+      };
+    });
+  },
+  
+  // Updates a single property of the specified record(s) with the new value
+  // The ids argument may be:
+    // null: updates all records
+    // a single numeric ID: updates only that record
+    // an array of numeric IDs: updates the records with those IDs
+  // The push argument specifies whether the new value should be pushed onto the array of the property (true),
+    // or replace the value for that property entirely (false)
+  // Accepts an optional callback which has the IDs of the updated records as its argument
+  updateProperty: function(ids, property, newValue, push, table, callback) {
+    var results = [];
     
     var updateData = function(data) {
       if (push) {
@@ -268,9 +325,9 @@ var idb = {
     transaction.oncomplete = function() {
       if (typeof callback == 'function') { callback(results); }
     };
-    
+
     var objectStore = transaction.objectStore(table);
-    
+
     if (ids == null) { // Updates all the records in the table
       objectStore.openCursor().onsuccess = function(ev) {
         var cursor = ev.target.result;
@@ -289,6 +346,7 @@ var idb = {
       };
     } else if (typeof ids == 'number') { // Updates only the selected record
       var request = objectStore.get(ids);
+      
       request.onsuccess = function() {
         var data = request.result;
         
@@ -296,9 +354,7 @@ var idb = {
         
         var requestUpdate = objectStore.put(newData);
         
-        requestUpdate.onsuccess = function() {
-          results = requestUpdate.result;
-        };
+        requestUpdate.onsuccess = function() { results = requestUpdate.result; };
       };
     } else { // Updates only the selected records
       ids.forEach(function(id) {
@@ -309,9 +365,7 @@ var idb = {
           
           var requestUpdate = objectStore.put(newData);
           
-          requestUpdate.onsuccess = function() {
-            results.push(requestUpdate.result);
-          };
+          requestUpdate.onsuccess = function() { results.push(requestUpdate.result); };
         };
       });
     }
@@ -332,7 +386,7 @@ var idb = {
       var objectStoreName = idb.database.objectStoreNames[counter];
       database[objectStoreName] = records;
       counter += 1;
-      if (counter === idb.database.objectStoreNames.length) {
+      if (counter == idb.database.objectStoreNames.length) {
         var opendb = function() {
           idb.open(this.currentDatabase, populateDatabase);
         };

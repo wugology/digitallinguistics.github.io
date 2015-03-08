@@ -8,9 +8,23 @@
 // - Construction
 // - Tag
 
-// IDB functions that each model should have
+// Each model inherits the following methods
+// From idbObj:
 // - delete: deletes the model and reindexes its array as needed
 // - save: updates the object in IndexedDB, or adds it if the object doesn't yet exist, then assigns itself a breadcrumb
+// From Model:
+// - json
+// - search
+// From View:
+// - hide
+// - display
+// - toggleDisplay
+// From ObserverList
+// - observers (array)
+// - observers.add
+// - observers.remove
+// - notify
+// - update
 
 var Media = function(data) {
   Model.call(this, data);
@@ -25,7 +39,7 @@ var Media = function(data) {
 
 var Corpus = function(data) {
   Model.call(this, data);
-
+  
   Object.defineProperty(this, 'model', {
     enumerable: true,
     value: 'Corpus'
@@ -59,12 +73,12 @@ var Text = function(data) {
 // Abbr: p
 var Phrase = function(data) {
   Model.call(this, data);
-
+  
   Object.defineProperty(this, 'model', {
     enumerable: true,
     value: 'Phrase'
   });
-  
+
   this.words = this.words.map(function(wordData) {
     return new Word(wordData);
   });
