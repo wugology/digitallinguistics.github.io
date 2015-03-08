@@ -59,12 +59,12 @@ var Breadcrumb = {
 // EVENT SYSTEM
 var ObserverList = function() {
   Object.defineProperties(this, {
-    "observers": {
+    'observers': {
       value: [],
       writable: true
     },
     
-    "notify": {
+    'notify': {
       value: function(action, data) {
         var subs = this.observers.filter(function(sub) {
           return sub.action == action;
@@ -76,7 +76,7 @@ var ObserverList = function() {
       }.bind(this)
     },
     
-    "update": {
+    'update': {
       value: function(action, data) {
         console.log('No update function has been set for this object yet.');
         // Overwrite this function with an update function specific to the model, view, or collection
@@ -86,7 +86,7 @@ var ObserverList = function() {
   });
   
   Object.defineProperties(this.observers, {
-    "add": {
+    'add': {
       value: function(observer, action) {
         var sub = {
           action: action,
@@ -97,7 +97,7 @@ var ObserverList = function() {
       }.bind(this)
     },
     
-    "remove": {
+    'remove': {
       value: function(observer, action) {
         this.observers.forEach(function(sub, i, arr) {
           if (sub.observer == observer && sub.action == action) {
@@ -109,7 +109,6 @@ var ObserverList = function() {
   });
 };
 
-
 // BASE MODEL
 var Model = function(data) {
   ObserverList.call(this);
@@ -117,13 +116,13 @@ var Model = function(data) {
   augment(this, data);
   
   Object.defineProperties(this, {
-    "json": {
+    'json': {
       get: function() {
         return JSON.stringify(this);
       }
     },
     
-    "search": {
+    'search': {
       // This is a generic search function that can be overwritten on a model-specific basis
       value: function(searchTerm) {
         var results = [];

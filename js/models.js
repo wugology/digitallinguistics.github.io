@@ -8,6 +8,10 @@
 // - Construction
 // - Tag
 
+// IDB functions that each model should have
+// - delete: deletes the model and reindexes its array as needed
+// - save: updates the object in IndexedDB, or adds it if the object doesn't yet exist, then assigns itself a breadcrumb
+
 var Media = function(data) {
   Model.call(this, data);
   

@@ -65,7 +65,7 @@ var idb = {
   },
   
   // Gets either a single record, an array of records, or all the records from a given table
-  // Acceptable values for 'id':
+  // Acceptable values for 'ids':
   // - null: returns all the records in the table
   // - single ID: returns just the record with that index
   // - array of IDs: returns all the records with those indexes
@@ -88,7 +88,7 @@ var idb = {
         if (cursor) {
           var result = {
             key: cursor.key,
-            value: cursor.value
+            value: idb.reconstruct(cursor.value)
           };
           
           results.push(result);
@@ -104,9 +104,37 @@ var idb = {
     } else { // Get only the provided IDs
       ids.forEach(function(id) {
         var request = objectStore.get(id);
-        request.onsuccess = function(ev) { results.push(request.result); };
+        request.onsuccess = function(ev) { results.push(idb.reconstruct(request.result)); };
       });
     }
+  },
+  
+  // Accepts either a single breadcrumb or an array of breadcrumbs
+  // Requires a callback function that takes the search results as its argument
+  getBreadcrumb: function(breadcrumbs, callback) {
+    var results = [];
+    
+    if (typeof breadcrumbs == 'string') { breadcrumbs = new Array(breadcrumbs); }
+    
+    breadcrumbs.forEach(function(breadcrumb) {
+      var indexes = Breadcrumb.parse(breadcrumb);
+      
+      var getData = function(text) {
+        if (!indexes.phrase) {
+          results.push(text);
+        } else if (!indexes.word) {
+          results.push(text.phrases[indexes.phrase]);
+        } else if (!indexes.morpheme) {
+          results.push(text.phrases[indexes.phrase].words[indexes.word]);
+        } else {
+          results.push(text.phrases[indexes.phrase].words[indexes.word].morphemes[indexes.morpheme]);
+        }
+        
+        if (typeof callback == 'function') { callback(results); }
+      };
+      
+      idb.get(indexes.text, 'texts', getData);
+    });
   },
   
   // Opens the db, and creates a new one if the db name doesn't exist
@@ -167,6 +195,10 @@ var idb = {
   },
   
   // To be replaced with Pat's search function
+  // Eventually, this function sould take 3 arguments:
+    // 1. a hash of search criteria
+    // 2. the search function to be applied to each text, using the search hash
+    // 3. the callback function, which takes the search results as an argument
   // Currently requires searchText to be a regular expression object
   search: function(searchText, tier, orthography, callback) {
     results = [];
