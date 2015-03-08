@@ -1,89 +1,4 @@
-// The API for IndexedDB
-// These functions will be used primarily (perhaps exclusively) by the Models
-
 var idb = {
-  // Adds an array of objects to the specified table (object store)
-  // Takes an optional callback function that will be applied to the index of each newly-stored object
-  add: function(array, table, successCallback) {
-    idb.results = [];
-    
-    var transaction = idb.database.transaction(table, 'readwrite');
-    
-    transaction.oncomplete = function() {
-      if (typeof successCallback === 'function') {
-        successCallback(idb.results);
-      }
-    };
-    
-    var objectStore = transaction.objectStore(table);
-    
-    if (table === 'media') {
-      for (var i=0; i<array.length; i++) {
-        var request = objectStore.add(array[i]);
-        
-        request.onsuccess = function() {
-          idb.results = request.result;
-        };
-      }
-    } else {
-      array.forEach(function(item) {
-        if (item.toJSON) {
-          item = item.toJSON();
-        }
-        var request = objectStore.add(item);
-        
-        request.onsuccess = function() {
-          idb.results = request.result;
-        };
-      });
-    }
-  },
-  
-  // Creates the database
-  createDatabase: function() {
-    var defaults = { keyPath: 'id', autoIncrement: true };
-    var objectStores = [
-      'corpora',
-      'languages',
-      'lexicons',
-      'texts'
-    ];
-    
-    objectStores.forEach(function(objectStore) {
-      idb.database.createObjectStore(objectStore, defaults);
-    });
-    
-    idb.database.createObjectStore('media', { autoIncrement: true });
-  },
-  
-  // Change this value to work with different databases
-  currentDatabase: 'WugbotDev',
-  
-  // Deletes the specified database
-  deleteDatabase: function(dbname, successCallback) {
-    if (arguments.length === 0 || (arguments.length === 1 && typeof arguments[0] === 'function')) {
-      console.log('Please specify a database to delete.');
-    }
-    
-    if ((arguments.length === 1 && typeof arguments[0] === 'string') || arguments.length === 2) {
-      delete localStorage.wugbotPreferences;
-      delete app.preferences;
-      
-      var request = indexedDB.deleteDatabase(dbname);
-      request.onsuccess = function() {
-        console.log('Database deleted.');
-        
-        if (typeof successCallback === 'function') {
-          successCallback();
-        }
-      };
-      
-      request.onblocked = function() {
-        idb.database.close();
-      };
-    }
-  },
-  
   // Gets an object from the specified table in the database, using the index provided
   // Requires a callback function that has the returned object as its argument
   get: function(id, table, successCallback) {
@@ -152,27 +67,6 @@ var idb = {
     };
   },
   
-  // Takes an optional callback function that has the database object as its argument
-  open: function(dbname, successCallback) {
-    var request = indexedDB.open(dbname, 1);
-    
-    request.onsuccess = function() {
-      idb.database = request.result;
-      idb.onversionchange = function(ev) {
-        ev.target.close;
-      };
-      
-      if (typeof successCallback === 'function') {
-        successCallback(idb.database);
-      }
-    };
-    
-    request.onupgradeneeded = function() {
-      idb.database = request.result;
-      idb.createDatabase();
-    };
-  },
-  
   pushUpdate: function(id, property, objectToPush, table, successCallback) {
     idb.results = [];
     
@@ -232,9 +126,6 @@ var idb = {
     
     var request = objectStore.delete(objectToRemove.id);
   },
-  
-  // Stores the results of each database transaction. Mostly used for development and debugging.
-  results: null,
   
   // searchText should be a regular expression object
   search: function(searchText, tier, orthography, successCallback) {
@@ -342,10 +233,4 @@ var idb = {
       idb.getAll(idb.database.objectStoreNames[i], saveRecords);
     }
   }
-};
-
-idb.database = {};
-
-idb.database.onerror = function(ev) {
-  alert('Database error: ' + ev.target.errorCode);
 };

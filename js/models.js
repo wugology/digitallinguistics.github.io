@@ -8,11 +8,19 @@
 // - Construction
 // - Tag
 
-var Corpus = function() {
+var Media = function(file) {
+  this.file = file;
+  
+  // Maybe some methods to read the file to an array buffer, etc.
+};
+
+var Corpus = function(data) {
+  Model.call(this, data);
 };
 
 // Abbr: lang
 var Language = function() {
+  Model.call(this, data);
 };
 
 // Abbr: t
