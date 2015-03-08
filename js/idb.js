@@ -88,11 +88,9 @@ var idb = {
   // Gets either a single record, an array of records, or all the records from a given table
   // Acceptable values for 'ids':
   // - null: returns all the records in the table
-  // - single ID: returns just the record with that index
-  // - array of IDs: returns all the records with those indexes
-  // The ids argument may also take a breadcrumb or array of breadcrumbs (as a string)
-  // - This will return the object for that breadcrumb, even if it's not a top-level object
-  // Takes a required callback function that has the returned results as its argument
+  // - single ID or breadcrumb: returns just the record with that ID, or the object with that breadcrumb
+  // - array of IDs or breadcrumbs: returns all the records with those IDs, or all the objects with those breadcrumbs
+  // Takes a required callback function that has an array of the returned results as its argument
   get: function(ids, table, callback) {
     var
       results [];
@@ -208,6 +206,8 @@ var idb = {
     var
       results,
       transaction = idb.database.transaction(table, 'readwrite');
+    
+    if (typeof ids == 'number' || typeof ids == 'string') { ids = new Array(ids); }
       
     transaction.oncomplete = function() {
       if (typeof callback == 'function') { callback(results); }
@@ -219,12 +219,38 @@ var idb = {
       var request = objectStore.clear();
       request.onsuccess = function(ev) { results.push(request.result); };
       
-    } else if (typeof ids == 'number') { // Delete a single record
-      var request = objectStore.delete(id);
-      
-    } else { // Get only the provided IDs
+    } else if (typeof ids[0] == 'number') { // Deletes based on ID
       ids.forEach(function(id) {
-        var request = objectStore.delete(id);
+        objectStore.delete(id);
+      });
+    } else if (typeof ids[0] == 'string') { // Deletes based on breadcrumb
+      ids.forEach(function(breadcrumb) {
+        var indexes = Breadcrumb.parse(breadcrumb);
+        
+        if (indexes.phrase == null) {
+          objectStore.delete(indexes.text);
+        } else {
+          
+          var request = objectStore.get(indexes.text);
+          
+          request.onsuccess = function() {
+            var text = request.result;
+
+            if (!indexes.word) {
+              text.phrases.splice(indexes.phrase, 1);
+            } else if (!indexes.morpheme) {
+              text.phrases[indexes.phrase].words.splice(indexes.word, 1);
+            } else {
+              text.phrases[indexes.phrase].words[indexes.word].morphemes.splice(indexes.morpheme, 1);
+            }
+            
+            Breadcrumb.reset(text);
+            
+            var requestUpdate = objectStore.put(text);
+            
+            requestUpdate.onsuccess = function() { results.push(requestUpdate.result); };
+          };
+        }
       });
     }
   },
@@ -291,11 +317,37 @@ var idb = {
     };
     
     newValues.forEach(function(newValue) {
-      var request = transaction.objectStore(table).put(newValue);
+      if (newValue.id) {
+        var request = transaction.objectStore(table).put(newValue);
+
+        request.onsuccess = function() {
+          results.push(request.result);
+        };
+      }
       
-      request.onsuccess = function() {
-        results.push(request.result);
-      };
+      if (newValue.breadcrumb) {
+        var indexes = Breadcrumb.parse(newValue.breadcrumb);
+        
+        var objectStore = transaction.objectStore('texts');
+        
+        var request = objectStore.get(indexes.text);
+        
+        request.onsuccess = function() {
+          var text = request.result;
+          
+            if (!indexes.word) {
+              text.phrases[indexes.phrase] = newValue;
+            } else if (!indexes.morpheme) {
+              text.phrases[indexes.phrase].words[indexes.word] = newValue;
+            } else {
+              text.phrases[indexes.phrase].words[indexes.word].morphemes[indexes.morpheme] = newValue;
+            }
+          
+          var requestUpdate = objectStore.put(text);
+          
+          requestUpdate.onsuccess = function() { results.push(requestUpdate.result); };
+        };
+      }
     });
   },
   

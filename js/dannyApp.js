@@ -10,11 +10,16 @@ var app = {
   }
 };
 
+
+// APP VIEWS
 // Nav View
 var Nav = function(options) {
   View.call(this, null, options);
 };
 
+
+// APP SECTIONS
+// Navs
 app.appNav = new Nav({ el: $('#appNav') });
 app.appNav.update = function(action, data) {
   if (data == 'boxIcon') {

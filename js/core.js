@@ -52,6 +52,41 @@ var Breadcrumb = {
       morpheme: convert(3)
     };
     return indexes;
+  },
+  
+  // Resets the breadcrumbs on every item within an item
+  reset: function(item) {
+    var resetWord = function(word) {
+      word.morphemes.forEach(function(morpheme, m) {
+        morpheme.breadcrumb = word.breadcrumb + '_' + m;
+      });
+    };
+    
+    var resetPhrase = function(phrase) {
+      phrase.words.forEach(function(word, w) {
+        word.breadcrumb = phrase.breadcrumb + '_' + w;
+        resetWord(word);
+      });
+    };
+    
+    var resetText = function(text) {
+      text.phrases.forEach(function(phrase, p) {
+        phrase.breadcrumb = text.id + '_' + p;
+        resetPhrase(phrase);
+      });
+    };
+    
+    if (item.model == 'Word') {
+      resetWord(item);
+    }
+    
+    if (item.model == 'Phrase') {
+      resetPhrase(item);
+    }
+    
+    if (item.model == 'Text') {
+      resetText(item);
+    }
   }
 };
 
@@ -62,7 +97,13 @@ var idbObj = function() {
     'delete': {
       configurable: true,
       value: function(callback) {
-        idb.remove(this.id, idb.getTable(this.model), callback);
+        if (this.breadcrumb) {
+          var id = this.breadcrumb;
+        } else {
+          var id = this.id;
+        }
+        
+        idb.remove(id, idb.getTable(this.model), callback);
       }.bind(this)
     },
 
