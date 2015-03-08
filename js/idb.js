@@ -165,4 +165,153 @@ var idb = {
       });
     }
   },
+  
+  // To be replaced with Pat's search function
+  // Currently requires searchText to be a regular expression object
+  search: function(searchText, tier, orthography, callback) {
+    results = [];
+    
+    var transaction = idb.database.transaction('texts');
+    
+    transaction.oncomplete = function() {
+      if (typeof callback == 'function') { callback(results); }
+    };
+    
+    var objectStore = transaction.objectStore('texts');
+    
+    objectStore.openCursor().onsuccess = function(ev) {
+      var cursor = ev.target.result;
+      
+      if (cursor) {
+        var text;
+        
+        cursor.value.phrases.forEach(function(phrase) {
+          var checkText = function(text) {
+            if (text.search(searchText) == -1) { results.push(idb.reconstruct(phrase)); }
+          };
+          
+          if (phrase[Tier]) {
+            if (typeof phrase[tier] == 'string') {
+              checkText(phrase[tier]);
+            } else {
+              var orthographies = phrase[tier].filter(function(ortho) {
+                if (ortho.orthography == orthography) { return true; }
+              });
+              
+              orthographies.forEach(function(ortho) {
+                if (ortho.text) { checkText(ortho.text); }
+              });
+            }
+          }
+        });
+        
+        cursor.continue();
+      }
+    };
+  },
+  
+  // Updates a property within a single record
+  // Can specify whether you want to apply the change to 1 record, multiple records, or all records in a table
+    // - 1 record: ids = number
+    // - multiple records: ids = array of numbers
+    // - entire table: ids = null
+  // Takes a required 'push' argument specifying whether you want the new value to replace the old one (push = true),
+    // or be pushed onto the existing array for that property (push = false)
+  // Takes an optional callback function, which has the ID of the updated record as its argument
+  update: function(ids, property, newValue, table, push, callback) {
+    results = [];
+    
+    var updateData = function(data) {
+      if (push) {
+        data[property].push(newValue);
+      } else {
+        data[property] = newValue;
+      }
+      
+      return data;
+    };
+    
+    var transaction = idb.database.transaction(table, 'readwrite');
+    
+    transaction.oncomplete = function() {
+      if (typeof callback == 'function') { callback(results); }
+    };
+    
+    var objectStore = transaction.objectStore(table);
+    
+    if (ids == null) { // Updates all the records in the table
+      objectStore.openCursor().onsuccess = function(ev) {
+        var cursor = ev.target.result;
+        
+        if (cursor) {
+          var newData = updateData(cursor.value);
+          
+          var requestUpdate = objectStore.put(newData);
+          
+          requestUpdate.onsuccess = function() {
+            results.push(requestUpdate.result);
+          };
+          
+          cursor.continue();
+        }
+      };
+    } else if (typeof ids == 'number') { // Updates only the selected record
+      var request = objectStore.get(ids);
+      request.onsuccess = function() {
+        var data = request.result;
+        
+        var newData = updateData(data);
+        
+        var requestUpdate = objectStore.put(newData);
+        
+        requestUpdate.onsuccess = function() {
+          results = requestUpdate.result;
+        };
+      };
+    } else { // Updates only the selected records
+      ids.forEach(function(id) {
+        objectStore.get(id).onsuccess = function() {
+          var data = request.result;
+          
+          var newData = updateData(data);
+          
+          var requestUpdate = objectStore.put(newData);
+          
+          requestUpdate.onsuccess = function() {
+            results.push(requestUpdate.result);
+          };
+        };
+      });
+    }
+  },
+  
+  upgradeDatabase: function(dbname) {
+    var
+      counter = 0,
+      database = {};
+    
+    var populateDatabase = function() {
+      Object.keys(database).forEach(function(key, i) {
+        idb.add(database[key], key);
+      });
+    };
+
+    var saveRecords = function(records) {
+      var objectStoreName = idb.database.objectStoreNames[counter];
+      database[objectStoreName] = records;
+      counter += 1;
+      if (counter === idb.database.objectStoreNames.length) {
+        var opendb = function() {
+          idb.open(this.currentDatabase, populateDatabase);
+        };
+        idb.deleteDatabase(dbname, opendb);
+      }
+    };
+    
+    var transaction = idb.database.transaction(idb.database.objectStoreNames);
+    for (var i=0; i<idb.database.objectStoreNames.length; i++) {
+      var objectStore = transaction.objectStore(idb.database.objectStoreNames[i]);
+      idb.getAll(idb.database.objectStoreNames[i], saveRecords);
+    }
+  }
 };
