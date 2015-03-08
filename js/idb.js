@@ -20,6 +20,7 @@ var idb = {
     if (items.length == 1) {
       var request = objectStore.add(item);
       request.onsuccess = function() { results = request.result; };
+      
     } else {
       items.forEach(function(item) {
         var request = objectStore.add(item);
@@ -69,7 +70,7 @@ var idb = {
   // - single ID: returns just the record with that index
   // - array of IDs: returns all the records with those indexes
   // Takes a required callback function that has the returned results as its argument
-  get: function(id, table, callback) {
+  get: function(ids, table, callback) {
     var
       results,
       transaction = idb.database.transaction(table);
@@ -78,12 +79,33 @@ var idb = {
       if (typeof callback == 'function') { callback(results); }
     };
     
-    if (id == null) {
-      // get all
-    } else if (typeof id == 'number') {
-      // get the single record
-    } else {
-      // get only the provided ids
+    var objectStore = transaction.objectStore(table);
+    
+    if (ids == null) { // Get all records in the table; Mozilla actually has a getAll() function, but Chrome does not
+      objectStore.openCursor().onsuccess = function(ev) {
+        var cursor = ev.target.result;
+        
+        if (cursor) {
+          var result = {
+            key: cursor.key,
+            value: cursor.value
+          };
+          
+          results.push(result);
+          
+          cursor.continue();
+        }
+      };
+      
+    } else if (typeof ids == 'number') { // Get a single record
+      var request = objectStore.get(id);
+      request.onsuccess = function(ev) { results = idb.reconstruct(request.result); };
+      
+    } else { // Get only the provided IDs
+      ids.forEach(function(id) {
+        var request = objectStore.get(id);
+        request.onsuccess = function(ev) { results.push(request.result); };
+      });
     }
   },
   
@@ -106,5 +128,41 @@ var idb = {
       idb.database = request.result;
       idb.createStores();
     };
-  }
+  },
+  
+  reconstruct: function(obj) {
+    var newObj = new window[obj.model]();
+    
+    augment(newObj, obj);
+  },
+  
+  // Deletes records from the database
+  // The ids argument may be one of:
+  // - null: deletes the entire table (and returns the empty table)
+  // - a single index: deletes the record with that index (and returns nothing)
+  // - an array of indexes: deletes the records with the provided indexes (and returns nothing)
+  remove: function(ids, table, callback) {
+    var
+      results,
+      transaction = idb.database.transaction(table);
+      
+    transaction.oncomplete = function() {
+      if (typeof callback == 'function') { callback(results); }
+    };
+    
+    var objectStore = transaction.objectStore(table);
+    
+    if (ids == null) { // Delete all records in the table
+      var request = objectStore.clear();
+      request.onsuccess = function(ev) { results.push(request.result); };
+      
+    } else if (typeof ids == 'number') { // Delete a single record
+      var request = objectStore.delete(id);
+      
+    } else { // Get only the provided IDs
+      ids.forEach(function(id) {
+        var request = objectStore.delete(id);
+      });
+    }
+  },
 };

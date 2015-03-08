@@ -1,72 +1,4 @@
 var idb = {
-  // Gets an object from the specified table in the database, using the index provided
-  // Requires a callback function that has the returned object as its argument
-  get: function(id, table, successCallback) {
-    idb.results = null;
-    
-    var transaction = idb.database.transaction(table);
-    
-    transaction.oncomplete = function() {
-      if (typeof successCallback === 'function') {
-        successCallback(idb.results);
-      }
-    };
-    
-    var request = transaction.objectStore(table).get(id);
-    
-    request.onsuccess = function(ev) {
-      if (typeof successCallback === 'function') {
-        if (table !== 'media') {
-          idb.results = idb.reconstruct(request.result);
-        } else {
-          idb.results = request.result;
-        }
-      }
-    };
-  },
-  
-  // Retrieves an array of each object in te specified object store
-  // Mozilla actually has a .getAll() function, but Chrome does not
-  getAll: function(table, successCallback) {
-    var results = [];
-    
-    var transaction = idb.database.transaction(table);
-    
-    transaction.oncomplete = function() {
-      if (typeof successCallback === 'function') {
-        successCallback(results);
-      }
-    };
-    
-    var objectStore = transaction.objectStore(table);
-    
-    objectStore.openCursor().onsuccess = function(ev) {
-      var cursor = ev.target.result;
-      
-      if (cursor) {
-        if (table !== 'media') {
-          var result = {
-            key: cursor.key,
-            value: idb.reconstruct(cursor.value)
-          };
-          
-          results.push(result);
-          
-          cursor.continue();
-        } else {
-          var result = {
-            key: cursor.key,
-            value: cursor.value
-          };
-          
-          results.push(result);
-          
-          cursor.continue();
-        }
-      }   
-    };
-  },
-  
   pushUpdate: function(id, property, objectToPush, table, successCallback) {
     idb.results = [];
     
@@ -91,42 +23,7 @@ var idb = {
       };
     };
   },
-  
-  // Re-adds the methods that were removed from the object when it was added to the database
-  // The 'model' argument is the name of the constructor which builds the object (e.g. 'Text', with initial Caps)
-  reconstruct: function(object) {
-    var newObject = new window[object.model]();
-    var keys = Object.keys(object);
-    
-    keys.forEach(function(key) {
-      newObject[key] = object[key];
-    });
-    
-    if (newObject.model === 'Text') {
-      newObject.phrases.forEach(function(phrase, i) {
-        newObject.phrases[i] = idb.reconstruct(phrase);
-      });
-    }
-    
-    return newObject;
-  },
 
-  // Deletes an object from the specified object store
-  // Takes an optional callback function that fires once the object is deleted
-  remove: function(objectToRemove, table, callback) {
-    idb.results = [];
-    
-    var transaction = idb.database.transaction(table, 'readwrite');
-    
-    transaction.oncomplete = function() {
-      callback(request.result);
-    };
-    
-    var objectStore = transaction.objectStore(table);
-    
-    var request = objectStore.delete(objectToRemove.id);
-  },
-  
   // searchText should be a regular expression object
   search: function(searchText, tier, orthography, successCallback) {
     idb.results = [];
