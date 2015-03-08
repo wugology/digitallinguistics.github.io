@@ -17,8 +17,9 @@ var idb = {
     
     var objectStore = transaction.objectStore(table);
     
-    if (items.length == 1) {
-      var request = objectStore.add(item);
+    
+    if (!items.length) {
+      var request = objectStore.add(items);
       request.onsuccess = function() { results = request.result; };
       
     } else {
@@ -93,7 +94,7 @@ var idb = {
   // Takes a required callback function that has an array of the returned results as its argument
   get: function(ids, table, callback) {
     var
-      results [];
+      results = [],
       transaction = idb.database.transaction(table);
     
     if (typeof ids == 'number' || typeof ids == 'string') { ids = new Array(ids); }
