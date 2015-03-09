@@ -7,7 +7,7 @@
 
 // BASE FUNCTIONS & OBJECTS
 // Adds all the enumerable keys of one object (the source) to another (the destination)
-var augment = function(destination, source) {
+function augment(destination, source) {
   Object.keys(source).forEach(function(key) {
     destination[key] = source[key];
   });
@@ -16,7 +16,7 @@ var augment = function(destination, source) {
 };
 
 // A global Breadcrumb object that handles functions relating to breadcrumbs
-var Breadcrumb = {
+Breadcrumb = {
   create: function(text, phrase, word, morpheme) {
     var breadcrumb = Array.prototype.slice
       .call(arguments)
@@ -91,7 +91,7 @@ var Breadcrumb = {
 };
 
 // IDB MIX-Infinity
-var idbObj = function() {
+function IDBObj() {
   Object.defineProperties(this, {
     // Accepts an optional callback function
     'delete': {
@@ -119,7 +119,7 @@ var idbObj = function() {
 
 
 // EVENT SYSTEM
-var ObserverList = function() {
+function ObserverList() {
   Object.defineProperties(this, {
     'observers': {
       value: [],
@@ -172,17 +172,24 @@ var ObserverList = function() {
 };
 
 // BASE MODEL
-var Model = function(data) {
-  idbObj.call(this);
+function Model(data) {
+  IDBObj.call(this);
   ObserverList.call(this);
   
   augment(this, data);
+  
+  delete this.model;
   
   Object.defineProperties(this, {
     'json': {
       get: function() {
         return JSON.stringify(this);
       }
+    },
+    
+    'model': {
+      enumerable: true,
+      value: this.constructor.name
     },
     
     'search': {
@@ -206,7 +213,7 @@ var Model = function(data) {
 
 // BASE VIEW
 // This view is the prototype for both item and collection views
-var View = function(model, options) {
+function View(model, options) {
   ObserverList.call(this);
   
   this.model = model;

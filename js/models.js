@@ -26,96 +26,62 @@
 // - notify
 // - update
 
-var Media = function(data) {
+models = {};
+
+models.Media = function Media(data) {
   Model.call(this, data);
-  
-  Object.defineProperty(this, 'model', {
-    enumerable: true,
-    value: 'Media'
-  });
   
   // Maybe some methods to read the file to an array buffer, etc.
 };
 
-var Corpus = function(data) {
+models.Corpus = function Corpus(data) {
   Model.call(this, data);
-  
-  Object.defineProperty(this, 'model', {
-    enumerable: true,
-    value: 'Corpus'
-  });
 };
 
 // Abbr: lang
-var Language = function() {
+models.Language = function Language(data) {
   Model.call(this, data);
-
-  Object.defineProperty(this, 'model', {
-    enumerable: true,
-    value: 'Language'
-  });
 };
 
 // Abbr: t
-var Text = function(data) {
+models.Text = function Text(data) {
   Model.call(this, data);
-
-  Object.defineProperty(this, 'model', {
-    enumerable: true,
-    value: 'Text'
-  });
   
-  this.phrases = this.phrases.map(function(phraseData) {
-    return new Phrase(phraseData);
-  });
+  if (this.phrases) {
+    this.phrases = this.phrases.map(function(phraseData) {
+      return new models.Phrase(phraseData);
+    });
+  }
 };
 
 // Abbr: p
-var Phrase = function(data) {
+models.Phrase = function Phrase(data) {
   Model.call(this, data);
   
-  Object.defineProperty(this, 'model', {
-    enumerable: true,
-    value: 'Phrase'
-  });
-
-  this.words = this.words.map(function(wordData) {
-    return new Word(wordData);
-  });
+  if (this.words) {
+    this.words = this.words.map(function(wordData) {
+      return new models.Word(wordData);
+    });
+  }
 };
 
 // Abbr: w
-var Word = function(data) {
+models.Word = function Word(data) {
   Model.call(this, data);
-
-  Object.defineProperty(this, 'model', {
-    enumerable: true,
-    value: 'Word'
-  });
   
   // Do we need a hydrate function for morphemes (actually lexemes)?
 };
 
 // Abbr: lex
-var Lexeme = function(data) {
+models.Lexeme = function Lexeme(data) {
   Model.call(this, data);
-  
-  Object.defineProperty(this, 'model', {
-    enumerable: true,
-    value: 'Lexeme'
-  });
 };
 
 // Abbr: cxn
-var Construction = function() {
+models.Construction = function Construction() {
   Model.call(this, data);
-  
-  Object.defineProperty(this, 'model', {
-    enumerable: true,
-    value: 'Construction'
-  });  
 };
 
-var Tag = function() {
-  // Tags don't seem like models, so I'm not calling the Model function here (yet)
+models.Tag = function Tag() {
+  Model.call(this, data);
 };

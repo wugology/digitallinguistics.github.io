@@ -17,15 +17,22 @@ var idb = {
     
     var objectStore = transaction.objectStore(table);
     
+    var store = function(item) {
+      Object.defineProperty(item, 'model', {
+        enumerable: true,
+        value: item.constructor.name
+      });
+      
+      var request = objectStore.add(item);
+      
+      request.onsuccess = function() { results.push(request.result); };
+    };
     
     if (!items.length) {
-      var request = objectStore.add(items);
-      request.onsuccess = function() { results = request.result; };
-      
+      store(items);
     } else {
       items.forEach(function(item) {
-        var request = objectStore.add(item);
-        request.onsuccess = function() { results.push(request.results); };
+        store(item);
       });
     }
   },
@@ -193,9 +200,9 @@ var idb = {
   },
   
   reconstruct: function(obj) {
-    var newObj = new window[obj.model]();
-    
+    var newObj = new models[obj.model](obj);
     augment(newObj, obj);
+    return newObj;
   },
   
   // Deletes records from the database
