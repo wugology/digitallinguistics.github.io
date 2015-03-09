@@ -256,6 +256,8 @@ var idb = {
     }
   },
   
+  results: [],
+  
   // To be replaced with Pat's search function
   // Eventually, this function sould take 3 arguments:
     // 1. a hash of search criteria
