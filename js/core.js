@@ -35,6 +35,12 @@ function checkAgainst(a, b) {
   });
 };
 
+function toArray(primitive) {
+  arr = new Array();
+  arr[0] = primitive;
+  return arr;
+};
+
 // A global Breadcrumb object that handles functions relating to breadcrumbs
 Breadcrumb = {
   // Finds the given breadcrumb in a given text, and applies the given function to it

@@ -69,8 +69,8 @@ var idb = {
   get: function(ids, tableName, callback) {
     var results = [];
     
-    var getEach = function(table) {
-      if (ids == 'all') {
+    if (ids == 'all') {
+      var getAll = function(table) {
         var request = table.openCursor();
         
         request.onsuccess = function() {
@@ -81,21 +81,33 @@ var idb = {
             cursor.continue();
           }
         };
-        
-      } else {
-        if (!ids.length) {
-          var ids = new Array(ids);
-          ids.forEach(function(id) {
-            var request = table.get(id);
-            request.onsuccess = function() {
-              results.push(idb.hydrate(request.result));
-            };
-          });
-        }
+      };
+      
+      idb.transact(tableName, results, callback, getAll);
+      
+    } else {
+      if (!ids.length) {
+        var ids = toArray(ids);
       }
-    };
-    
-    idb.transact(tableName, results, callback, getEach);
+      
+      var getEach = function(table) {
+        ids.forEach(function(id) {
+          var request = table.get(id);
+          
+          request.onsuccess = function() {
+            results.push(idb.hydrate(request.result));
+          };
+        });
+      };
+      
+      idb.transact(tableName, results, callback, getEach);
+    }
+  },
+  
+  // Gets all the records in a table
+  // Requires a callback function that has the array of returned results as its argument
+  getAll: function(tableName, callback) {
+    idb.get('all', tableName, callback);
   },
 
   // Gets objects from the database by their breadcrumb
@@ -105,8 +117,8 @@ var idb = {
   // Takes a required callback function that has an array of retrieved objects as its argument
   getBreadcrumb: function(breadcrumbs, callback) {
     var results = [];
-    if (typeof breadcrumbs[0] == 'number') { breadcrumbs = new Array(breadcrumbs); }
-    if (typeof breadcrumbs == 'string') { breadcrumbs = new Array(Breadcrumb.parse(breadcrumbs)); }
+    if (typeof breadcrumbs[0] == 'number') { breadcrumbs = toArray(breadcrumbs); }
+    if (typeof breadcrumbs == 'string') { breadcrumbs = toArray(Breadcrumb.parse(breadcrumbs)); }
     if (typeof breadcrumbs[0] == 'string') { breadcrumbs = breadcrumbs.map(Breadcrumb.parse); }
     
     var getByBreadcrumb = function(table) {
@@ -200,7 +212,7 @@ var idb = {
     
     var removeByID = function(table) {
       if (typeof ids == 'number') {
-        ids = new Array(ids);
+        ids = toArray(ids);
         ids.forEach(function(id) { table.delete(id); });
       } else if (ids == 'all') {
         table.clear();
@@ -216,8 +228,8 @@ var idb = {
   // Also accepts string-format breadcrumbs: '1_2_3_4', or '1_7', or '13_4_9', etc.
   // Takes an optional callback function
   removeBreadcrumb: function(breadcrumbs, callback) {
-    if (typeof breadcrumbs[0] == 'number') { breadcrumbs = new Array(breadcrumbs); }
-    if (typeof breadcrumbs == 'string') { breadcrumbs = new Array(Breadcrumb.parse(breadcrumbs)); }
+    if (typeof breadcrumbs[0] == 'number') { breadcrumbs = toArray(breadcrumbs); }
+    if (typeof breadcrumbs == 'string') { breadcrumbs = toArray(Breadcrumb.parse(breadcrumbs)); }
     if (typeof breadcrumbs[0] == 'string') { breadcrumbs = breadcrumbs.map(Breadcrumb.parse); }
     
     var removeByBreadcrumb = function(table) {
@@ -303,7 +315,7 @@ var idb = {
   // Items may either be a single object or an array of objects (objects must have the same model)
   // Accepts an optional callback that has an array of indexes of the added items as its argument
   store: function(items, callback) {
-    if (!items.length) { items = new Array(items); }
+    if (!items.length) { items = toArray(items); }
     
     var results = [];
     var model = items[0].model;
@@ -416,7 +428,7 @@ var idb = {
       
       idb.transact(tableName, results, callback, updateAll);
     } else {
-      if (typeof ids == 'number') { ids = new Array(ids); }
+      if (typeof ids == 'number') { ids = toArray(ids); }
       
       var updateEach = function(table) {
       };
