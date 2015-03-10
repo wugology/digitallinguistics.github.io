@@ -198,20 +198,11 @@ function Model(data) {
       value: this.constructor.name
     },
     
+    // Takes a hash of criteria as its argument
     'search': {
-      // This is a generic search function that can be overwritten on a model-specific basis
-      value: function(searchTerm) {
-        var results = [];
-        
-        Object.keys(this).forEach(function(key) {
-          if (typeof this[key] == 'string' && this[key].includes(searchTerm)) {
-            results.push(this[key]);
-          }
-        }, this);
-        
-        return results;
-      }.bind(this),
-      writable: true
+      value: function(criteria) {
+        checkAgainst(criteria, this);
+      }
     }
   });
 };
