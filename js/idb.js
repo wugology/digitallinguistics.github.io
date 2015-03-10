@@ -32,28 +32,35 @@ var idb = {
   export: function(callback) {
     idb.exported = {};
     var tableNames = Array.prototype.slice.call(idb.database.objectStoreNames);
-    var transaction = idb.database.transaction(tableNames);
-    transaction.oncomplete = function() {
-      if (typeof callback == 'function') { callback(idb.exported); }
-    };
-    tableNames.forEach(function(tableName) {
-      var results = idb.exported[tableName] = [];
-      
-      var getAll = function(table) {
-        var request = table.openCursor;
-        
-        request.onsuccess = function() {
-          var cursor = request.result;
-          
-          if (cursor) {
-            results.push(cursor.value);
-            cursor.continue();
-          }
-        };
+    
+    if (tableNames.length > 0) {
+      var transaction = idb.database.transaction(tableNames);
+
+      transaction.oncomplete = function() {
+        if (typeof callback == 'function') { callback(idb.exported); }
       };
-      
-      idb.transact(tableName, null, null, getAll);
-    });
+
+      tableNames.forEach(function(tableName) {
+        var results = idb.exported[tableName] = [];
+        
+        var getAll = function(table) {
+          var request = table.openCursor;
+          
+          request.onsuccess = function() {
+            var cursor = request.result;
+            
+            if (cursor) {
+              results.push(cursor.value);
+              cursor.continue();
+            }
+          };
+        };
+        
+        idb.transact(tableName, null, null, getAll);
+      });
+    } else {
+      callback();
+    }
   },
 
   // Gets items from the database by an ID (does not accept breadcrumbs)
@@ -143,8 +150,10 @@ var idb = {
       idb.database = request.result;
       
       var deleteTables = function() {
-        idb.database.objectStoreNames.forEach(function(objectStoreName) {
-          idb.database.deleteObjectStore(objectStoreName);
+        var tableNames = Array.prototype.slice.call(idb.database.objectStoreNames);
+        
+        tableNames.forEach(function(tableName) {
+          idb.database.deleteObjectStore(tableName);
         });
         
         idb.createTables();
