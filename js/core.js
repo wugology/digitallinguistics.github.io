@@ -17,7 +17,21 @@ function augment(destination, source) {
 
 function checkAgainst(a, b) {
   return Object.keys(a).every(function(key) {
-    return a[key] == b[key];
+    if (typeof a[key] == 'string' || typeof a[key] == 'number') {
+      return a[key] == b[key];
+      
+    } else if (a[key].length) {
+      var c = a[key];
+      var d = b[key];
+      return c.every(function(obj, i) {
+        return checkAgainst(c[i], d[i]);
+      });
+      
+    } else if (typeof a[key] == 'object') {
+      var c = a[key];
+      var d = b[key];
+      return checkAgainst(c, d);
+    }
   });
 };
 
