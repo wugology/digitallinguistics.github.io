@@ -99,25 +99,24 @@ Breadcrumb = {
 // IDB MIX-Infinity
 function IDBObj() {
   Object.defineProperties(this, {
-    // Accepts an optional callback function
+    // Deletes the object from IndexedDB
+    // Accepts an optional callback function that fires when the database transaction is complete
     'delete': {
-      configurable: true,
       value: function(callback) {
-        if (this.breadcrumb) {
-          var id = this.breadcrumb;
-        } else {
-          var id = this.id;
+        if (this.id) {
+          var tableName = idb.tableList.filter(function(table) {
+            return table.model == this.model;
+          })[0];
+          idb.remove(id, tableName, callback);
         }
-        
-        idb.remove(id, idb.getTable(this.model), callback);
       }.bind(this)
     },
 
-    // Accepts an optional callback function that has the ID of the record saved to as its argument
-    'save': {
-      configurable: true,
+    // Stores the object in IndexedDB
+    // Optional callback function has an array of a single index (the index of the stored object) as its argument
+    'store': {
       value: function(callback) {
-        idb.update(this, idb.getTable(this.model), callback);
+        idb.store(this, callback);
       }.bind(this)
     }
   });
@@ -182,7 +181,9 @@ function Model(data) {
   IDBObj.call(this);
   ObserverList.call(this);
   
-  augment(this, data);
+  if (data) {
+    augment(this, data);
+  }
   
   delete this.model;
   

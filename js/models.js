@@ -36,6 +36,14 @@ models.Media = function Media(data) {
 
 models.Corpus = function Corpus(data) {
   Model.call(this, data);
+  
+  Object.defineProperties(this, {
+    'setAsCurrent': {
+      value: function() {
+        app.preferences.currentCorpus = this;
+      }
+    }
+  });
 };
 
 // Abbr: lang

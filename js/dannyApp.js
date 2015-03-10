@@ -4,10 +4,16 @@
 // The UI, with regions/interfaces and general nav views
 
 var app = {
+  initialize: function() {
+    idb.open('WugbotDev');
+  },
+  
   // Change this function to use app.popups.blank instead
   notify: function(text) {
     alert(text);
-  }
+  },
+  
+  preferences: {}
 };
 
 
@@ -44,3 +50,5 @@ app.navIcons.el.addEventListener('click', function(ev) {
 
 app.navIcons.observers.add(app.appNav, 'navIconClick');
 app.navIcons.observers.add(app.mainNav, 'navIconClick');
+
+window.addEventListener('load', app.initialize);

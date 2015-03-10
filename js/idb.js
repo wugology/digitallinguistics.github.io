@@ -128,6 +128,13 @@ var idb = {
   
   hydrate: function(obj) {
     var newObj = new models[obj.model](obj);
+    if (newObj.id) {
+      delete newObj.id;
+      Object.defineProperty(newObj, 'id', {
+        enumerable: true,
+        value: obj.id
+      });
+    }
     return newObj;
   },
   
@@ -175,7 +182,14 @@ var idb = {
   // Note that 'table' is an actual reference to an object store, not just a table name
   put: function(item, table, results) {
     var request = table.put(item);
-    request.onsuccess = function() { results.push(request.result); };
+    request.onsuccess = function() {
+      Object.defineProperty(item, 'id', {
+        enumerable: true,
+        value: request.result
+      });
+      
+      results.push(request.result);
+    };
   },
 
   // Removes records with the specified IDs from the specified table
@@ -293,11 +307,14 @@ var idb = {
     
     var results = [];
     var model = items[0].model;
+    var tables = idb.tableList.filter(function(table) {
+      return table.model == model;
+    });
     
-    if (items[0].id) {
+    if ( tables.length > 0 ) {
       var tableName = idb.tableList.filter(function(table) {
         return table.model == items[0].model;
-      })[0];
+      })[0].name;
       
       var storeByID = function(table) {
         items.forEach(function(item) {
@@ -357,7 +374,7 @@ var idb = {
   // Helper function: Creates a transaction, gets the table, and applies an action to it
   // The 'action' argument is a function which has the idb table as its argument
   transact: function(tableName, results, callback, action) {
-    var transaction = idb.database.transaction(tableName);
+    var transaction = idb.database.transaction(tableName, 'readwrite');
     
     transaction.oncomplete = function() {
       if (typeof callback == 'function') { callback(results); }
