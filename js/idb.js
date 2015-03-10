@@ -70,7 +70,7 @@ var idb = {
           var cursor = request.result;
           
           if (cursor) {
-            results.push(cursor.value);
+            results.push(idb.hydrate(cursor.value));
             cursor.continue();
           }
         };
@@ -81,7 +81,7 @@ var idb = {
           ids.forEach(function(id) {
             var request = table.get(id);
             request.onsuccess = function() {
-              results.push(request.result);
+              results.push(idb.hydrate(request.result));
             };
           });
         }
@@ -94,10 +94,13 @@ var idb = {
   // Gets objects from the database by their breadcrumb
   // The 'breadcrumbs' argument may be either a single breadcrumb or an array of breadcrumbs (an array of arrays)
   // Breadcrumb format: [1, 2, 3, 4], or [1, 7], or [13, 4, 9], etc.
+  // Also accepts string-format breadcrumbs: '1_2_3_4', or '1_7', or '13_4_9', etc.
   // Takes a required callback function that has an array of retrieved objects as its argument
   getBreadcrumb: function(breadcrumbs, callback) {
     var results = [];
     if (typeof breadcrumbs[0] == 'number') { breadcrumbs = new Array(breadcrumbs); }
+    if (typeof breadcrumbs == 'string') { breadcrumbs = new Array(Breadcrumb.parse(breadcrumbs)); }
+    if (typeof breadcrumbs[0] == 'string') { breadcrumbs = breadcrumbs.map(Breadcrumb.parse); }
     
     var getByBreadcrumb = function(table) {
       breadcrumbs.forEach(function(breadcrumb) {
@@ -107,7 +110,7 @@ var idb = {
           var text = request.result;
           
           Breadcrumb.applyTo(breadcrumb, text, function(obj) {
-            results.push(obj);
+            results.push(idb.hydrate(obj));
           });
         };
       });
@@ -138,7 +141,24 @@ var idb = {
     
     request.onupgradeneeded = function() {
       idb.database = request.result;
-      idb.createTables();
+      
+      var deleteTables = function() {
+        idb.database.objectStoreNames.forEach(function(objectStoreName) {
+          idb.database.deleteObjectStore(objectStoreName);
+        });
+        
+        idb.createTables();
+        
+        Object.keys(idb.exported).forEach(function(key, i, keys) {
+          idb.store(idb.exported[key]);
+          
+          if (i == keys.length-1) {
+            if (typeof callback == 'function') { callback(idb.database); }
+          }
+        });
+      };
+      
+      idb.export(deleteTables);
     };
   },
   
@@ -170,9 +190,12 @@ var idb = {
   // Removes objects with the specified breadcrumb from the database
   // The 'breadcrumbs' argument may be either a single breadcrumb or an array of breadcrumbs (an array of arrays)
   // Breadcrumb format: [1, 2, 3, 4], or [1, 7], or [13, 4, 9], etc.
+  // Also accepts string-format breadcrumbs: '1_2_3_4', or '1_7', or '13_4_9', etc.
   // Takes an optional callback function
   removeBreadcrumb: function(breadcrumbs, callback) {
-    if (breadcrumbs[0] == 'number') { breadcrumbs = new Array(breadcrumbs); }
+    if (typeof breadcrumbs[0] == 'number') { breadcrumbs = new Array(breadcrumbs); }
+    if (typeof breadcrumbs == 'string') { breadcrumbs = new Array(Breadcrumb.parse(breadcrumbs)); }
+    if (typeof breadcrumbs[0] == 'string') { breadcrumbs = breadcrumbs.map(Breadcrumb.parse); }
     
     var removeByBreadcrumb = function(table) {
       breadcrumbs.forEach(function(breadcrumb) {
@@ -224,24 +247,24 @@ var idb = {
                   if (lingType != 'Word') {
                     word.morphemes.forEach(function(morpheme) {
                       if (checkAgainst(criteria, morpheme)) {
-                        results.push(morpheme);
+                        results.push(idb.hydrate(morpheme));
                       }
                     });
                   } else {
                     if (checkAgainst(criteria, word)) {
-                      results.push(word);
+                      results.push(idb.hydrate(word));
                     }
                   }
                 });
               } else {
                 if (checkAgainst(criteria, phrase)) {
-                  results.push(phrase);
+                  results.push(idb.hydrate(phrase));
                 }
               }
             });
           } else {
             if (checkAgainst(criteria, text)) {
-              results.push(text);
+              results.push(idb.hydrate(text));
             }
           }
           
@@ -252,18 +275,6 @@ var idb = {
     
     idb.transact('texts', results, callback, check);
   },
-  
-  
-  
-  
-  
-
-        
-        
-        
-        
-        
-        
   
   // Adds or updates database items
   // Items may either be a single object or an array of objects (objects must have the same model)
@@ -347,112 +358,70 @@ var idb = {
     
     action(table);
   },
-
   
-  
-  
-  
-  
-  
-  // Updates a single property of the specified record(s) with the new value
-  // The ids argument may be:
-    // null: updates all records
-    // a single numeric ID: updates only that record
-    // an array of numeric IDs: updates the records with those IDs
-  // The push argument specifies whether the new value should be pushed onto the array of the property (true),
-    // or replace the value for that property entirely (false)
-  // Accepts an optional callback which has the IDs of the updated records as its argument
-  updateProperty: function(ids, property, newValue, push, table, callback) {
+  // Updates the property of the specified records in a table with a new value
+  // The IDs argument may be a single ID, an array of IDs, or 'all'
+  // Accepts an optional callback function that has an array of the updated records as its result
+  update: function(ids, tableName, property, newValue, callback) {
     var results = [];
     
-    var updateData = function(data) {
-      if (push) {
-        data[property].push(newValue);
-      } else {
-        data[property] = newValue;
-      }
-      
-      return data;
-    };
-    
-    var transaction = idb.database.transaction(table, 'readwrite');
-    
-    transaction.oncomplete = function() {
-      if (typeof callback == 'function') { callback(results); }
-    };
-
-    var objectStore = transaction.objectStore(table);
-
-    if (ids == null) { // Updates all the records in the table
-      objectStore.openCursor().onsuccess = function(ev) {
-        var cursor = ev.target.result;
+    if (ids == 'all') {
+      var updateAll = function(table) {
+        var request = table.openCursor();
         
-        if (cursor) {
-          var newData = updateData(cursor.value);
+        request.onsuccess = function() {
+          var cursor = request.result;
           
-          var requestUpdate = objectStore.put(newData);
-          
-          requestUpdate.onsuccess = function() {
-            results.push(requestUpdate.result);
-          };
-          
-          cursor.continue();
-        }
-      };
-    } else if (typeof ids == 'number') { // Updates only the selected record
-      var request = objectStore.get(ids);
-      
-      request.onsuccess = function() {
-        var data = request.result;
-        
-        var newData = updateData(data);
-        
-        var requestUpdate = objectStore.put(newData);
-        
-        requestUpdate.onsuccess = function() { results = requestUpdate.result; };
-      };
-    } else { // Updates only the selected records
-      ids.forEach(function(id) {
-        objectStore.get(id).onsuccess = function() {
-          var data = request.result;
-          
-          var newData = updateData(data);
-          
-          var requestUpdate = objectStore.put(newData);
-          
-          requestUpdate.onsuccess = function() { results.push(requestUpdate.result); };
+          if (cursor) {
+            var data = cursor.value;
+            
+            data[property] = newValue;
+            
+            var requestUpdate = table.put(data);
+            
+            requestUpdate.onsuccess = function() {
+              results.push(idb.hydrate(data));
+            };
+            
+            cursor.continue();
+          }
         };
-      });
+      };
+      
+      idb.transact(tableName, results, callback, updateAll);
+    } else {
+      if (typeof ids == 'number') { ids = new Array(ids); }
+      
+      var updateEach = function(table) {
+      };
+      
+      idb.transact(tableName, results, callback, updateEach);
     }
   },
   
-  upgradeDatabase: function(dbname) {
-    var
-      counter = 0,
-      database = {};
+  // Updates a property of the object at the specified breadcrumb with the new value
+  // To replace the entire object at that breadcrumb, use idb.store()
+  // Breadcrum may either be array ([1, 2, 3, 4]) or string ('1_2_3_4') format
+  // Takes an optional callback function with no arguments
+  updateBreadcrumb: function(breadcrumb, property, newValue) {
+    if (typeof breadcrumb == 'string') { breadcrumb = Breadcrumb.parse(breadcrumb); }
     
-    var populateDatabase = function() {
-      Object.keys(database).forEach(function(key, i) {
-        idb.add(database[key], key);
-      });
-    };
-
-    var saveRecords = function(records) {
-      var objectStoreName = idb.database.objectStoreNames[counter];
-      database[objectStoreName] = records;
-      counter += 1;
-      if (counter == idb.database.objectStoreNames.length) {
-        var opendb = function() {
-          idb.open(this.currentDatabase, populateDatabase);
+    var update = function(table) {
+      var request = table.get(breadcrumb[0]);
+      
+      request.onsuccess = function() {
+        var text = request.result;
+        
+        var setValue = function(obj) {
+          obj[property] = newValue;
         };
-        idb.deleteDatabase(dbname, opendb);
-      }
+        
+        Breadcrumb.applyTo(breadcrumb, text, setValue);
+        
+        var requestUpdate = table.put(text);
+      };
     };
     
-    var transaction = idb.database.transaction(idb.database.objectStoreNames);
-    for (var i=0; i<idb.database.objectStoreNames.length; i++) {
-      var objectStore = transaction.objectStore(idb.database.objectStoreNames[i]);
-      idb.getAll(idb.database.objectStoreNames[i], saveRecords);
-    }
+    idb.transact('texts', null, callback, update);
   }
 };
