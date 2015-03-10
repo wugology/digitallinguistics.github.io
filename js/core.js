@@ -35,6 +35,14 @@ function checkAgainst(a, b) {
   });
 };
 
+function createElement(tagName, attributes) {
+  var el = document.createElement(tagName);
+  for (var attribute in attributes) {
+    el[attribute] = attributes[attribute];
+  }
+  return el;
+};
+
 function toArray(primitive) {
   arr = new Array();
   arr[0] = primitive;
@@ -206,6 +214,7 @@ function Model(data) {
     },
     
     // Takes a hash of criteria as its argument
+    // Probably going to be replaced by a model search function
     'search': {
       value: function(criteria) {
         checkAgainst(criteria, this);
@@ -214,15 +223,40 @@ function Model(data) {
   });
 };
 
+// BASE COLLECTION
+function Collection(data) {
+  ObserverList.call(data);
+  
+  Object.defineProperties(data, {
+    'json': {
+      get: function() {
+        return JSON.stringify(this);
+      }
+    },
+    
+    'search': {
+      value: function() {
+        // Pat's super awesome collection search function goes here
+      }
+    }
+  });
+  
+  return data;
+};
 
 // BASE VIEW
 // This view is the prototype for both item and collection views
+// Options that can be specified for all views:
+// - el: The DOM element associated with this view
+// - template: The HTML template associated with this view
 function View(model, options) {
   ObserverList.call(this);
   
   this.model = model;
   
-  this.el = options.el;
+  if (options) {
+    augment(this, options);
+  }
   
   // Displays a DOM element that was previously hidden
   // The optional media argument specifies whether you would only like to display the element on desktop or mobile
