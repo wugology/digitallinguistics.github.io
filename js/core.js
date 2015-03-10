@@ -15,43 +15,30 @@ function augment(destination, source) {
   return destination;
 };
 
+function checkAgainst(a, b) {
+  return Object.keys(a).every(function(key) {
+    return a[key] == b[key];
+  });
+};
+
 // A global Breadcrumb object that handles functions relating to breadcrumbs
 Breadcrumb = {
-  create: function(text, phrase, word, morpheme) {
-    var breadcrumb = Array.prototype.slice
-      .call(arguments)
-      .join('_');
-    return breadcrumb;
-  },
-  
-  get: function(breadcrumb) {
-    var indexes = this.parse(breadcrumb);
-    
-    var retrieval = function(text) {
-      if (!indexes.phrase) {
-        return text;
-      } else if (!indexes.word) {
-        return text.phrases[indexes.phrase];
-      } else if (!indexes.morpheme) {
-        return text.phrases[indexes.phrase].words[indexes.word];
-      } else {
-        return text.phrases[indexes.phrase].words[indexes.word].morphemes[indexes.morpheme];
-      }
-    };
-    
-    idb.get(indexes.text, 'texts', retrieval);
+  // Finds the given breadcrumb in a given text, and applies the given function to it
+  // Action can take optional second and third arguments, which are the index of the object in the array, and the array that the object is in
+  applyTo: function(breadcrumb, text, action) {
+    if (breadcrumb.length == 1) {
+      action(text);
+    } else if (breadcrumb.length == 2) {
+      action(text.phrases[breadcrumb[1]], breadcrumb[1], text.phrases);
+    } else if (breadcrumb.length == 3) {
+      action(text.phrases[breadcrumb[1]].words[breadcrumb[2]], breadcrumb[2], text.phrases[breadcrumb[1]].words);
+    } else if (breadcrumb.length == 4) {
+      action(text.phrases[breadcrumb[1]].words[breadcrumb[2]].morphemes[breadcrumb[3]], breadcrumb[3], text.phrases[breadcrumb[1]].words[breadcrumb[2]].morphemes);
+    }
   },
   
   parse: function(breadcrumb) {
-    var nums = breadcrumb.split('_');
-    var convert = function(i) { return Number(nums[i]) || null; };
-    var indexes = {
-      text: convert(0),
-      phrase: convert(1),
-      word: convert(2),
-      morpheme: convert(3)
-    };
-    return indexes;
+    return breadcrumb.split('_');
   },
   
   // Resets the breadcrumbs on every item within an item
@@ -87,6 +74,11 @@ Breadcrumb = {
     if (item.model == 'Text') {
       resetText(item);
     }
+  },
+  
+  stringify: function(breadcrumb) {
+    var crumb = breadcrumb.join('_');
+    return crumb;
   }
 };
 
