@@ -44,9 +44,7 @@ function createElement(tagName, attributes) {
 };
 
 function toArray(primitive) {
-  arr = new Array();
-  arr[0] = primitive;
-  return arr;
+  return [primitive];
 };
 
 // A global Breadcrumb object that handles functions relating to breadcrumbs
