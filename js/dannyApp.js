@@ -5,12 +5,25 @@
 
 var app = {
   initialize: function() {
-    idb.open('WugbotDev');
+    var loadPreferences = function() {
+      if (localStorage.wugbotPreferences) { app.preferences = JSON.parse(localStorage.wugbotPreferences); }
+      if (app.preferences.currentWorkview) {
+        app.router.setWorkview(app.preferences.currentWorkview);
+      } else {
+        app.router.setWorkview('texts');
+      }
+    };
+    
+    idb.open('WugbotDev', loadPreferences);
   },
   
   // Change this function to use popups.blank instead
   notify: function(text) {
     alert(text);
+  },
+  
+  save: function() {
+    localStorage.wugbotPreferences = JSON.stringify(app.preferences, null, 2);
   },
   
   preferences: {}
@@ -32,6 +45,8 @@ var Router = function(options) {
     });
     
     modules[workview + 'Overview'].render();
+    
+    app.preferences.currentWorkview = workview;
   };
   
   this.update = function(action, data) {
@@ -222,3 +237,4 @@ app.appNav.el.addEventListener('click', function(ev) {
 app.navIcons.el.addEventListener('click', function(ev) { app.navIcons.notify('navIconClick', ev.target.id); });
 
 window.addEventListener('load', app.initialize);
+window.addEventListener('unload', app.save);

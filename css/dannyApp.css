@@ -50,9 +50,6 @@ legend {
   transition: max-width 1s;
   width: 33%; }
 
-.module {
-  margin-top: 1.5rem; }
-
 .phrase {
   background-color: rgba(63, 147, 249, 0.25);
   border-radius: 10px; }
