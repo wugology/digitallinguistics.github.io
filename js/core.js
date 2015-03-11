@@ -136,7 +136,7 @@ function IDBObj() {
 
 
 // EVENT SYSTEM
-function ObserverList() {
+function Events() {
   Object.defineProperties(this, {
     'observers': {
       value: [],
@@ -191,7 +191,7 @@ function ObserverList() {
 // BASE MODEL
 function Model(data) {
   IDBObj.call(this);
-  ObserverList.call(this);
+  Events.call(this);
   
   if (data) {
     augment(this, data);
@@ -223,7 +223,7 @@ function Model(data) {
 
 // BASE COLLECTION
 function Collection(data) {
-  ObserverList.call(data);
+  Events.call(data);
   
   Object.defineProperties(data, {
     'json': {
@@ -248,7 +248,7 @@ function Collection(data) {
 // - el: The DOM element associated with this view
 // - template: The HTML template associated with this view
 function View(model, options) {
-  ObserverList.call(this);
+  Events.call(this);
   
   this.model = model;
   
