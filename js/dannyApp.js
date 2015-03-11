@@ -8,7 +8,7 @@ var app = {
     idb.open('WugbotDev');
   },
   
-  // Change this function to use app.popups.blank instead
+  // Change this function to use popups.blank instead
   notify: function(text) {
     alert(text);
   },

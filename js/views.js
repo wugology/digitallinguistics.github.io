@@ -13,7 +13,20 @@ var PhraseView = function(model, options) {
     this.template.content.querySelector('.phrase').dataset.breadcrumb = model.breadcrumb;
     var contentWrapper = this.template.content.querySelector('.wrapper');
     
-    // Populate phrase data here
+    Object.keys(this.model.transcripts).forEach(function(ortho) {
+      var p = createElement('p', { textContent: this.model.transcripts[ortho] });
+      contentWrapper.appendChild(p);
+    });
+    
+    Object.keys(this.model.transcriptions).forEach(function(ortho) {
+      var p = createElement('p', { textContent: this.model.transcriptions[ortho] });
+      contentWrapper.appendChild(p);
+    });
+    
+    Object.keys(this.model.notes).forEach(function(ortho) {
+      var p = createElement('p', { textContent: this.model.notes[ortho] });
+      contentWrapper.appendChild(p);
+    });
     
     var phrase = this.template.content.cloneNode(true);
     wrapper.appendChild(phrase);
