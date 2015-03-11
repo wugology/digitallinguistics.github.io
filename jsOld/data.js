@@ -81,5 +81,3 @@ var Text = function(data, callback) {
   
   return this;
 }.bind(this);
-
-var Word = function() {};

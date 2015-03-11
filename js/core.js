@@ -5,7 +5,7 @@
 // - Base view & collection
 
 
-// BASE FUNCTIONS & OBJECTS
+// HELPER FUNCTIONS
 // Adds all the enumerable keys of one object (the source) to another (the destination)
 function augment(destination, source) {
   Object.keys(source).forEach(function(key) {
@@ -213,6 +213,7 @@ function Model(data) {
     
     // Takes a hash of criteria as its argument
     // Probably going to be replaced by a model search function
+    // Might call idb.search(lingType, criteria)
     'search': {
       value: function(criteria) {
         checkAgainst(criteria, this);
