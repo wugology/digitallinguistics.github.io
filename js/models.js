@@ -35,14 +35,24 @@ models.Text = function Text(data) {
     this.phrases = this.phrases.map(function(phraseData) {
       return new models.Phrase(phraseData);
     });
+    
+    this.phrases = new models.Phrases(this.phrases);
   }
 
-  this.store();
+  this.store(function() { Breadcrumb.reset(this); }.bind(this));
 };
 
 // Abbr: p
 models.Phrase = function Phrase(data) {
   Model.call(this, data);
+  
+  if (this.words) {
+    this.words = this.words.map(function(wordData) {
+      return new models.Word(wordData);
+    });
+    
+    this.words = new models.Words(this.words);
+  }
 };
 
 // Abbr: w

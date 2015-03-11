@@ -71,22 +71,26 @@ Breadcrumb = {
   reset: function(item) {
     var resetWord = function(word) {
       word.morphemes.forEach(function(morpheme, m) {
-        morpheme.breadcrumb = word.breadcrumb + '_' + m;
+        morpheme.breadcrumb = word.breadcrumb.concat(m);
       });
     };
     
     var resetPhrase = function(phrase) {
       phrase.words.forEach(function(word, w) {
-        word.breadcrumb = phrase.breadcrumb + '_' + w;
-        resetWord(word);
+        word.breadcrumb = phrase.breadcrumb.concat(w);
+        if (word.morphemes) { resetWord(word); }
       });
     };
     
     var resetText = function(text) {
-      text.phrases.forEach(function(phrase, p) {
-        phrase.breadcrumb = text.id + '_' + p;
-        resetPhrase(phrase);
-      });
+      text.breadcrumb = [text.id];
+      
+      if (text.phrases) {
+        text.phrases.forEach(function(phrase, p) {
+          phrase.breadcrumb = text.breadcrumb.concat(p);
+            if (phrase.words) { resetPhrase(phrase); }
+        });
+      }
     };
     
     if (item.model == 'Word') {
@@ -136,20 +140,20 @@ function IDBObj() {
 
 
 // EVENT SYSTEM
-function ObserverList() {
+function Events() {
   Object.defineProperties(this, {
-    'observers': {
+    'events': {
       value: [],
       writable: true
     },
     
     'notify': {
       value: function(action, data) {
-        var subs = this.observers.filter(function(sub) {
+        var subs = this.events.filter(function(sub) {
           return sub.action == action;
         });
 
-        this.observers.forEach(function(sub) {
+        this.events.forEach(function(sub) {
           sub.observer.update(sub.action, data);
         });
       }.bind(this)
@@ -164,7 +168,7 @@ function ObserverList() {
     }
   });
   
-  Object.defineProperties(this.observers, {
+  Object.defineProperties(this.events, {
     'add': {
       value: function(observer, action) {
         var sub = {
@@ -172,13 +176,13 @@ function ObserverList() {
           observer: observer
         };
         
-        this.observers.push(sub);
+        this.events.push(sub);
       }.bind(this)
     },
     
     'remove': {
       value: function(observer, action) {
-        this.observers.forEach(function(sub, i, arr) {
+        this.events.forEach(function(sub, i, arr) {
           if (sub.observer == observer && sub.action == action) {
             arr.splice(i, 1);
           }
@@ -191,7 +195,7 @@ function ObserverList() {
 // BASE MODEL
 function Model(data) {
   IDBObj.call(this);
-  ObserverList.call(this);
+  Events.call(this);
   
   if (data) {
     augment(this, data);
@@ -224,7 +228,7 @@ function Model(data) {
 
 // BASE COLLECTION
 function Collection(data) {
-  ObserverList.call(data);
+  Events.call(data);
   
   Object.defineProperties(data, {
     'json': {
@@ -249,7 +253,7 @@ function Collection(data) {
 // - el: The DOM element associated with this view
 // - template: The HTML template associated with this view
 function View(model, options) {
-  ObserverList.call(this);
+  Events.call(this);
   
   this.model = model;
   

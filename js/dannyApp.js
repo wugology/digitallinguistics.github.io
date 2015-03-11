@@ -21,6 +21,12 @@ var app = {
 // Nav View
 var Nav = function(options) {
   View.call(this, null, options);
+  delete this.model;
+};
+
+var Popup = function(options) {
+  View.call(this, null, options);
+  delete this.model;
 };
 
 
@@ -48,7 +54,28 @@ app.navIcons.el.addEventListener('click', function(ev) {
   app.navIcons.notify('navIconClick', ev.target.id);
 });
 
-app.navIcons.observers.add(app.appNav, 'navIconClick');
-app.navIcons.observers.add(app.mainNav, 'navIconClick');
+app.navIcons.events.add(app.appNav, 'navIconClick');
+app.navIcons.events.add(app.mainNav, 'navIconClick');
 
 window.addEventListener('load', app.initialize);
+
+
+// POPUPS
+var popups = {};
+
+popups.fileUpload = new Popup({
+  el: $('#fileUploadPopup'),
+  button: $('#fileUploadButton'),
+  input: $('#fileUpload'),
+  
+  // Applies the callback function to the uploaded file when the 'Go' button is clicked
+  render: function(goButtonCallback) {
+    var processFile = function() {
+      goButtonCallback(this.input.files[0]);
+      this.button.removeEventListener('click', processFile);
+    }.bind(this);
+    
+    this.button.addEventListener('click', processFile);
+    this.display();
+  }
+});
