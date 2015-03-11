@@ -43,25 +43,10 @@ models.Text = function Text(data) {
 // Abbr: p
 models.Phrase = function Phrase(data) {
   Model.call(this, data);
-  
-  if (this.transcripts) { this.transcripts = new models.Transcripts(this.transcripts); }
-  
-  if (this.transcriptions) { this.transcriptions = new models.Transcriptions(this.transcriptions); }
-  
-  if (this.words) { this.words = new models.Words(this.words); }
-  
-  if (this.translations) { this.translations = new models.Translations(this.translations); }
-  
-  if (this.notes) { this.notes = new models.Notes(this.notes); }
 };
 
 // Abbr: w
 models.Word = function Word(data) {
-  Model.call(this, data);
-};
-
-// Abbr: rep
-models.Rep = models.Representation = function Representation(data) {
   Model.call(this, data);
 };
 
@@ -85,7 +70,11 @@ models.Tag = function Tag() {
 
 // COLLECTIONS MODELS (PLURAL)
 models.MediaCollection = function MediaCollection(data) {
-  Collection.call(this, data);
+  var coll = data.map(function(mediaData) {
+    return new models.Media(mediaData);
+  });
+  
+  var media = Collection.call(coll, coll);
 };
 
 // Doesn't seem like we need a Corpora collection model
@@ -118,46 +107,6 @@ models.Phrases = function Phrases(data) {
   var phrases = Collection.call(coll, coll);
   
   return phrases;
-};
-
-models.Transcripts = function Transcripts(data) {
-  var coll = data.map(function(transcriptData) {
-    return new models.Rep(transcriptData);
-  });
-  
-  var transcripts = Collection.call(coll, coll);
-  
-  return transcripts;
-};
-
-models.Transcriptions = function Transcriptions(data) {
-  var coll = data.map(function(transcriptionData) {
-    return new models.Rep(transcriptionData);
-  });
-  
-  var transcriptions = Collection.call(coll, coll);
-  
-  return transcriptions;
-};
-
-models.Translations = function Translations(data) {
-  var coll = data.map(function(translationData) {
-    return new models.Rep(translationData);
-  });
-  
-  var translations = Collection.call(coll, coll);
-  
-  return translations;
-};
-
-models.Notes = function Notes(data) {
-  var coll = data.map(function(noteData) {
-    return new models.Rep(noteData);
-  });
-  
-  var notes = Collection.call(coll, coll);
-  
-  return notes;
 };
 
 models.Words = function Words(data) {
