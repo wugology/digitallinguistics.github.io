@@ -50,6 +50,9 @@ legend {
   transition: max-width 1s;
   width: 33%; }
 
+.module {
+  margin-top: 1.5rem; }
+
 .phrase {
   background-color: rgba(63, 147, 249, 0.25);
   border-radius: 10px; }
@@ -90,23 +93,3 @@ legend {
 
 #corpusSelector:hover {
   box-shadow: 0 0 5px 0 white; }
-
-/* Temporary or placeholder styling */
-.module:not(.textsModule) {
-  margin-top: 1rem; }
-  
-.documentsModule,
-.lexiconModule,
-.orthographiesModule,
-.tagsModule {
-  border: 1px solid black;
-  padding: 0.25rem; }
-
-.documentsModule ul,
-.lexiconModule ul,
-.mediaModule ul,
-.orthographiesModule ul,
-.tagsModule ul,
-#detailsPane .textsModule ul {
-  display: inline-block;
-  margin: 0.5rem; }

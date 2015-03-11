@@ -140,26 +140,27 @@ function IDBObj() {
 
 
 // EVENT SYSTEM
-function Events() {
+function Events(options) {
   Object.defineProperties(this, {
-    'events': {
+    'observers': {
       value: [],
       writable: true
     },
     
     'notify': {
       value: function(action, data) {
-        var subs = this.events.filter(function(sub) {
+        var subs = this.observers.filter(function(sub) {
           return sub.action == action;
         });
 
-        this.events.forEach(function(sub) {
+        this.observers.forEach(function(sub) {
           sub.observer.update(sub.action, data);
         });
       }.bind(this)
     },
     
     'update': {
+      configurable: true,
       value: function(action, data) {
         console.log('No update function has been set for this object yet.');
         // Overwrite this function with an update function specific to the model, view, or collection
@@ -168,7 +169,7 @@ function Events() {
     }
   });
   
-  Object.defineProperties(this.events, {
+  Object.defineProperties(this.observers, {
     'add': {
       value: function(observer, action) {
         var sub = {
@@ -176,13 +177,13 @@ function Events() {
           observer: observer
         };
         
-        this.events.push(sub);
+        this.observers.push(sub);
       }.bind(this)
     },
     
     'remove': {
       value: function(observer, action) {
-        this.events.forEach(function(sub, i, arr) {
+        this.observers.forEach(function(sub, i, arr) {
           if (sub.observer == observer && sub.action == action) {
             arr.splice(i, 1);
           }
