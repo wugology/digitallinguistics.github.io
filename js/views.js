@@ -13,13 +13,7 @@ var PhraseView = function(model, options) {
     this.template.content.querySelector('.phrase').dataset.breadcrumb = model.breadcrumb;
     var contentWrapper = this.template.content.querySelector('.wrapper');
     
-    if (model.transcripts) { model.transcripts.render(contentWrapper); }
-    
-    if (model.transcriptions) { model.transcriptions.render(contentWrapper); }
-    
-    if (model.translations) { model.translations.render(contentWrapper); }
-    
-    if (model.notes) { model.notes.render(contentWrapper); }
+    // Populate phrase data here
     
     var phrase = this.template.content.cloneNode(true);
     wrapper.appendChild(phrase);

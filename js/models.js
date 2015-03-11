@@ -109,46 +109,6 @@ models.Phrases = function Phrases(data) {
   return phrases;
 };
 
-models.Transcripts = function Transcripts(data) {
-  var coll = data.map(function(transcriptData) {
-    return new models.Rep(transcriptData);
-  });
-  
-  var transcripts = Collection.call(coll, coll);
-  
-  return transcripts;
-};
-
-models.Transcriptions = function Transcriptions(data) {
-  var coll = data.map(function(transcriptionData) {
-    return new models.Rep(transcriptionData);
-  });
-  
-  var transcriptions = Collection.call(coll, coll);
-  
-  return transcriptions;
-};
-
-models.Translations = function Translations(data) {
-  var coll = data.map(function(translationData) {
-    return new models.Rep(translationData);
-  });
-  
-  var translations = Collection.call(coll, coll);
-  
-  return translations;
-};
-
-models.Notes = function Notes(data) {
-  var coll = data.map(function(noteData) {
-    return new models.Rep(noteData);
-  });
-  
-  var notes = Collection.call(coll, coll);
-  
-  return notes;
-};
-
 models.Words = function Words(data) {
   var coll = data.map(function(wordData) {
     return new models.Word(wordData);
