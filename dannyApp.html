@@ -10,8 +10,8 @@
   <link rel=stylesheet type=text/css href=css/fonts.css>
   <link rel=stylesheet type=text/css href=css/style.css>
   <link rel=stylesheet type=text/css href=css/dannyApp.css>
-  <link id=desktopCSS rel=stylesheet type=text/css href=css/dannyDesktop.css media='(min-width: 1000px)'>
-  <link id=mobileCSS rel=stylesheet type=text/css href=css/dannyMobile.css media='(max-width: 1000px)'>
+  <link id=desktopCSS rel=stylesheet type=text/css href=css/desktop.css media='(min-width: 1000px)'>
+  <link id=mobileCSS rel=stylesheet type=text/css href=css/mobile.css media='(max-width: 1000px)'>
 </head>
 <body>
   <header>
@@ -49,41 +49,46 @@
       <nav id=sideNav class=hideonMobile>
         <ul>
           <li class=hideonMobile><a><img id=collapseLeft src=img/collapseLeft.svg alt='open/close the overview pane' class=icon></a></li>
-          <li class='hideonDesktop hideonMobile'><a><img id=documentsNav src=img/pages.svg alt='open the documents module' class=icon></a></li>
-          <li class='hideonDesktop hideonMobile'><a><img id=lexiconNav src=img/bookSide.svg alt='open the lexicon module' class=icon></a></li>
-          <li class='hideonDesktop hideonMobile'><a><img id=mediaNav src=img/headphones.svg alt='open the media module' class=icon></a></li>
-          <li class='hideonDesktop hideonMobile'><a><img id=orthographiesNav src=img/letters.svg alt='open the orthographies module' class=icon></a></li>
-          <li class='hideonDesktop hideonMobile'><a><img id=tagsNav src=img/tag.svg alt='open the tags module' class=icon></a></li>
-          <li class='hideonDesktop hideonMobile'><a><img id=textsNav src=img/openBook.svg alt='open the texts module' class=icon></a></li>
+          <li class='hideonDesktop hideonMobile'><a><img id=documentsNav src=img/pages.svg alt='open the documents workview' class=icon></a></li>
+          <li class='hideonDesktop hideonMobile'><a><img id=lexiconNav src=img/bookSide.svg alt='open the lexicon workview' class=icon></a></li>
+          <li class='hideonDesktop hideonMobile'><a><img id=mediaNav src=img/headphones.svg alt='open the media workview' class=icon></a></li>
+          <li class='hideonDesktop hideonMobile'><a><img id=orthographiesNav src=img/letters.svg alt='open the orthographies workview' class=icon></a></li>
+          <li class='hideonDesktop hideonMobile'><a><img id=tagsNav src=img/tag.svg alt='open the tags workview' class=icon></a></li>
+          <li class='hideonDesktop hideonMobile'><a><img id=textsNav src=img/openBook.svg alt='open the texts workview' class=icon></a></li>
         </ul>
       </nav>
       
-      <div class='documentsModule module hideonDesktop hideonMobile'>
+      <div id=documentsOverview class='overview module hideonDesktop hideonMobile'>
+        <h1>Documents</h1>
         <p>This is a documents module. This module will display a list of documents associated with this corpus, such as scans of field notes or archival documents, copies of consent forms, etc. Clicking a document will display the document details in the details pane.</p>
         <ul id=documentsList>Here is a <code>&lt;ul&gt;</code> with <code>id=documentsList</code> for displaying the list of documents associated with this corpus. It may be necssary to have multiple <code>&lt;ul&gt;</code>’s for different types of documents.</ul>
       </div>
       
-      <div class='lexiconModule module hideonDesktop hideonMobile'>
+      <div id=lexiconOverview class='overview module hideonDesktop hideonMobile'>
+        <h1>Lexicon</h1>
         <p>This is a lexicon module. This module will display the list of entries in the lexicon or lexica associated with this corpus, and can be filtered and sorted, etc. Clicking a lexical entry will display that entry in the details pane.</p>
         <ul id=lexiconEntries>Here is a <code>&lt;ul&gt;</code> with <code>id=lexiconEntries</code> for displaying the list of lexical entries for this corpus.</ul>
       </div>
       
-      <div class='mediaModule module hideonDesktop hideonMobile'>
+      <div id=mediaOverview class='overview module hideonDesktop hideonMobile'>
+        <h1>Media</h1>
         <button id=addMediaButton type=button value='Add media file'>Add media file</button>
         <ul id=mediaList></ul>
       </div>
       
-      <div class='orthographiesModule module hideonDesktop hideonMobile'>
+      <div id=orthographiesOverview class='overview module hideonDesktop hideonMobile'>
+        <h1>Orthographies</h1>
         <p>This is an orthographies module. This module will display the list of orthographies associated with this corpus. Clicking an orthography will display the orthography in the details pane for editing.</p>
         <ul id=orthographiesList>Here is a <code>&lt;ul&gt;</code> with <code>id=orthographiesList</code> for displaying the list of orthographies associated with this corpus. It may be necessary to have multiple <code>&lt;ul&gt;</code>’s for different languages.</ul>
       </div>
       
-      <div class='tagsModule module hideonDesktop hideonMobile'>
+      <div id=tagsOverview class='overview module hideonDesktop hideonMobile'>
+        <h1>Tags</h1>
         <p>This is a tags module. This module will display a list of tags in the corpus, organized in some way. It may be that this is removed later and integrated into other types of tools, like a corpus tagger. Alternatively, this may be the place where those tools live.</p>
         <ul id=tagsList>Here is a <code>&lt;ul&gt;</code> with <code>id=tagsList</code> for displaying the list of tags associated with this corpus.</ul>
       </div>
       
-      <div class='textsModule module hideonDesktop hideonMobile'>
+      <div id=textsOverview class='overview module hideonDesktop hideonMobile'>
         <h1>Texts</h1>
         <div>
           <button id=addNewTextButton type=button value='Add new text'>Add new text</button>
@@ -101,27 +106,27 @@
       <p>This is the details pane, where the user will be doing most of their work. Users will use the overview pane to pull up items to work on, and then input and edit those items here.</p>
       <p>Each of the modules in this section will be hidden unless the user has selected the relevant view from the navigation menu at the top of the page.</p>
 
-      <div class='documentsModule module hideonDesktop hideonMobile'>
+      <div id=documentsDetail class='details module hideonDesktop hideonMobile'>
         <p>This is a documents module. Details of individual documents - or perhaps the document itself - will be displayed here.</p>
       </div>
       
-      <div class='lexiconModule module hideonDesktop hideonMobile'>
+      <div id=lexiconDetail class='details module hideonDesktop hideonMobile'>
         <p>This is a lexicon module. Details of individual lexical entries will be displayed here.</p>
       </div>
       
-      <div class='mediaModule module hideonDesktop hideonMobile'>
+      <div id=mediaDetail class='details module hideonDesktop hideonMobile'>
         <audio class=audioPlayer controls></audio>
       </div>
       
-      <div class='orthographiesModule module hideonDesktop hideonMobile'>
+      <div id=orthographiesDetail class='details module hideonDesktop hideonMobile'>
         <p>This is an orthographies module. Details of individual orthographies will be displayed here.</p>
       </div>
       
-      <div class='tagsModule module hideonDesktop hideonMobile'>
+      <div id=tagsDetail class='details module hideonDesktop hideonMobile'>
         <p>This is a tags module. Details of individual tags will be displayed here (for example, all the phrases a tag has been applied to).</p>
       </div>
       
-      <div class='textsModule module hideonDesktop hideonMobile'>
+      <div id=textsDetail class='details module hideonDesktop hideonMobile'>
         <button id=addTextMediaButton type=button value='Add a media file to this text'>Add a media file to this text</button>
         <button id=deleteTextButton type=button value='Delete this text'>Delete this text</button>
 

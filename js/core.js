@@ -71,22 +71,26 @@ Breadcrumb = {
   reset: function(item) {
     var resetWord = function(word) {
       word.morphemes.forEach(function(morpheme, m) {
-        morpheme.breadcrumb = word.breadcrumb + '_' + m;
+        morpheme.breadcrumb = word.breadcrumb.concat(m);
       });
     };
     
     var resetPhrase = function(phrase) {
       phrase.words.forEach(function(word, w) {
-        word.breadcrumb = phrase.breadcrumb + '_' + w;
-        resetWord(word);
+        word.breadcrumb = phrase.breadcrumb.concat(w);
+        if (word.morphemes) { resetWord(word); }
       });
     };
     
     var resetText = function(text) {
-      text.phrases.forEach(function(phrase, p) {
-        phrase.breadcrumb = text.id + '_' + p;
-        resetPhrase(phrase);
-      });
+      text.breadcrumb = [text.id];
+      
+      if (text.phrases) {
+        text.phrases.forEach(function(phrase, p) {
+          phrase.breadcrumb = text.breadcrumb.concat(p);
+            if (phrase.words) { resetPhrase(phrase); }
+        });
+      }
     };
     
     if (item.model == 'Word') {
@@ -136,32 +140,45 @@ function IDBObj() {
 
 
 // EVENT SYSTEM
-function Events() {
-  Object.defineProperties(this, {
-    'observers': {
+// Handlers is an array of settings for event handlers that will be added to the object
+// - Each handler has 3 attributes: el (what the listener attaches to; this is a string representing the attribute of the object the Events mixin is being called on), evType (e.g. 'click', 'onload'), and functionCall (the function to execute when the event fires)
+function Events(handlers) {
+  if (handlers) {
+    handlers.forEach(function(handler) {
+      this.el.addEventListener(handler.evType, handler.functionCall);
+    }, this);
+  }
+  
+  if (!this.observers) {
+    Object.defineProperty(this, 'observers', {
       value: [],
       writable: true
-    },
-    
-    'notify': {
-      value: function(action, data) {
-        var subs = this.observers.filter(function(sub) {
-          return sub.action == action;
-        });
-
-        this.observers.forEach(function(sub) {
-          sub.observer.update(sub.action, data);
-        });
-      }.bind(this)
-    },
-    
-    'update': {
+    });
+  }
+  
+  if (!this.update) {
+    Object.defineProperty(this, 'update', {
+      configurable: true,
+      
       value: function(action, data) {
         console.log('No update function has been set for this object yet.');
         // Overwrite this function with an update function specific to the model, view, or collection
       },
+      
       writable: true
-    }
+    });
+  }
+  
+  Object.defineProperty(this, 'notify', {
+    value: function(action, data) {
+      var subs = this.observers.filter(function(sub) {
+        return sub.action == action;
+      });
+      
+      this.observers.forEach(function(sub) {
+        sub.observer.update(sub.action, data);
+      });
+    }.bind(this)
   });
   
   Object.defineProperties(this.observers, {
@@ -245,13 +262,16 @@ function Collection(data) {
 
 // BASE VIEW
 // This view is the prototype for both item and collection views
-// Options that can be specified for all views:
-// - el: The DOM element associated with this view
-// - template: The HTML template associated with this view
 function View(model, options) {
+<<<<<<< HEAD
   Events.call(this);
   
   this.model = model;
+=======
+  if (model) {
+    this.model = model;
+  }
+>>>>>>> 8fb99322bdc934a8fc3c2b858816b90f3cf0bab0
   
   if (options) {
     augment(this, options);
@@ -285,4 +305,10 @@ function View(model, options) {
     this.el.classList.toggle('hideonMobile');
     this.el.classList.toggle('hideonDesktop');
   };
+  
+  if (options) {
+    Events.call(this, options.handlers);
+  } else {
+    Events.call(this);
+  }
 };

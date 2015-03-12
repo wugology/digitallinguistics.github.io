@@ -1,87 +1,112 @@
 // Contains the script for things in the tools folder
 tools = {};
 
-// Gets the file from the file input, converts it from an ELAN tsv export format into a valid JSON format, and returns the JSON object
-// In the future, it may be good to make this function sufficiently robust that it can handle all the various settings in the ELAN export popup
-tools.convert = function(callback) {
-  var file = views.popups.fileUpload.file;
-  if (!file) {
-    page.notify('Please select a file below.');
-  } else {
-    var phrases = [];
-    var fileReader = new FileReader();
-    fileReader.onload = function(ev) {
-      var text = ev.target.result;
+// Columns is an array of objects with 5 possible attributes:
+// - import: a Boolean indicating whether this column should be imported (defaults to true)
+//   - if false, json may be left blank
+// - elan: name of the ELAN column (required)
+// - json: name of the phrase attribute where this data will live (required if being imported)
+//   - e.g. transcriptions, translations, etc.
+// - orthography: name of the orthography for this column (required for columns containing textual data)
+// - type: the content type (defaults to null)
+// - format: set to 'number' if you the string should be converted to a number
 
-      text = text.trim();
-      var lines = text.split(/\n/g);
-      var header = lines[0].trim();
-      var columnNames = header.split(/\t/g);
-      columnNames.forEach(function(columnName, i) {
-        columnName = columnName.startsWith('Begin Time') ? 'startTime' : columnName;
-        columnName = columnName.startsWith('End Time') ? 'endTime' : columnName;
-        columnName = columnName.startsWith('Duration') ? 'duration' : columnName;
-        columnName = columnName.startsWith('Transcript') ? 'transcript' : columnName;
-        columnName = columnName.startsWith('Notes') ? 'notes' : columnName;
-        columnName = columnName.startsWith('Translation') ? 'translation' : columnName;
-        columnName = columnName.startsWith('Transcription') ? 'transcription' : columnName;
-        columnName = columnName.startsWith('Phonemic') ? 'phonemic' : columnName;
-        columnName = columnName.startsWith('Phonetic') ? 'phonetic' : columnName;
-        columnName = columnName.replace(/[^\S]/g, '');
-        columnNames[i] = columnName;
-      });
-      var labelLine = function(line) {
-        var values = line.trim().split(/\t/g);
-        var phrase = {};
-        columnNames.forEach(function(columnName, i) {
-          values[i] = !values[i] ? null : values[i];
-          phrase[columnName] = values[i];
-        });
-        phrases.push(phrase);
-      };
-      lines.slice(1).forEach(labelLine);
-      
-      phrases.forEach(function(phrase, i) {
-        phrase.startTime = parseFloat(phrase.startTime);
-        phrase.endTime = parseFloat(phrase.endTime);
-        phrase.transcripts = [{ text: phrase.transcript, orthography: null }];
-        phrase.translations = [{ type: 'free', text: phrase.translation, orthography: null }];
-        phrase.transcriptions = [
-          { type: 'phonemic', text: phrase.phonemic, orthography: null },
-          { type: 'phonetic', text: phrase.phonetic, orthography: null }
-        ];
-        delete phrase.transcript;
-        delete phrase.translation;
-        delete phrase.phonemic;
-        delete phrase.phonetic;
-        delete phrase.duration;
-        
-        phrases[i] = new Phrase({
-          breadcrumb: null,
-          speaker: null,
-          startTime: phrase.startTime,
-          endTime: phrase.endTime,
-          transcriptions: phrase.transcriptions,
-          transcripts: phrase.transcripts,
-          translations: phrase.translations,
-          tags: [],
-          words: [],
-          notes: phrase.notes
-        });
-      });
-      
-      var text = new Text({
-        media: [],
-        persons: [],
-        phrases: phrases,
-        tags: [],
-        titles: [{ orthography: null, text: '[no title]' }]
-      });
-      
-      if (typeof callback === 'function') {
-        callback(text);
-      }
-    };
-    fileReader.readAsText(file);
+var ekegusiiColumns = [
+  {
+    elan: 'Begin Time - ss.msec',
+    json: 'startTime',
+    format: 'number'
+  },
+  {
+    elan: 'End Time - ss.msec',
+    json: 'endTime',
+    format: 'number'
+  },
+  {
+    elan: 'Duration',
+    import: false
+  },
+  {
+    elan: 'Transcript',
+    json: 'transcripts',
+    orthography: 'DT2 Phonemic'
+  },
+  {
+    elan: 'Phonemic',
+    json: 'transcriptions',
+    orthography: 'Phonemic'
+  },
+  {
+    elan: 'Phonetic',
+    json: 'transcriptions',
+    orthography: 'Phonetic'
+  },
+  {
+    elan: 'Translation',
+    json: 'translations',
+    orthography: 'English'
+  },
+  {
+    elan: 'Notes',
+    json: 'notes',
+    orthography: 'English'
   }
+];
+
+tools.elan2json = function(file, columns, callback) {
+  var phrases = [];
+  var fileReader = new FileReader();
+  fileReader.onload = function(ev) {
+    var text = ev.target.result;
+    text = text.trim();
+    var lines = text.split(/\n/g);
+    var header = lines[0].trim();
+    var columnNames = header.split(/\t/g);
+    
+    var labelLine = function(line) {
+      var values = line.trim().split(/\t/g);
+      var p = {};
+      
+      values.forEach(function(value) {
+        value = value ? value.trim() : null;
+      });
+      
+      columnNames.forEach(function(columnName, i) {
+        var column = columns.filter(function(column) {
+          return column.elan == columnName;
+        })[0];
+        
+        // Error handling
+        if (!column) {
+          alert('Error: Import settings for column "' + columnName + '" not specified. Please specify import settings for this column and try again.');
+        }
+        
+        if (!column.import || column.import == true) {
+          if (column.format == 'number') { values[i] = Number(values[i]); }
+          
+          if (column.orthography) {
+            p[column.json] = {};
+            p[column.json][column.orthography] = values[i];
+          } else {
+            p[column.json] = values[i];
+          }
+        }
+      });
+      
+      phrases.push(p);
+    };
+    
+    lines.slice(1).forEach(labelLine);
+    
+    phrases.forEach(function(p) {
+      p = new models.Phrase(p);
+    });
+    
+    var t = { phrases: phrases };
+    var text = new models.Text(t);
+    
+    if (typeof callback == 'function') { callback(text); }
+  };
+  
+  fileReader.readAsText(file);
 };

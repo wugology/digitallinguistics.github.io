@@ -1,5 +1,13 @@
 // VIEWS
 
+// VIEWS HELPERS
+function renderTextContent(textHash, wrapper) {
+  Object.keys(textHash).forEach(function(ortho) {
+    var p = createElement('p', { textContent: textHash(ortho) });
+    wrapper.appendChild(p);
+  });
+};
+
 // ITEM VIEWS
 // The model for an item view is a single item (rather than an array of items)
 var TextView = function(model, options) {
@@ -13,20 +21,10 @@ var PhraseView = function(model, options) {
     this.template.content.querySelector('.phrase').dataset.breadcrumb = model.breadcrumb;
     var contentWrapper = this.template.content.querySelector('.wrapper');
     
-    Object.keys(this.model.transcripts).forEach(function(ortho) {
-      var p = createElement('p', { textContent: this.model.transcripts[ortho] });
-      contentWrapper.appendChild(p);
-    });
-    
-    Object.keys(this.model.transcriptions).forEach(function(ortho) {
-      var p = createElement('p', { textContent: this.model.transcriptions[ortho] });
-      contentWrapper.appendChild(p);
-    });
-    
-    Object.keys(this.model.notes).forEach(function(ortho) {
-      var p = createElement('p', { textContent: this.model.notes[ortho] });
-      contentWrapper.appendChild(p);
-    });
+    renderTextContent(this.model.transcripts, contentWrapper);
+    renderTextContent(this.model.transcriptions, contentWrapper);
+    renderTextContent(this.model.translations, contentWrapper);
+    renderTextContent(this.model.notes, contentWrapper);
     
     var phrase = this.template.content.cloneNode(true);
     wrapper.appendChild(phrase);
