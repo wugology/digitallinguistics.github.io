@@ -263,15 +263,9 @@ function Collection(data) {
 // BASE VIEW
 // This view is the prototype for both item and collection views
 function View(model, options) {
-<<<<<<< HEAD
-  Events.call(this);
-  
-  this.model = model;
-=======
   if (model) {
     this.model = model;
   }
->>>>>>> 8fb99322bdc934a8fc3c2b858816b90f3cf0bab0
   
   if (options) {
     augment(this, options);
