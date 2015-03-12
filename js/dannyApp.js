@@ -102,7 +102,15 @@ var Popup = function(options) {
 app.corpusSelector = new View(null, {
   el: $('#corpusSelector'),
   
-  // Optionally takes a corpus name to set the value to after rendering
+  handlers: [{
+    el: this.el,
+    evType: 'change',
+    functionCall: function(ev) { this.notify('selectCorpus', ev.target.value); }
+  }],
+  
+  observers: [{ action: 'selectCorpus', observer: app.router }],
+  
+  // Optionally takes a corpus ID to set the value to after rendering
   render: function(corpusID) {    
     idb.getAll('corpora', function(corpora) {
       this.el.innerHTML = '';
@@ -128,8 +136,6 @@ app.corpusSelector = new View(null, {
   }
 });
 
-app.corpusSelector.observers.add(app.router, 'selectCorpus');
-app.corpusSelector.el.addEventListener('change', function(ev) { app.corpusSelector.notify('selectCorpus', ev.target.value); });
 
 // NAVS
 app.appNav = new Nav({
@@ -214,6 +220,7 @@ modules.tagsOverview = new Module({
 
 modules.textsOverview = new Module({
   el: $('#textsOverview'),
+  importButton: $('#importTextButton'),
   
   render: function() {
     this.display();

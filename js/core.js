@@ -140,7 +140,15 @@ function IDBObj() {
 
 
 // EVENT SYSTEM
-function Events(options) {
+// Handlers is an array of settings for event handlers that will be added to the object
+// - Each handler has 3 attributes: el (what the listener attaches to; this is a string representing the attribute of the object the Events mixin is being called on), evType (e.g. 'click', 'onload'), and functionCall (the function to execute when the event fires)
+function Events(handlers) {
+  if (handlers) {
+    handlers.forEach(function(handler) {
+      this.el.addEventListener(handler.evType, handler.functionCall);
+    }, this);
+  }
+  
   Object.defineProperties(this, {
     'observers': {
       value: [],
@@ -250,12 +258,7 @@ function Collection(data) {
 
 // BASE VIEW
 // This view is the prototype for both item and collection views
-// Options that can be specified for all views:
-// - el: The DOM element associated with this view
-// - template: The HTML template associated with this view
 function View(model, options) {
-  Events.call(this);
-  
   if (model) {
     this.model = model;
   }
@@ -292,4 +295,6 @@ function View(model, options) {
     this.el.classList.toggle('hideonMobile');
     this.el.classList.toggle('hideonDesktop');
   };
+
+  Events.call(this, options.handlers);
 };
