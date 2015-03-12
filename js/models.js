@@ -7,7 +7,7 @@ models.Media = function Media(data) {
   // Maybe some methods to read the file to an array buffer, etc.
 };
 
-models.Corpus = function Corpus(data) {
+models.Corpus = function Corpus(data, callback) {
   Model.call(this, data);
   
   Object.defineProperties(this, {
@@ -18,7 +18,7 @@ models.Corpus = function Corpus(data) {
     }
   });
   
-  this.store();
+  this.store(callback);
 };
 
 // Abbr: lang

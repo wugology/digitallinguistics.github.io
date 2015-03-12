@@ -7,13 +7,20 @@ var app = {
   initialize: function() {
     var initSequence = function() {
       // Load the preferences
-      if (localStorage.wugbotPreferences) { app.preferences = JSON.parse(localStorage.wugbotPreferences); }
+      if (localStorage.wugbotPreferences != 'undefined') { app.preferences = JSON.parse(localStorage.wugbotPreferences); }
       
       // Render and set corpus selector
       if (app.preferences.currentCorpus) {
+        idb.hydrate(app.preferences.currentCorpus);
         app.corpusSelector.render(app.preferences.currentCorpus.id);
       } else {
-        console.log('Displaying the manage corpora popup!');
+        idb.getAll('corpora', function(corpora) {
+          if (corpora.length == 0) {
+            popups.manageCorpora.display();
+          } else {
+            app.corpusSelector.render();
+          }
+        });
       }
       
       // Set the current workview
@@ -63,9 +70,9 @@ var Router = function(options) {
     if (action == 'appNavClick') { this.setWorkview(data); }
     if (action == 'selectCorpus') {
       if (data == 'manage') {
-        console.log('Displaying the manage corpora popup!');
+        popups.manageCorpora.display();
       } else if (data != 'select') {
-        console.log('Setting the current corpus by corpus ID!');
+        idb.get(Number(data), 'corpora', function(results) { results[0].setAsCurrent(); });
       }
     }
   };
@@ -98,6 +105,8 @@ app.corpusSelector = new View(null, {
   // Optionally takes a corpus name to set the value to after rendering
   render: function(corpusID) {    
     idb.getAll('corpora', function(corpora) {
+      this.el.innerHTML = '';
+      
       var option = createElement('option', { textContent: 'Select a corpus', value: 'select' });
       this.el.appendChild(option);
       option.classList.add('unicode');
@@ -120,6 +129,7 @@ app.corpusSelector = new View(null, {
 });
 
 app.corpusSelector.observers.add(app.router, 'selectCorpus');
+app.corpusSelector.el.addEventListener('change', function(ev) { app.corpusSelector.notify('selectCorpus', ev.target.value); });
 
 // NAVS
 app.appNav = new Nav({
@@ -135,6 +145,9 @@ app.appNav = new Nav({
 });
 
 app.appNav.observers.add(app.router, 'appNavClick');
+app.appNav.el.addEventListener('click', function(ev) {
+  if (ev.target.tagName == 'A') { app.appNav.notify('appNavClick', ev.target.textContent.toLowerCase()); }
+});
 
 app.mainNav = new Nav({
   el: $('#mainNav'),
@@ -153,6 +166,7 @@ app.navIcons = new Nav({
 
 app.navIcons.observers.add(app.appNav, 'navIconClick');
 app.navIcons.observers.add(app.mainNav, 'navIconClick');
+app.navIcons.el.addEventListener('click', function(ev) { app.navIcons.notify('navIconClick', ev.target.id); });
 
 
 // MODULES
@@ -275,12 +289,35 @@ popups.fileUpload = new Popup({
   }
 });
 
+popups.manageCorpora = new Popup({
+  el: $('#manageCorporaPopup'),
+  button: $('#createCorpusButton'),
+  input: $('#corpusNameBox')
+});
+
+popups.manageCorpora.button.addEventListener('click', function(ev) {
+  ev.preventDefault();
+  var data = { name: popups.manageCorpora.input.value };
+  var setCorpus = function() {
+    app.corpusSelector.render(corpus.id);
+    corpus.setAsCurrent();
+  };
+  var corpus = new models.Corpus(data, setCorpus);
+  popups.manageCorpora.hide();
+});
+
+popups.settings = new Popup({
+  el: $('#settingsPopup'),
+  icon: $('#settingsIcon')
+});
+
+popups.settings.icon.addEventListener('click', function() {
+  popups.settings.toggleDisplay();
+});
 
 // EVENT LISTENERS
-app.appNav.el.addEventListener('click', function(ev) {
-  if (ev.target.tagName == 'A') { app.appNav.notify('appNavClick', ev.target.textContent.toLowerCase()); }
+$('#popups').addEventListener('click', function(ev) {
+  if (ev.target.classList.contains('icon')) { popups[ev.target.parentNode.id.replace('Popup', '')].hide(); }
 });
-app.corpusSelector.el.addEventListener('change', function(ev) { app.corpusSelector.notify('selectCorpus', ev.target.value); });
-app.navIcons.el.addEventListener('click', function(ev) { app.navIcons.notify('navIconClick', ev.target.id); });
 window.addEventListener('load', app.initialize);
 window.addEventListener('unload', app.save);
