@@ -144,7 +144,7 @@ app.appNav = new Nav({
   
   handlers: [{
     el: this.el,
-    evType: 'click'
+    evType: 'click',
     functionCall: function(ev) { this.notify('appNavClick', ev.target.textContent.toLowerCase()); }
   }],
   
@@ -330,7 +330,7 @@ popups.settings = new Popup({
   handlers: [{
     el: this.icon,
     evType: 'click',
-    functionCall: popups.settings.toggleDisplay
+    functionCall: this.toggleDisplay
   }]
 });
 
