@@ -142,6 +142,14 @@ app.appNav = new Nav({
   el: $('#appNav'),
   buttons: $('#appNav a'),
   
+  handlers: [{
+    el: this.el,
+    evType: 'click'
+    functionCall: function(ev) { this.notify('appNavClick', ev.target.textContent.toLowerCase()); }
+  }],
+  
+  observers: [{ action: 'appNavClick', observer: app.router }],
+  
   update: function(action, data) {
     if (data == 'boxIcon') {
       this.toggleDisplay();
@@ -150,13 +158,19 @@ app.appNav = new Nav({
   }
 });
 
-app.appNav.observers.add(app.router, 'appNavClick');
-app.appNav.el.addEventListener('click', function(ev) {
-  if (ev.target.tagName == 'A') { app.appNav.notify('appNavClick', ev.target.textContent.toLowerCase()); }
-});
-
 app.mainNav = new Nav({
   el: $('#mainNav'),
+  
+  handlers: [{
+    el: this.el,
+    evType: 'click',
+    functionCall: function(ev) { this.notify('navIconClick', ev.target.id); }
+  }],
+  
+  observers: [
+    { action: 'navIconClick', observer: app.appNav },
+    { action: 'navIconClick', observer: app.mainNav }
+  ],
   
   update: function(action, data) {
     if (data == 'menuIcon') {
@@ -169,10 +183,6 @@ app.mainNav = new Nav({
 app.navIcons = new Nav({
   el: $('#navIcons')
 });
-
-app.navIcons.observers.add(app.appNav, 'navIconClick');
-app.navIcons.observers.add(app.mainNav, 'navIconClick');
-app.navIcons.el.addEventListener('click', function(ev) { app.navIcons.notify('navIconClick', ev.target.id); });
 
 
 // MODULES
@@ -315,12 +325,15 @@ popups.manageCorpora.button.addEventListener('click', function(ev) {
 
 popups.settings = new Popup({
   el: $('#settingsPopup'),
-  icon: $('#settingsIcon')
+  icon: $('#settingsIcon'),
+  
+  handlers: [{
+    el: this.icon,
+    evType: 'click',
+    functionCall: popups.settings.toggleDisplay
+  }]
 });
 
-popups.settings.icon.addEventListener('click', function() {
-  popups.settings.toggleDisplay();
-});
 
 // EVENT LISTENERS
 $('#popups').addEventListener('click', function(ev) {
