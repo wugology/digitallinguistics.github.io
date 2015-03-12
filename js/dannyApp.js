@@ -63,18 +63,23 @@ var Router = function(options) {
       case 'documents':
         idb.get(app.preferences.currentCorpus.documents, 'documents', function(docs) {
           var docs = new models.DocumentsCollection(docs);
-          new modules.DocumentsOverview(docs, modules.docsDefaults).render();
+          new modules.DocumentsOverview(docs, modules.documentsOverviewDefaults).render();
         });
         break;
       case 'lexicon':
+        new modules.LexiconOverview(null, modules.lexiconOverviewDefaults).render();
         break;
       case 'media':
+        new modules.MediaOverview(null, modules.mediaOverviewDefaults).render();
         break;
       case 'orthographies':
+        new modules.OrthographiesOverview(null, modules.orthographiesOverviewDefaults).render();
         break;
       case 'tags':
+        new modules.TagsOverview(null, modules.tagsOverviewDefaults).render();
         break;
       case 'texts':
+        new modules.TextsOverview(null, modules.textsOverviewDefaults).render();
         break;
     }
     
@@ -103,8 +108,8 @@ var Nav = function(options) {
   delete this.model;
 };
 
-var Module = function(collection, options) {
-  View.call(this, collection, options);
+var Module = function(model, options) {
+  View.call(this, model, options);
   app.router.observers.add(this, 'setWorkview');
 };
 
@@ -177,17 +182,6 @@ app.appNav = new Nav({
 app.mainNav = new Nav({
   el: $('#mainNav'),
   
-  handlers: [{
-    el: this.el,
-    evType: 'click',
-    functionCall: function(ev) { this.notify('navIconClick', ev.target.id); }
-  }],
-  
-  observers: [
-    { action: 'navIconClick', observer: app.appNav },
-    { action: 'navIconClick', observer: app.mainNav }
-  ],
-  
   update: function(action, data) {
     if (data == 'menuIcon') {
       this.toggleDisplay();
@@ -197,7 +191,18 @@ app.mainNav = new Nav({
 });
 
 app.navIcons = new Nav({
-  el: $('#navIcons')
+  el: $('#navIcons'),
+  
+  handlers: [{
+    el: this.el,
+    evType: 'click',
+    functionCall: function(ev) { app.navIcons.notify('navIconClick', ev.target.id); }
+  }],
+  
+  observers: [
+    { action: 'navIconClick', observer: app.appNav },
+    { action: 'navIconClick', observer: app.mainNav }
+  ]
 });
 
 
@@ -208,7 +213,7 @@ modules.DocumentsOverview = function(collection, options) {
   Module.call(this, collection, options);
 };
 
-modules.docsDefaults = {
+modules.documentsOverviewDefaults = {
   el: $('#documentsOverview'),
   workview: 'documents',
   
@@ -222,43 +227,83 @@ modules.docsDefaults = {
   }
 };
 
-modules.lexiconOverview = new Module({
+modules.LexiconOverview = function(collection, options) {
+  Module.call(this, collection, options);
+};
+
+modules.lexiconOverviewDefaults = {
   el: $('#lexiconOverview'),
   workview: 'lexicon',
   
   render: function() {
     this.display();
-  }
-});
+  },
 
-modules.mediaOverview = new Module({
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    app.router.observers.remove(this);
+  }
+};
+
+modules.MediaOverview = function(collection, options) {
+  Module.call(this, collection, options);
+};
+
+modules.mediaOverviewDefaults = {
   el: $('#mediaOverview'),
   workview: 'media',
 
   render: function() {
     this.display();
+  },
+  
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    app.router.observers.remove(this);
   }
-});
+};
 
-modules.orthographiesOverview = new Module({
+modules.OrthographiesOverview = function(collection, options) {
+  Module.call(this, collection, options);
+};
+
+modules.orthographiesOverviewDefaults = {
   el: $('#orthographiesOverview'),
   workview: 'orthographies',
   
   render: function() {
     this.display();
-  }
-});
+  },
 
-modules.tagsOverview = new Module({
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    app.router.observers.remove(this);
+  }
+};
+
+modules.TagsOverview = function(collection, options) {
+  Module.call(this, collection, options);
+};
+
+modules.tagsOverviewDefaults = {
   el: $('#tagsOverview'),
   workview: 'tags',
   
   render: function() {
     this.display();
-  }
-});
+  },
 
-modules.textsOverview = new Module({
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    app.router.observers.remove(this);
+  }
+};
+
+modules.TextsOverview = function(collection, options) {
+  Module.call(this, collection, options);
+};
+
+modules.textsOverviewDefaults = {
   el: $('#textsOverview'),
   importButton: $('#importTextButton'),
   workview: 'texts',
@@ -268,69 +313,128 @@ modules.textsOverview = new Module({
     evType: 'click',
     functionCall: function() {
       popups.fileUpload.render(function(file) {
-        tools.elan2json(file, ekegusiiColumns, modules.textsOverview.render);
+        tools.elan2json(file, ekegusiiColumns, this.render);
       });
     }
   }],
   
   render: function() {
-    modules.textsOverview.display();
+    this.display();
+  },
+  
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    app.router.observers.remove(this);
   }
-});
+};
 
-modules.documentsDetail = new Module({
+modules.DocumentsDetail = function(model, options) {
+  Module.call(this, collection, options);
+};
+
+modules.documentsDetailDefaults = {
   el: $('#documentsDetail'),
   workview: 'documents',
   
   render: function() {
     this.display();
-  }
-});
+  },
 
-modules.lexiconDetail = new Module({
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    app.router.observers.remove(this);
+  }
+};
+
+modules.LexiconDetail = function(model, options) {
+  Module.call(this, collection, options);
+};
+
+modules.lexiconDetailDefaults = {
   el: $('#lexiconDetail'),
   workview: 'lexicon',
   
   render: function() {
     this.display();
+  },
+  
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    app.router.observers.remove(this);
   }
-});
+};
 
-modules.mediaDetail = new Module({
+modules.MediaDetail = function(model, options) {
+  Module.call(this, collection, options);
+};
+
+modules.mediaDetailDefaults = {
   el: $('#mediaDetail'),
   workview: 'media',
   
   render: function() {
     this.display();
+  },
+  
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    app.router.observers.remove(this);
   }
-});
+};
 
-modules.orthographiesDetail = new Module({
+modules.OrthographiesDetail = function(model, options) {
+  Module.call(this, collection, options);
+};
+
+modules.orthographiesDetailDefaults = {
   el: $('#orthographiesDetail'),
   workview: 'orthographies',
   
   render: function() {
     this.display();
-  }
-});
+  },
 
-modules.tagsDetail = new Module({
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    app.router.observers.remove(this);
+  }
+};
+
+modules.TagsDetail = function(model, options) {
+  Module.call(this, collection, options);
+};
+
+modules.tagsDetailDefaults = {
   el: $('#tagsDetail'),
   workview: 'tags',
   
   render: function() {
     this.display();
-  }
-});
+  },
 
-modules.textsDetail = new Module({
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    app.router.observers.remove(this);
+  }
+};
+
+modules.TextsDetail = function(model, options) {
+  Module.call(this, collection, options);
+};
+
+modules.textsDetailDefaults = {
   el: $('#textsDetail'),
   workview: 'texts',
   
   render: function() {
     this.display();
+  },
+
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    app.router.observers.remove(this);
   }
-});
+};
 
 
 // POPUPS
