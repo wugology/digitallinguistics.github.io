@@ -256,7 +256,9 @@ function Collection(data) {
 function View(model, options) {
   Events.call(this);
   
-  this.model = model;
+  if (model) {
+    this.model = model;
+  }
   
   if (options) {
     augment(this, options);

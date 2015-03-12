@@ -5,8 +5,18 @@
 
 var app = {
   initialize: function() {
-    var loadPreferences = function() {
+    var initSequence = function() {
+      // Load the preferences
       if (localStorage.wugbotPreferences) { app.preferences = JSON.parse(localStorage.wugbotPreferences); }
+      
+      // Render and set corpus selector
+      if (app.preferences.currentCorpus) {
+        app.corpusSelector.render(app.preferences.currentCorpus.id);
+      } else {
+        console.log('Displaying the manage corpora popup!');
+      }
+      
+      // Set the current workview
       if (app.preferences.currentWorkview) {
         app.router.setWorkview(app.preferences.currentWorkview);
       } else {
@@ -14,7 +24,7 @@ var app = {
       }
     };
     
-    idb.open('WugbotDev', loadPreferences);
+    idb.open('WugbotDev', initSequence);
   },
   
   // Change this function to use popups.blank instead
@@ -51,6 +61,13 @@ var Router = function(options) {
   
   this.update = function(action, data) {
     if (action == 'appNavClick') { this.setWorkview(data); }
+    if (action == 'selectCorpus') {
+      if (data == 'manage') {
+        console.log('Displaying the manage corpora popup!');
+      } else if (data != 'select') {
+        console.log('Setting the current corpus by corpus ID!');
+      }
+    }
   };
 };
 
@@ -73,6 +90,36 @@ var Popup = function(options) {
   delete this.model;
 };
 
+
+// MISC
+app.corpusSelector = new View(null, {
+  el: $('#corpusSelector'),
+  
+  // Optionally takes a corpus name to set the value to after rendering
+  render: function(corpusID) {    
+    idb.getAll('corpora', function(corpora) {
+      var option = createElement('option', { textContent: 'Select a corpus', value: 'select' });
+      this.el.appendChild(option);
+      option.classList.add('unicode');
+      
+      corpora.forEach(function(corpus) {
+        var option = createElement('option', { textContent: corpus.name, value: corpus.id });
+        this.el.appendChild(option);
+        option.classList.add('unicode');
+      }, this);
+      
+      var option = createElement('option', { textContent: 'Manage corpora', value: 'manage' });
+      this.el.appendChild(option);
+      option.classList.add('unicode');
+
+      if (corpusID) {
+        this.el.value = corpusID;
+      }
+    }.bind(this));
+  }
+});
+
+app.corpusSelector.observers.add(app.router, 'selectCorpus');
 
 // NAVS
 app.appNav = new Nav({
@@ -233,8 +280,7 @@ popups.fileUpload = new Popup({
 app.appNav.el.addEventListener('click', function(ev) {
   if (ev.target.tagName == 'A') { app.appNav.notify('appNavClick', ev.target.textContent.toLowerCase()); }
 });
-
+app.corpusSelector.el.addEventListener('change', function(ev) { app.corpusSelector.notify('selectCorpus', ev.target.value); });
 app.navIcons.el.addEventListener('click', function(ev) { app.navIcons.notify('navIconClick', ev.target.id); });
-
 window.addEventListener('load', app.initialize);
 window.addEventListener('unload', app.save);
