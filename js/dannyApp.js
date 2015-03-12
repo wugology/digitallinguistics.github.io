@@ -57,17 +57,33 @@ var Router = function(options) {
       if (button.textContent.toLowerCase() == workview) { button.classList.add('underline'); }
     });
     
-    Object.keys(modules).forEach(function(key) {
-      modules[key].hide();
-    });
+    this.notify('setWorkview', workview);
     
-    modules[workview + 'Overview'].render();
+    switch (workview) {
+      case 'documents':
+        idb.get(app.preferences.currentCorpus.documents, 'documents', function(docs) {
+          var docs = new models.DocumentsCollection(docs);
+          new modules.DocumentsOverview(docs, modules.docsDefaults).render();
+        });
+        break;
+      case 'lexicon':
+        break;
+      case 'media':
+        break;
+      case 'orthographies':
+        break;
+      case 'tags':
+        break;
+      case 'texts':
+        break;
+    }
     
     app.preferences.currentWorkview = workview;
   };
   
   this.update = function(action, data) {
     if (action == 'appNavClick') { this.setWorkview(data); }
+    
     if (action == 'selectCorpus') {
       if (data == 'manage') {
         popups.manageCorpora.display();
@@ -83,13 +99,13 @@ app.router = new Router();
 
 // APP VIEWS
 var Nav = function(options) {
-  View.call(this, null, options);
+  View.call(this, null, options);  
   delete this.model;
 };
 
-var Module = function(options) {
-  View.call(this, null, options);
-  delete this.model;
+var Module = function(collection, options) {
+  View.call(this, collection, options);
+  app.router.observers.add(this, 'setWorkview');
 };
 
 var Popup = function(options) {
@@ -145,7 +161,7 @@ app.appNav = new Nav({
   handlers: [{
     el: this.el,
     evType: 'click',
-    functionCall: function(ev) { this.notify('appNavClick', ev.target.textContent.toLowerCase()); }
+    functionCall: function(ev) { app.appNav.notify('appNavClick', ev.target.textContent.toLowerCase()); }
   }],
   
   observers: [{ action: 'appNavClick', observer: app.router }],
@@ -188,16 +204,27 @@ app.navIcons = new Nav({
 // MODULES
 var modules = {};
 
-modules.documentsOverview = new Module({
+modules.DocumentsOverview = function(collection, options) {
+  Module.call(this, collection, options);
+};
+
+modules.docsDefaults = {
   el: $('#documentsOverview'),
+  workview: 'documents',
   
   render: function() {
     this.display();
+  },
+  
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    app.router.observers.remove(this);
   }
-});
+};
 
 modules.lexiconOverview = new Module({
   el: $('#lexiconOverview'),
+  workview: 'lexicon',
   
   render: function() {
     this.display();
@@ -206,6 +233,7 @@ modules.lexiconOverview = new Module({
 
 modules.mediaOverview = new Module({
   el: $('#mediaOverview'),
+  workview: 'media',
 
   render: function() {
     this.display();
@@ -214,6 +242,7 @@ modules.mediaOverview = new Module({
 
 modules.orthographiesOverview = new Module({
   el: $('#orthographiesOverview'),
+  workview: 'orthographies',
   
   render: function() {
     this.display();
@@ -222,6 +251,7 @@ modules.orthographiesOverview = new Module({
 
 modules.tagsOverview = new Module({
   el: $('#tagsOverview'),
+  workview: 'tags',
   
   render: function() {
     this.display();
@@ -231,14 +261,26 @@ modules.tagsOverview = new Module({
 modules.textsOverview = new Module({
   el: $('#textsOverview'),
   importButton: $('#importTextButton'),
+  workview: 'texts',
+  
+  handlers: [{
+    el: this.importButton,
+    evType: 'click',
+    functionCall: function() {
+      popups.fileUpload.render(function(file) {
+        tools.elan2json(file, ekegusiiColumns, modules.textsOverview.render);
+      });
+    }
+  }],
   
   render: function() {
-    this.display();
+    modules.textsOverview.display();
   }
 });
 
 modules.documentsDetail = new Module({
   el: $('#documentsDetail'),
+  workview: 'documents',
   
   render: function() {
     this.display();
@@ -247,6 +289,7 @@ modules.documentsDetail = new Module({
 
 modules.lexiconDetail = new Module({
   el: $('#lexiconDetail'),
+  workview: 'lexicon',
   
   render: function() {
     this.display();
@@ -255,6 +298,7 @@ modules.lexiconDetail = new Module({
 
 modules.mediaDetail = new Module({
   el: $('#mediaDetail'),
+  workview: 'media',
   
   render: function() {
     this.display();
@@ -263,6 +307,7 @@ modules.mediaDetail = new Module({
 
 modules.orthographiesDetail = new Module({
   el: $('#orthographiesDetail'),
+  workview: 'orthographies',
   
   render: function() {
     this.display();
@@ -271,6 +316,7 @@ modules.orthographiesDetail = new Module({
 
 modules.tagsDetail = new Module({
   el: $('#tagsDetail'),
+  workview: 'tags',
   
   render: function() {
     this.display();
@@ -279,6 +325,7 @@ modules.tagsDetail = new Module({
 
 modules.textsDetail = new Module({
   el: $('#textsDetail'),
+  workview: 'texts',
   
   render: function() {
     this.display();
@@ -297,11 +344,19 @@ popups.fileUpload = new Popup({
   // Applies the callback function to the uploaded file when the 'Go' button is clicked
   render: function(goButtonCallback) {
     var processFile = function() {
-      goButtonCallback(this.input.files[0]);
+      if (typeof goButtonCallback != 'function') {
+        console.log('Define a function to run when the Go button is clicked.');
+      } else {
+        goButtonCallback(this.input.files[0]);
+      }
+      
+      this.hide();
+      
       this.button.removeEventListener('click', processFile);
     }.bind(this);
     
     this.button.addEventListener('click', processFile);
+    
     this.display();
   }
 });

@@ -149,32 +149,36 @@ function Events(handlers) {
     }, this);
   }
   
-  Object.defineProperties(this, {
-    'observers': {
+  if (!this.observers) {
+    Object.defineProperty(this, 'observers', {
       value: [],
       writable: true
-    },
-    
-    'notify': {
-      value: function(action, data) {
-        var subs = this.observers.filter(function(sub) {
-          return sub.action == action;
-        });
-
-        this.observers.forEach(function(sub) {
-          sub.observer.update(sub.action, data);
-        });
-      }.bind(this)
-    },
-    
-    'update': {
+    });
+  }
+  
+  if (!this.update) {
+    Object.defineProperty(this, 'update', {
       configurable: true,
+      
       value: function(action, data) {
         console.log('No update function has been set for this object yet.');
         // Overwrite this function with an update function specific to the model, view, or collection
       },
+      
       writable: true
-    }
+    });
+  }
+  
+  Object.defineProperty(this, 'notify', {
+    value: function(action, data) {
+      var subs = this.observers.filter(function(sub) {
+        return sub.action == action;
+      });
+      
+      this.observers.forEach(function(sub) {
+        sub.observer.update(sub.action, data);
+      });
+    }.bind(this)
   });
   
   Object.defineProperties(this.observers, {
@@ -295,6 +299,10 @@ function View(model, options) {
     this.el.classList.toggle('hideonMobile');
     this.el.classList.toggle('hideonDesktop');
   };
-
-  Events.call(this, options.handlers);
+  
+  if (options) {
+    Events.call(this, options.handlers);
+  } else {
+    Events.call(this);
+  }
 };

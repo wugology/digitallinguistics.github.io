@@ -29,6 +29,7 @@ var idb = {
 
   // Exports the entire database and returns a database object in JSON format
   // Accepts an optional callback function
+  // Need to change this so you can export any database, not just the current one
   export: function(callback) {
     idb.exported = {};
     var tableNames = Array.prototype.slice.call(idb.database.objectStoreNames);
@@ -86,21 +87,25 @@ var idb = {
       idb.transact(tableName, results, callback, getAll);
       
     } else {
-      if (!ids.length) {
-        var ids = toArray(ids);
+      if (ids.length == 0) {
+        callback(results);
+      } else {
+        if (!ids.length) {
+          var ids = toArray(ids);
+        }
+        
+        var getEach = function(table) {
+          ids.forEach(function(id) {
+            var request = table.get(id);
+            
+            request.onsuccess = function() {
+              results.push(idb.hydrate(request.result));
+            };
+          });
+        };
+        
+        idb.transact(tableName, results, callback, getEach);
       }
-      
-      var getEach = function(table) {
-        ids.forEach(function(id) {
-          var request = table.get(id);
-          
-          request.onsuccess = function() {
-            results.push(idb.hydrate(request.result));
-          };
-        });
-      };
-      
-      idb.transact(tableName, results, callback, getEach);
     }
   },
   
@@ -366,6 +371,10 @@ var idb = {
       model: 'Corpus'
     },
     {
+      name: 'documents',
+      model: 'Document'
+    },
+    {
       name: 'languages',
       model: 'Language'
     },
@@ -461,5 +470,21 @@ var idb = {
     };
     
     idb.transact('texts', null, callback, update);
+  },
+  
+  // Exports the data, deletes the database, then repopulates it
+  upgradeDatabase: function(dbname, callback) {
+    var deletedb = function() {
+      var opendb = function() {
+        var popdb = function() {
+          Object.keys[idb.exported].forEach(function(tableData) {
+            tableData.forEach(function(record) { record.store() });
+          });
+        };
+        idb.open(dbname, popdb);
+      };
+      idb.deleteDatabase(dbname, opendb);
+    };
+    idb.export(dbname);
   }
 };

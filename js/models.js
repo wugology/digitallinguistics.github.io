@@ -1,6 +1,12 @@
 models = {};
 
 // ITEM MODELS (SINGULAR)
+models.Document = function(data) {
+  Model.call(this, data);
+  
+  // Maybe some methods to read the file to an array buffer, etc.
+};
+
 models.Media = function Media(data) {
   Model.call(this, data);
   
@@ -9,6 +15,12 @@ models.Media = function Media(data) {
 
 models.Corpus = function Corpus(data, callback) {
   Model.call(this, data);
+  
+  if (!this.documents) { this.documents = []; }
+  if (!this.languages) { this.languages = []; }
+  if (!this.lexicons) { this.lexicons = []; }
+  if (!this.media) { this.media = []; }
+  if (!this.texts) { this.texts = []; }
   
   Object.defineProperties(this, {
     'setAsCurrent': {
@@ -79,12 +91,24 @@ models.Tag = function Tag() {
 
 
 // COLLECTIONS MODELS (PLURAL)
+models.DocumentsCollection = function(data) {
+  var coll = data.map(function(documentData) {
+    return new models.Document(documentData);
+  });
+  
+  var documents = Collection.call(coll, coll);
+  
+  return documents;
+};
+
 models.MediaCollection = function MediaCollection(data) {
   var coll = data.map(function(mediaData) {
     return new models.Media(mediaData);
   });
   
   var media = Collection.call(coll, coll);
+  
+  return media;
 };
 
 // Doesn't seem like we need a Corpora collection model
