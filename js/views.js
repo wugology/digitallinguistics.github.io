@@ -30,7 +30,7 @@ var PhraseView = function(model, options) {
     wrapper.appendChild(phrase);
     
     this.el = phrase;
-  };
+  }.bind(this);
 };
 
 var WordView = function(model, options) {
