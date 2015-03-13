@@ -294,8 +294,6 @@ function Collection(data) {
 
 // BASE VIEW
 function View(model, options) {
-  Events.call(this);
-  
   if (model) {
     this.model = model;
   }
@@ -319,4 +317,6 @@ function View(model, options) {
     this.el.classList.toggle('hideonMobile');
     this.el.classList.toggle('hideonDesktop');    
   }.bind(this);
+  
+  Events.call(this);
 };
