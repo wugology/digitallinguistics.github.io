@@ -43,6 +43,18 @@ function createElement(tagName, attributes) {
   return el;
 };
 
+function hydrate(obj) {
+  var newObj = new models[obj.model](obj);
+  if (newObj.id) {
+    delete newObj.id;
+    Object.defineProperty(newObj, 'id', {
+      enumerable: true,
+      value: obj.id
+    });
+  }
+  return newObj;
+};
+
 function toArray(primitive) {
   return [primitive];
 };
@@ -142,10 +154,10 @@ function IDBObj() {
 // EVENT SYSTEM
 // Handlers is an array of settings for event handlers that will be added to the object
 // - Each handler has 3 attributes: el (what the listener attaches to; this is a string representing the attribute of the object the Events mixin is being called on), evType (e.g. 'click', 'onload'), and functionCall (the function to execute when the event fires)
-function Events(handlers) {
-  if (handlers) {
-    handlers.forEach(function(handler) {
-      this.el.addEventListener(handler.evType, handler.functionCall);
+function Events() {
+  if (this.handlers) {
+    this.handlers.forEach(function(handler) {
+      this[handler.el].addEventListener(handler.evType, handler.functionCall);
     }, this);
   }
   
@@ -159,13 +171,11 @@ function Events(handlers) {
   if (!this.update) {
     Object.defineProperty(this, 'update', {
       configurable: true,
-      
+      writable: true,
       value: function(action, data) {
         console.log('No update function has been set for this object yet.');
         // Overwrite this function with an update function specific to the model, view, or collection
-      },
-      
-      writable: true
+      }
     });
   }
   
@@ -180,10 +190,10 @@ function Events(handlers) {
       });
     }.bind(this)
   });
-  
+
   Object.defineProperties(this.observers, {
     'add': {
-      value: function(observer, action) {
+      value: function(action, observer) {
         var sub = {
           action: action,
           observer: observer
@@ -194,7 +204,7 @@ function Events(handlers) {
     },
     
     'remove': {
-      value: function(observer, action) {
+      value: function(action, observer) {
         this.observers.forEach(function(sub, i, arr) {
           if (sub.observer == observer && sub.action == action) {
             arr.splice(i, 1);
@@ -204,6 +214,7 @@ function Events(handlers) {
     }
   });
 };
+
 
 // BASE MODEL
 function Model(data) {
@@ -220,7 +231,7 @@ function Model(data) {
     'json': {
       get: function() {
         return JSON.stringify(this);
-      }
+      }.bind(this)
     },
     
     'model': {
@@ -228,20 +239,25 @@ function Model(data) {
       value: this.constructor.name
     },
     
-    // Takes a hash of criteria as its argument
-    // Probably going to be replaced by a model search function
-    // Might call idb.search(lingType, criteria)
+    // Takes a hash of search criteria as its argument
     'search': {
+      configurable: true,
+      
       value: function(criteria) {
         checkAgainst(criteria, this);
-      }
+      }.bind(this),
+      
+      writable: true,
     }
   });
 };
 
+
 // BASE COLLECTION
 function Collection(data) {
   Events.call(data);
+  
+  delete data.model;
   
   Object.defineProperties(data, {
     'json': {
@@ -250,9 +266,14 @@ function Collection(data) {
       }
     },
     
+    'model': {
+      enumerable: true,
+      value: this.constructor.name
+    },
+    
     'search': {
       value: function() {
-        // Pat's super awesome collection search function goes here
+        // A search function for collections
       }
     }
   });
@@ -260,8 +281,8 @@ function Collection(data) {
   return data;
 };
 
+
 // BASE VIEW
-// This view is the prototype for both item and collection views
 function View(model, options) {
   Events.call(this);
   
@@ -273,38 +294,21 @@ function View(model, options) {
     augment(this, options);
   }
   
-  // Displays a DOM element that was previously hidden
-  // The optional media argument specifies whether you would only like to display the element on desktop or mobile
+  // The optional media elements specifies whether you would only like to display the element on one media type (desktop/mobile)
   this.display = function(media) {
-    if (media !== 'mobile') {
-      this.el.classList.remove('hideonDesktop');
-    }
-    if (media !== 'desktop') {
-      this.el.classList.remove('hideonMobile');
-    }
-  };
+    if (media != 'mobile') { this.el.classList.remove('hideonDesktop'); }
+    if (media != 'desktop') { this.el.classList.remove('hideonMobile'); }
+  }.bind(this);
   
-    // Hides a DOM element, and content reflows to fill that empty space
-  // The optional media argument specifies whether you would only like to hide the element on desktop or mobile
   this.hide = function(media) {
-    if (media !== 'mobile') {
-      this.el.classList.add('hideonDesktop');
-    }
-    
-    if (media !== 'desktop') {
-      this.el.classList.add('hideonMobile');
-    }
-  };
-
-  // Hides the element if it is currently displayed, and displays the element if it is currently hidden
-  this.toggleDisplay = function() {
-    this.el.classList.toggle('hideonMobile');
-    this.el.classList.toggle('hideonDesktop');
-  };
+    if (media != 'mobile') { this.el.classList.add('hideonDesktop'); }
+    if (media != 'desktop') { this.el.classList.add('hideonMobile'); }
+  }.bind(this);
   
-  if (options) {
-    Events.call(this, options.handlers);
-  } else {
-    Events.call(this);
-  }
+  this.toggleDisplay = function(media) {
+    this.el.classList.toggle('hideonMobile');
+    this.el.classList.toggle('hideonDesktop');    
+  }.bind(this);
+  
+  Events.call(this);
 };

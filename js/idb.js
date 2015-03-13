@@ -78,7 +78,7 @@ var idb = {
           var cursor = request.result;
           
           if (cursor) {
-            results.push(idb.hydrate(cursor.value));
+            results.push(hydrate(cursor.value));
             cursor.continue();
           }
         };
@@ -99,7 +99,7 @@ var idb = {
             var request = table.get(id);
             
             request.onsuccess = function() {
-              results.push(idb.hydrate(request.result));
+              results.push(hydrate(request.result));
             };
           });
         };
@@ -134,25 +134,13 @@ var idb = {
           var text = request.result;
           
           Breadcrumb.applyTo(breadcrumb, text, function(obj) {
-            results.push(idb.hydrate(obj));
+            results.push(hydrate(obj));
           });
         };
       });
     };
     
     idb.transact('texts', results, callback, getByBreadcrumb);
-  },
-  
-  hydrate: function(obj) {
-    var newObj = new models[obj.model](obj);
-    if (newObj.id) {
-      delete newObj.id;
-      Object.defineProperty(newObj, 'id', {
-        enumerable: true,
-        value: obj.id
-      });
-    }
-    return newObj;
   },
   
   // Opens the database, or creates a new one if it doesn't yet exist
@@ -287,24 +275,24 @@ var idb = {
                   if (lingType != 'Word') {
                     word.morphemes.forEach(function(morpheme) {
                       if (checkAgainst(criteria, morpheme)) {
-                        results.push(idb.hydrate(morpheme));
+                        results.push(hydrate(morpheme));
                       }
                     });
                   } else {
                     if (checkAgainst(criteria, word)) {
-                      results.push(idb.hydrate(word));
+                      results.push(hydrate(word));
                     }
                   }
                 });
               } else {
                 if (checkAgainst(criteria, phrase)) {
-                  results.push(idb.hydrate(phrase));
+                  results.push(hydrate(phrase));
                 }
               }
             });
           } else {
             if (checkAgainst(criteria, text)) {
-              results.push(idb.hydrate(text));
+              results.push(hydrate(text));
             }
           }
           
@@ -427,7 +415,7 @@ var idb = {
             var requestUpdate = table.put(data);
             
             requestUpdate.onsuccess = function() {
-              results.push(idb.hydrate(data));
+              results.push(hydrate(data));
             };
             
             cursor.continue();

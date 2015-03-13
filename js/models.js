@@ -3,17 +3,15 @@ models = {};
 // ITEM MODELS (SINGULAR)
 models.Document = function(data) {
   Model.call(this, data);
-  
   // Maybe some methods to read the file to an array buffer, etc.
 };
 
-models.Media = function Media(data) {
+models.MediaFile = function MediaFile(data) {
   Model.call(this, data);
-  
   // Maybe some methods to read the file to an array buffer, etc.
 };
 
-models.Corpus = function Corpus(data, callback) {
+models.Corpus = function Corpus(data) {
   Model.call(this, data);
   
   if (!this.documents) { this.documents = []; }
@@ -23,20 +21,24 @@ models.Corpus = function Corpus(data, callback) {
   if (!this.texts) { this.texts = []; }
   
   Object.defineProperties(this, {
+    // Retrieves all the specified type of object in this corpus from IndexedDB
+    'get': {
+      value: function(type, callback) {
+        idb.get(this[type], type, callback);
+      }.bind(this)
+    },
+    
     'setAsCurrent': {
       value: function() {
         app.preferences.currentCorpus = this;
-      }
+      }.bind(this)
     }
   });
-  
-  this.store(callback);
 };
 
 // Abbr: lang
 models.Language = function Language(data) {
   Model.call(this, data);
-  this.store();
 };
 
 // Abbr: t
@@ -49,9 +51,40 @@ models.Text = function Text(data) {
     });
     
     this.phrases = new models.Phrases(this.phrases);
+  } else {
+    this.phrases = new models.Phrase([]);
   }
-
-  this.store(function() { Breadcrumb.reset(this); }.bind(this));
+  
+  this.abbreviation = this.abbreviation || '';
+  this.type = this.type || '';
+  this.genre = this.genre || '';
+  this.analyses = this.analyses || [];
+  this.media = this.media || [];
+  this.persons = this.persons || [];
+  this.tags = this.tags || [];
+  this.titles = this.titles || { Eng: '' };
+  this.custom = this.custom || {};
+  
+  Object.defineProperties(this, {
+    'addToCorpus': {
+      value: function() {
+        app.preferences.currentCorpus.texts.push(this.id);
+      }.bind(this)
+    },
+    
+    // Pass this a function that has the text as its argument - this keeps app-specific rendering methods in the app
+    'render': {
+      value: function(renderFunction) {
+        renderFunction(this);
+      }.bind(this)
+    },
+    
+    'setAsCurrent': {
+      value: function() {
+        app.preferences.currentText = this;
+      }.bind(this)
+    }
+  });
 };
 
 // Abbr: p
@@ -73,9 +106,9 @@ models.Word = function Word(data) {
 };
 
 // Abbr: lex
-models.Lexeme = function Lexeme(data) {
+models.Lexeme = function Lexeme(data, callback) {
   Model.call(this, data);
-  this.store();
+  this.store(callback);
 };
 
 // Morphemes do not have a model - only lexemes
@@ -91,22 +124,22 @@ models.Tag = function Tag() {
 
 
 // COLLECTIONS MODELS (PLURAL)
-models.DocumentsCollection = function(data) {
+models.Documents = function Documents(data) {
   var coll = data.map(function(documentData) {
     return new models.Document(documentData);
   });
   
-  var documents = Collection.call(coll, coll);
+  var documents = new Collection(coll);
   
   return documents;
 };
 
-models.MediaCollection = function MediaCollection(data) {
+models.MediaFiles = function MediaFiles(data) {
   var coll = data.map(function(mediaData) {
-    return new models.Media(mediaData);
+    return new models.MediaFile(mediaData);
   });
   
-  var media = Collection.call(coll, coll);
+  var media = new Collection(coll);
   
   return media;
 };
@@ -118,7 +151,7 @@ models.Languages = function Languages(data) {
     return new models.Language(languageData);
   });
   
-  var languages = Collection.call(coll, coll);
+  var languages = new Collection(coll);
   
   return languages;
 };
@@ -128,7 +161,20 @@ models.Texts = function Texts(data) {
     return new models.Text(textData);
   });
   
-  var texts = Collection.call(coll, coll);
+  var texts = new Collection(coll);
+  
+  // Displays a list of all the texts in this collection; each text gets a <li id=[breadcrumb]>
+  // populateListItem is a function that has a text and an empty <li> as its arguments; use this to populate the <li> with content from the text
+  texts.list = function(wrapper, populateListItem) {
+    this.forEach(function(text) {
+      var li = createElement('li');
+      li.dataset.id = text.id;
+      populateListItem(text, li);
+      li.classList.add('textsListItem');
+      wrapper.appendChild(li);
+    });
+    
+  };
   
   return texts;
 };
@@ -138,7 +184,7 @@ models.Phrases = function Phrases(data) {
     return new models.Phrase(phraseData);
   });
   
-  var phrases = Collection.call(coll, coll);
+  var phrases = new Collection(coll);
   
   return phrases;
 };
@@ -148,7 +194,7 @@ models.Words = function Words(data) {
     return new models.Word(wordData);
   });
   
-  var words = Collection.call(coll, coll);
+  var words = new Collection(coll);
   
   return words;
 };
@@ -159,7 +205,7 @@ models.Morphemes = function Morphemes(data) {
     return new models.Lexeme(lexemeData);
   });
   
-  var morphemes = Collection.call(coll, coll);
+  var morphemes = new Collection(coll);
   
   return morphemes;
 };
@@ -169,7 +215,7 @@ models.Lexicon = function Lexicon(data) {
     return new models.Lexeme(lexemeData);
   });
   
-  var lexicon = Collection.call(coll, coll);
+  var lexicon = new Collection(coll);
   
   return lexicon;
 };

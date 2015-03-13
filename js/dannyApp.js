@@ -1,34 +1,35 @@
-// App UI Javascript for Danny's app
-
 // APP
-// The UI, with regions/interfaces and general nav views
 
+// Controls general app functionality
 var app = {
   initialize: function() {
     var initSequence = function() {
       // Load the preferences
       if (localStorage.wugbotPreferences != 'undefined') { app.preferences = JSON.parse(localStorage.wugbotPreferences); }
       
-      // Render and set corpus selector
-      if (app.preferences.currentCorpus) {
-        idb.hydrate(app.preferences.currentCorpus);
-        app.corpusSelector.render(app.preferences.currentCorpus.id);
-      } else {
-        idb.getAll('corpora', function(corpora) {
-          if (corpora.length == 0) {
-            popups.manageCorpora.display();
-          } else {
-            app.corpusSelector.render();
-          }
-        });
-      }
-      
       // Set the current workview
-      if (app.preferences.currentWorkview) {
-        app.router.setWorkview(app.preferences.currentWorkview);
-      } else {
-        app.router.setWorkview('texts');
-      }
+      var setWorkview = function() {
+        if (app.preferences.currentWorkview) {
+          appView.setWorkview(app.preferences.currentWorkview);
+        } else {
+          appView.setWorkview();
+        }
+      };
+      
+      // Render the corpus selector and prompt for a new corpus if needed
+      idb.getAll('corpora', function(corpora) {
+        if (corpora.length == 0) {
+          popups.manageCorpora.display();
+          
+        } else {
+          if (app.preferences.currentCorpus) {
+            app.preferences.currentCorpus = hydrate(app.preferences.currentCorpus);
+            appView.corpusSelector.render(app.preferences.currentCorpus.id, setWorkview);
+          } else {
+            appView.corpusSelector.render();
+          }
+        }
+      });
     };
     
     idb.open('WugbotDev', initSequence);
@@ -46,66 +47,67 @@ var app = {
   preferences: {}
 };
 
-
-// ROUTER
-var Router = function(options) {
-  Events.call(this, options);
-  
-  this.setWorkview = function(workview) {
-    app.appNav.buttons.forEach(function(button) {
-      button.classList.remove('underline');
-      if (button.textContent.toLowerCase() == workview) { button.classList.add('underline'); }
-    });
+// APP VIEW
+var appView = new View(null, {
+  setWorkview: function(workview) {
+    if (!workview) { workview = 'texts'; }
+    
+    this.appNav.setButton(workview);
     
     this.notify('setWorkview', workview);
     
     switch (workview) {
       case 'documents':
-        idb.get(app.preferences.currentCorpus.documents, 'documents', function(docs) {
-          var docs = new models.DocumentsCollection(docs);
-          new modules.DocumentsOverview(docs, modules.docsDefaults).render();
+        app.preferences.currentCorpus.get('documents', function(docs) {
+          var docs = new models.Documents(docs);
+          modules.documentsOverview = new modules.DocumentsOverview(docs, modules.documentsOverviewDefaults);
+          modules.documentsOverview.render()
         });
         break;
       case 'lexicon':
+        modules.lexiconOverview = new modules.LexiconOverview(null, modules.lexiconOverviewDefaults);
+        modules.lexiconOverview.render();
         break;
       case 'media':
+        modules.mediaOverview = new modules.MediaOverview(null, modules.mediaOverviewDefaults);
+        modules.mediaOverview.render()
         break;
       case 'orthographies':
+        modules.orthographiesOverivew = new modules.OrthographiesOverview(null, modules.orthographiesOverviewDefaults);
+        modules.orthographiesOverivew.render()
         break;
       case 'tags':
+        modules.tagsOverview = modules.TagsOverview(null, modules.tagsOverviewDefaults)
+        modules.tagsOverview.render();
         break;
       case 'texts':
+        app.preferences.currentCorpus.get('texts', function(texts) {
+          var texts = new models.Texts(texts);
+          modules.textsOverview = new modules.TextsOverview(texts, modules.textsOverviewDefaults);
+          modules.textsOverview.render();
+        });
         break;
+      default:
     }
     
     app.preferences.currentWorkview = workview;
-  };
+  },
   
-  this.update = function(action, data) {
+  update: function(action, data) {
     if (action == 'appNavClick') { this.setWorkview(data); }
-    
-    if (action == 'selectCorpus') {
-      if (data == 'manage') {
-        popups.manageCorpora.display();
-      } else if (data != 'select') {
-        idb.get(Number(data), 'corpora', function(results) { results[0].setAsCurrent(); });
-      }
-    }
-  };
-};
-
-app.router = new Router();
+  }
+});
 
 
-// APP VIEWS
+// APP COMPONENT VIEWS
 var Nav = function(options) {
   View.call(this, null, options);  
   delete this.model;
 };
 
-var Module = function(collection, options) {
-  View.call(this, collection, options);
-  app.router.observers.add(this, 'setWorkview');
+var Module = function(model, options) {
+  View.call(this, model, options);
+  appView.observers.add('setWorkview', this);
 };
 
 var Popup = function(options) {
@@ -114,20 +116,51 @@ var Popup = function(options) {
 };
 
 
-// MISC
-app.corpusSelector = new View(null, {
+// APP COMPONENTS
+appView.appNav = new Nav({
+  el: $('#appNav'),
+  buttons: $('#appNav a'),
+  
+  handlers: [{
+    el: 'el',
+    evType: 'click',
+    functionCall: function(ev) { appView.appNav.notify('appNavClick', ev.target.textContent.toLowerCase()); }
+  }],
+  
+  observers: [{ action: 'appNavClick', observer: appView }],
+  
+  setButton: function(workview) {
+    this.buttons.forEach(function(button) {
+      button.classList.remove('underline');
+      if (button.textContent.toLowerCase() == workview) { button.classList.add('underline'); }
+    }, this);
+  },
+
+  update: function(action, data) {
+    if (data == 'boxIcon') {
+      appView.appNav.toggleDisplay();
+      appView.mainNav.hide();
+    }
+  }
+});
+
+appView.corpusSelector = new View(null, {
   el: $('#corpusSelector'),
   
   handlers: [{
-    el: this.el,
+    el: 'el',
     evType: 'change',
-    functionCall: function(ev) { this.notify('selectCorpus', ev.target.value); }
+    functionCall: function(ev) {
+      if (ev.target.value == 'manage') {
+        popups.manageCorpora.display();
+      } else if (ev.target.value != 'select') {
+        idb.get(Number(ev.target.value), 'corpora', function(results) { results[0].setAsCurrent(); });
+      }
+    }
   }],
   
-  observers: [{ action: 'selectCorpus', observer: app.router }],
-  
-  // Optionally takes a corpus ID to set the value to after rendering
-  render: function(corpusID) {    
+  // Optionally takes a corpus ID to set the dropdown to after rendering
+  render: function(corpusID, callback) {
     idb.getAll('corpora', function(corpora) {
       this.el.innerHTML = '';
       
@@ -148,56 +181,37 @@ app.corpusSelector = new View(null, {
       if (corpusID) {
         this.el.value = corpusID;
       }
+      
+      if (typeof callback == 'function') { callback(); }
     }.bind(this));
   }
 });
 
-
-// NAVS
-app.appNav = new Nav({
-  el: $('#appNav'),
-  buttons: $('#appNav a'),
-  
-  handlers: [{
-    el: this.el,
-    evType: 'click',
-    functionCall: function(ev) { app.appNav.notify('appNavClick', ev.target.textContent.toLowerCase()); }
-  }],
-  
-  observers: [{ action: 'appNavClick', observer: app.router }],
-  
-  update: function(action, data) {
-    if (data == 'boxIcon') {
-      this.toggleDisplay();
-      app.mainNav.hide();
-    }
-  }
-});
-
-app.mainNav = new Nav({
+appView.mainNav = new Nav({
   el: $('#mainNav'),
-  
-  handlers: [{
-    el: this.el,
-    evType: 'click',
-    functionCall: function(ev) { this.notify('navIconClick', ev.target.id); }
-  }],
-  
-  observers: [
-    { action: 'navIconClick', observer: app.appNav },
-    { action: 'navIconClick', observer: app.mainNav }
-  ],
   
   update: function(action, data) {
     if (data == 'menuIcon') {
-      this.toggleDisplay();
-      app.appNav.hide();
+      appView.mainNav.toggleDisplay();
+      appView.appNav.hide();
     }
   }
 });
 
-app.navIcons = new Nav({
-  el: $('#navIcons')
+
+appView.navIcons = new Nav({
+  el: $('#navIcons'),
+  
+  handlers: [{
+    el: 'el',
+    evType: 'click',
+    functionCall: function(ev) { appView.navIcons.notify('navIconClick', ev.target.id); }
+  }],
+  
+  observers: [
+    { action: 'navIconClick', observer: appView.appNav },
+    { action: 'navIconClick', observer: appView.mainNav }
+  ]
 });
 
 
@@ -208,7 +222,7 @@ modules.DocumentsOverview = function(collection, options) {
   Module.call(this, collection, options);
 };
 
-modules.docsDefaults = {
+modules.documentsOverviewDefaults = {
   el: $('#documentsOverview'),
   workview: 'documents',
   
@@ -218,119 +232,290 @@ modules.docsDefaults = {
   
   update: function(action, data) {
     if (data != this.workview) { this.hide(); }
-    app.router.observers.remove(this);
+    appView.observers.remove(this);
   }
 };
 
-modules.lexiconOverview = new Module({
+modules.LexiconOverview = function(collection, options) {
+  Module.call(this, collection, options);
+};
+
+modules.lexiconOverviewDefaults = {
   el: $('#lexiconOverview'),
   workview: 'lexicon',
   
   render: function() {
     this.display();
-  }
-});
+  },
 
-modules.mediaOverview = new Module({
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    appView.observers.remove(this);
+  }
+};
+
+modules.MediaOverview = function(collection, options) {
+  Module.call(this, collection, options);
+};
+
+modules.mediaOverviewDefaults = {
   el: $('#mediaOverview'),
   workview: 'media',
 
   render: function() {
     this.display();
+  },
+  
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    appView.observers.remove(this);
   }
-});
+};
 
-modules.orthographiesOverview = new Module({
+modules.OrthographiesOverview = function(collection, options) {
+  Module.call(this, collection, options);
+};
+
+modules.orthographiesOverviewDefaults = {
   el: $('#orthographiesOverview'),
   workview: 'orthographies',
   
   render: function() {
     this.display();
-  }
-});
+  },
 
-modules.tagsOverview = new Module({
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    appView.observers.remove(this);
+  }
+};
+
+modules.TagsOverview = function(collection, options) {
+  Module.call(this, collection, options);
+};
+
+modules.tagsOverviewDefaults = {
   el: $('#tagsOverview'),
   workview: 'tags',
   
   render: function() {
     this.display();
-  }
-});
+  },
 
-modules.textsOverview = new Module({
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    appView.observers.remove(this);
+  }
+};
+
+modules.TextsOverview = function(collection, options) {
+  Module.call(this, collection, options);
+};
+
+modules.textsOverviewDefaults = {
   el: $('#textsOverview'),
   importButton: $('#importTextButton'),
+  textsList: $('#textsList'),
   workview: 'texts',
   
-  handlers: [{
-    el: this.importButton,
-    evType: 'click',
-    functionCall: function() {
-      popups.fileUpload.render(function(file) {
-        tools.elan2json(file, ekegusiiColumns, modules.textsOverview.render);
-      });
+  handlers: [
+    {
+      el: 'importButton',
+      evType: 'click',
+      functionCall: function() {
+        popups.fileUpload.render(function(file) {
+          var importText = function(text) {
+            text.store(function(textIDs) {
+              text.id = textIDs[0];
+              Breadcrumb.reset(text);
+              text.addToCorpus();
+              text.store(function() { appView.setWorkview('texts'); });
+            });
+          };
+          
+          tools.elan2json(file, ekegusiiColumns, importText);
+        });
+      }
+    },
+    {
+      el: 'textsList',
+      evType: 'click',
+      functionCall: function(ev) {
+        if (ev.target.parentNode.classList.contains('textsListItem')) {
+          var text = modules.textsOverview.model.filter(function(text) {
+            return text.id == Number(ev.target.parentNode.dataset.id);
+          })[0];
+          
+          text.render(function(text) {
+            modules.textsDetail = new modules.TextsDetail(text, modules.textsDetailDefaults);
+            modules.textsDetail.render();
+            text.setAsCurrent();
+          });
+        }
+      }
     }
-  }],
+  ],
   
   render: function() {
-    modules.textsOverview.display();
+    var populateListItem = function(text, li) {
+      var p = createElement('p', { textContent: text.titles.Eng });
+      li.appendChild(p);
+    };
+    
+    this.model.list(this.textsList, populateListItem);
+    this.display();
+  },
+  
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    appView.observers.remove(this);
   }
-});
+};
 
-modules.documentsDetail = new Module({
+
+// DETAIL MODULES
+modules.DocumentsDetail = function(model, options) {
+  Module.call(this, model, options);
+};
+
+modules.documentsDetailDefaults = {
   el: $('#documentsDetail'),
   workview: 'documents',
   
   render: function() {
     this.display();
-  }
-});
+  },
 
-modules.lexiconDetail = new Module({
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    appView.observers.remove(this);
+  }
+};
+
+modules.LexiconDetail = function(model, options) {
+  Module.call(this, model, options);
+};
+
+modules.lexiconDetailDefaults = {
   el: $('#lexiconDetail'),
   workview: 'lexicon',
   
   render: function() {
     this.display();
+  },
+  
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    appView.observers.remove(this);
   }
-});
+};
 
-modules.mediaDetail = new Module({
+modules.MediaDetail = function(model, options) {
+  Module.call(this, model, options);
+};
+
+modules.mediaDetailDefaults = {
   el: $('#mediaDetail'),
   workview: 'media',
   
   render: function() {
     this.display();
+  },
+  
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    appView.observers.remove(this);
   }
-});
+};
 
-modules.orthographiesDetail = new Module({
+modules.OrthographiesDetail = function(model, options) {
+  Module.call(this, model, options);
+};
+
+modules.orthographiesDetailDefaults = {
   el: $('#orthographiesDetail'),
   workview: 'orthographies',
   
   render: function() {
     this.display();
-  }
-});
+  },
 
-modules.tagsDetail = new Module({
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    appView.observers.remove(this);
+  }
+};
+
+modules.TagsDetail = function(model, options) {
+  Module.call(this, model, options);
+};
+
+modules.tagsDetailDefaults = {
   el: $('#tagsDetail'),
   workview: 'tags',
   
   render: function() {
     this.display();
-  }
-});
+  },
 
-modules.textsDetail = new Module({
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    appView.observers.remove(this);
+  }
+};
+
+modules.TextsDetail = function(model, options) {
+  Module.call(this, model, options);
+};
+
+modules.textsDetailDefaults = {
   el: $('#textsDetail'),
+  titles: $('#textsDetail .titles'),
   workview: 'texts',
   
+  handlers: [
+    {
+      el: 'titles',
+      evType: 'input',
+      functionCall: function(ev) {
+        modules.textsDetail.model.titles[ev.target.id] = ev.target.value;
+      }
+    },
+    {
+      el: 'titles',
+      evType: 'keyup',
+      functionCall: function(ev) {
+        if (ev.keyCode == 13 || ev.keyCode == 27) {
+          ev.target.blur();
+          modules.textsDetail.model.store();
+        }
+      }
+    }
+  ],
+  
   render: function() {
+    this.titles.innerHTML = '';
+    
+    Object.keys(this.model.titles).forEach(function(key) {
+      var li = createElement('li', { id: key });
+      var label = createElement('label', { htmlFor: key });
+      var p = createElement('p', { textContent: key });
+      var input = createElement('input', { value: this.model.titles[key] || '', id: key });
+      label.appendChild(p);
+      label.appendChild(input);
+      li.appendChild(label);
+      this.titles.appendChild(li);
+      input.addEventListener('blur', modules.textsDetail.model.store);
+    }, this);
+    
     this.display();
+  },
+
+  update: function(action, data) {
+    if (data != this.workview) { this.hide(); }
+    appView.observers.remove(this);
   }
-});
+};
 
 
 // POPUPS
@@ -364,18 +549,24 @@ popups.fileUpload = new Popup({
 popups.manageCorpora = new Popup({
   el: $('#manageCorporaPopup'),
   button: $('#createCorpusButton'),
-  input: $('#corpusNameBox')
-});
-
-popups.manageCorpora.button.addEventListener('click', function(ev) {
-  ev.preventDefault();
-  var data = { name: popups.manageCorpora.input.value };
-  var setCorpus = function() {
-    app.corpusSelector.render(corpus.id);
-    corpus.setAsCurrent();
-  };
-  var corpus = new models.Corpus(data, setCorpus);
-  popups.manageCorpora.hide();
+  input: $('#corpusNameBox'),
+  
+  handlers: [{
+    el: 'button',
+    evType: 'click',
+    functionCall: function(ev) {
+      ev.preventDefault();
+      var data = { name: popups.manageCorpora.input.value };
+      var corpus = new models.Corpus(data);
+      corpus.store(function(corpusIDs) {
+        corpus.id = corpusIDs[0];
+        appView.corpusSelector.render(corpus.id);
+        corpus.setAsCurrent();
+        appView.setWorkview();
+      });
+      popups.manageCorpora.hide();
+    }
+  }]
 });
 
 popups.settings = new Popup({
@@ -383,9 +574,9 @@ popups.settings = new Popup({
   icon: $('#settingsIcon'),
   
   handlers: [{
-    el: this.icon,
+    el: 'icon',
     evType: 'click',
-    functionCall: this.toggleDisplay
+    functionCall: function() { popups.settings.toggleDisplay(); }
   }]
 });
 

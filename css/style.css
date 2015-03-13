@@ -123,7 +123,7 @@ ul.bulletedList li {
 .mainSection {
   padding: 1rem; }
 
-h1, h2, main p+p {
+h1, h2, main > p+p {
   padding-top: 0.5rem; }
 
 h1, th {
@@ -147,39 +147,10 @@ blockquote, q {
 blockquote:before, blockquote:after, q:before, q:after {
   content: '';
   content: none; }
-  
-body{
-    width: 800px;
-	margin: 50px;
-	padding: 0px; }
-    
-em {
-    font-weight:bold; }
 
 code {
   font-family: 'DejaVu Sans Mono';
   white-space: pre; }
-
-h1 {
-  font-weight: bold;
-  text-align: center; }
-
-h2 {
-    font-weight: bold; 
-    font-size: 150%; }
-
-input {
-  background-color: lightgray; }
-
-input[type='date] {
-  flex-direction: row; }
-
-input[type='radio'] {
-  align-self: center; }
-
-ol, ul {
-  list-style: none; }
->>>>>>> 56c72fee9c496f21853e0352b318bc433877fce9
 
 table {
   border-spacing: 0;
@@ -224,12 +195,3 @@ footer {
 
 footer img {
   margin: 0 0.5rem; }
-
-ul {
-    list-style-type: disc;
-    padding-left: 50px; }
-
-
-/* Styling by DOM elements */
-html, body {
-  background: white; }
