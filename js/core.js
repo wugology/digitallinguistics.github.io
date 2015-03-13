@@ -319,6 +319,4 @@ function View(model, options) {
     this.el.classList.toggle('hideonMobile');
     this.el.classList.toggle('hideonDesktop');    
   }.bind(this);
-  
-  Events.call(this);
 };
