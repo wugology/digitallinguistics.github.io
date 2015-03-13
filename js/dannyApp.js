@@ -60,25 +60,31 @@ var appView = new View(null, {
       case 'documents':
         app.preferences.currentCorpus.get('documents', function(docs) {
           var docs = new models.Documents(docs);
-          new modules.DocumentsOverview(docs, modules.documentsOverviewDefaults).render();
+          modules.documentsOverview = new modules.DocumentsOverview(docs, modules.documentsOverviewDefaults);
+          modules.documentsOverview.render()
         });
         break;
       case 'lexicon':
-        new modules.LexiconOverview(null, modules.lexiconOverviewDefaults).render();
+        modules.lexiconOverview = new modules.LexiconOverview(null, modules.lexiconOverviewDefaults);
+        modules.lexiconOverview.render();
         break;
       case 'media':
-        new modules.MediaOverview(null, modules.mediaOverviewDefaults).render();
+        modules.mediaOverview = new modules.MediaOverview(null, modules.mediaOverviewDefaults);
+        modules.mediaOverview.render()
         break;
       case 'orthographies':
-        new modules.OrthographiesOverview(null, modules.orthographiesOverviewDefaults).render();
+        modules.orthographiesOverivew = new modules.OrthographiesOverview(null, modules.orthographiesOverviewDefaults);
+        modules.orthographiesOverivew.render()
         break;
       case 'tags':
-        modules.TagsOverview(null, modules.tagsOverviewDefaults).render();
+        modules.tagsOverview = modules.TagsOverview(null, modules.tagsOverviewDefaults)
+        modules.tagsOverview.render();
         break;
       case 'texts':
         app.preferences.currentCorpus.get('texts', function(texts) {
           var texts = new models.Texts(texts);
-          new modules.TextsOverview(texts, modules.textsOverviewDefaults).render();
+          modules.textsOverview = new modules.TextsOverview(texts, modules.textsOverviewDefaults);
+          modules.textsOverview.render();
         });
         break;
       default:
@@ -335,9 +341,16 @@ modules.textsOverviewDefaults = {
       el: 'textsList',
       evType: 'click',
       functionCall: function(ev) {
-        if (ev.target.classList.contains('textsListItem')) {
-          var text = this.model.filter(function(text) { return text.id == Number(ev.target.id); })[0];
-          text.render();
+        if (ev.target.parentNode.classList.contains('textsListItem')) {
+          var text = modules.textsOverview.model.filter(function(text) {
+            return text.id == Number(ev.target.parentNode.dataset.id);
+          })[0];
+          
+          text.render(function(text) {
+            modules.textsDetail = new modules.TextsDetail(text, modules.textsDetailDefaults);
+            modules.textsDetail.render();
+            text.setAsCurrent();
+          });
         }
       }
     }
@@ -345,10 +358,8 @@ modules.textsOverviewDefaults = {
   
   render: function() {
     var populateListItem = function(text, li) {
-      var p1 = createElement('p', { textContent: Breadcrumb.stringify(text.breadcrumb) });
-      var p2 = createElement('p', { textContent: text.titles.en });
-      li.appendChild(p1);
-      li.appendChild(p2);
+      var p = createElement('p', { textContent: text.titles.Eng });
+      li.appendChild(p);
     };
     
     this.model.list(this.textsList, populateListItem);
@@ -361,8 +372,10 @@ modules.textsOverviewDefaults = {
   }
 };
 
+
+// DETAIL MODULES
 modules.DocumentsDetail = function(model, options) {
-  Module.call(this, collection, options);
+  Module.call(this, model, options);
 };
 
 modules.documentsDetailDefaults = {
@@ -380,7 +393,7 @@ modules.documentsDetailDefaults = {
 };
 
 modules.LexiconDetail = function(model, options) {
-  Module.call(this, collection, options);
+  Module.call(this, model, options);
 };
 
 modules.lexiconDetailDefaults = {
@@ -398,7 +411,7 @@ modules.lexiconDetailDefaults = {
 };
 
 modules.MediaDetail = function(model, options) {
-  Module.call(this, collection, options);
+  Module.call(this, model, options);
 };
 
 modules.mediaDetailDefaults = {
@@ -416,7 +429,7 @@ modules.mediaDetailDefaults = {
 };
 
 modules.OrthographiesDetail = function(model, options) {
-  Module.call(this, collection, options);
+  Module.call(this, model, options);
 };
 
 modules.orthographiesDetailDefaults = {
@@ -434,7 +447,7 @@ modules.orthographiesDetailDefaults = {
 };
 
 modules.TagsDetail = function(model, options) {
-  Module.call(this, collection, options);
+  Module.call(this, model, options);
 };
 
 modules.tagsDetailDefaults = {
@@ -452,14 +465,49 @@ modules.tagsDetailDefaults = {
 };
 
 modules.TextsDetail = function(model, options) {
-  Module.call(this, collection, options);
+  Module.call(this, model, options);
 };
 
 modules.textsDetailDefaults = {
   el: $('#textsDetail'),
+  titles: $('#textsDetail .titles'),
   workview: 'texts',
   
+  handlers: [
+    {
+      el: 'titles',
+      evType: 'input',
+      functionCall: function(ev) {
+        modules.textsDetail.model.titles[ev.target.id] = ev.target.value;
+      }
+    },
+    {
+      el: 'titles',
+      evType: 'keyup',
+      functionCall: function(ev) {
+        if (ev.keyCode == 13 || ev.keyCode == 27) {
+          ev.target.blur();
+          modules.textsDetail.model.store();
+        }
+      }
+    }
+  ],
+  
   render: function() {
+    this.titles.innerHTML = '';
+    
+    Object.keys(this.model.titles).forEach(function(key) {
+      var li = createElement('li', { id: key });
+      var label = createElement('label', { htmlFor: key });
+      var p = createElement('p', { textContent: key });
+      var input = createElement('input', { value: this.model.titles[key] || '', id: key });
+      label.appendChild(p);
+      label.appendChild(input);
+      li.appendChild(label);
+      this.titles.appendChild(li);
+      input.addEventListener('blur', modules.textsDetail.model.store);
+    }, this);
+    
     this.display();
   },
 

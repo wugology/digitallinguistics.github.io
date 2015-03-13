@@ -62,7 +62,7 @@ models.Text = function Text(data) {
   this.media = this.media || [];
   this.persons = this.persons || [];
   this.tags = this.tags || [];
-  this.titles = this.titles || { en: '' };
+  this.titles = this.titles || { Eng: '' };
   this.custom = this.custom || {};
   
   Object.defineProperties(this, {
@@ -72,9 +72,16 @@ models.Text = function Text(data) {
       }.bind(this)
     },
     
+    // Pass this a function that has the text as its argument - this keeps app-specific rendering methods in the app
     'render': {
+      value: function(renderFunction) {
+        renderFunction(this);
+      }.bind(this)
+    },
+    
+    'setAsCurrent': {
       value: function() {
-        
+        app.preferences.currentText = this;
       }.bind(this)
     }
   });

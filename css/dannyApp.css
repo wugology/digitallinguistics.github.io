@@ -10,20 +10,20 @@ footer, section {
 #sideNav a, #toolbarNav a {
   border: none; }
 
-.phrase:hover, .titles input:focus, .titles input:hover {
+.phrase:hover {
   box-shadow: 0px 0px 5px 0px #3F93F9; }
 
 #mediaList li, icon, #textsList li {
   cursor: pointer; }
 
-.phrase, #searchField {
+.phrase, #searchField, #textsList li, .titles li {
   -webkit-flex-direction: row;
   flex-direction: row; }
 
 audio, .phrase {
   margin-top: 1rem; }
 
-#corpusSelector {
+#corpusSelector, .titles {
   padding: 0 0.5rem; }
 
 .phrase, #popups > div{
@@ -66,14 +66,14 @@ legend {
 .titles input {
   font-family: 'Gentium Plus';
   font-size: 150%;
-  text-align: center; }
-
+  width: 90%; }
+  
 /* Styling by DOM elements (organized by DOM structure) */
 #searchBox {
   -webkit-flex-grow: 1;
   flex-grow: 1; }
 
-#searchField {
+#searchField, .titles li {
   align-items: center; }
 
 #sideNav {
@@ -90,3 +90,9 @@ legend {
 
 #corpusSelector:hover {
   box-shadow: 0 0 5px 0 white; }
+
+#textsDetail header {
+  align-items: stretch; }
+
+#textsDetail fieldset {
+  border: 1px solid black; }
