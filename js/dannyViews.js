@@ -1,6 +1,6 @@
 // VIEWS
 
-// VIEWS HELPERS
+// HELPERS
 function renderTextContent(textHash, wrapper) {
   Object.keys(textHash).forEach(function(ortho) {
     var p = createElement('p', { textContent: textHash[ortho] });
@@ -9,14 +9,79 @@ function renderTextContent(textHash, wrapper) {
   });
 };
 
-// ITEM VIEWS
-// The model for an item view is a single item (rather than an array of items)
-var TextView = function(model, options) {
-  View.call(this, model, options);
+
+// APP VIEW
+var appView = new View(null, {
+  setWorkview: function(workview) {
+    if (!workview) { workview = 'texts'; }
+    
+    this.appNav.setButton(workview);
+    
+    this.notify('setWorkview', workview);
+    
+    switch (workview) {
+      case 'documents':
+        app.preferences.currentCorpus.get('documents', function(docs) {
+          var docs = new models.Documents(docs);
+          modules.documentsOverview = new modules.DocumentsOverview(docs, modules.documentsOverviewDefaults);
+          modules.documentsOverview.render()
+        });
+        break;
+      case 'lexicon':
+        modules.lexiconOverview = new modules.LexiconOverview(null, modules.lexiconOverviewDefaults);
+        modules.lexiconOverview.render();
+        break;
+      case 'media':
+        modules.mediaOverview = new modules.MediaOverview(null, modules.mediaOverviewDefaults);
+        modules.mediaOverview.render()
+        break;
+      case 'orthographies':
+        modules.orthographiesOverivew = new modules.OrthographiesOverview(null, modules.orthographiesOverviewDefaults);
+        modules.orthographiesOverivew.render()
+        break;
+      case 'tags':
+        modules.tagsOverview = new modules.TagsOverview(null, modules.tagsOverviewDefaults)
+        modules.tagsOverview.render();
+        break;
+      case 'texts':
+        app.preferences.currentCorpus.get('texts', function(texts) {
+          var texts = new models.Texts(texts);
+          modules.textsOverview = new modules.TextsOverview(texts, modules.textsOverviewDefaults);
+          modules.textsOverview.render();
+        });
+        break;
+      default:
+    }
+    
+    app.preferences.currentWorkview = workview;
+  },
+  
+  update: function(action, data) {
+    if (action == 'appNavClick') { this.setWorkview(data); }
+  }
+});
+
+
+// APP COMPONENT VIEWS
+var Nav = function() {
+  View.call(this, null);  
+  delete this.model;
 };
 
-var PhraseView = function(model, options) {
-  View.call(this, model, options);
+var Module = function(model) {
+  View.call(this, model);
+  appView.observers.add('setWorkview', this);
+};
+
+var Popup = function() {
+  View.call(this, null);
+  delete this.model;
+};
+
+
+// ITEM VIEWS
+var PhraseView = function(model) {
+  View.call(this, model);
   
   this.template = $('#phraseTemplate');
   
@@ -34,23 +99,4 @@ var PhraseView = function(model, options) {
     
     this.el = pv;
   }.bind(this);
-};
-
-
-// COLLECTION VIEWS
-// The model for a collection view is an array of items (rather than a single item)
-var TextsView = function(collection, options) {
-  View.call(this, collection, options);
-};
-
-var PhrasesView = function(collection, options) {
-  View.call(this, collection, options);
-};
-
-var WordsView = function(collection, options) {
-  View.call(this, collection, options);
-};
-
-var MorphemesView = function(collection, options) {
-  View.call(this, collection, options);
 };

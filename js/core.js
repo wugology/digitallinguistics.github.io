@@ -165,12 +165,6 @@ function IDBObj() {
 // Handlers is an array of settings for event handlers that will be added to the object
 // - Each handler has 3 attributes: el (what the listener attaches to; this is a string representing the attribute of the object the Events mixin is being called on), evType (e.g. 'click', 'onload'), and functionCall (the function to execute when the event fires)
 function Events() {
-  if (this.handlers) {
-    this.handlers.forEach(function(handler) {
-      this[handler.el].addEventListener(handler.evType, handler.functionCall);
-    }, this);
-  }
-  
   if (!this.observers) {
     Object.defineProperty(this, 'observers', {
       value: [],
@@ -304,6 +298,7 @@ function View(model, options) {
   
   // The optional media elements specifies whether you would only like to display the element on one media type (desktop/mobile)
   this.display = function(media) {
+    console.log(this);
     if (media != 'mobile') { this.el.classList.remove('hideonDesktop'); }
     if (media != 'desktop') { this.el.classList.remove('hideonMobile'); }
   }.bind(this);

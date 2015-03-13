@@ -7,6 +7,12 @@ var app = {
       // Load the preferences
       if (localStorage.wugbotPreferences != 'undefined') { app.preferences = JSON.parse(localStorage.wugbotPreferences); }
       
+      // Initialize app views
+      appView.mainNav = new appView.MainNav();
+      appView.appNav = new appView.AppNav();
+      appView.navIcons = new appView.NavIcons(); // Needs to be ordered after mainNav and appNav
+      appView.corpusSelector = new appView.CorpusSelector();
+      
       // Set the current workview
       var setWorkview = function() {
         if (app.preferences.currentWorkview) {
@@ -47,198 +53,126 @@ var app = {
   preferences: {}
 };
 
-// APP VIEW
-var appView = new View(null, {
-  setWorkview: function(workview) {
-    if (!workview) { workview = 'texts'; }
-    
-    this.appNav.setButton(workview);
-    
-    this.notify('setWorkview', workview);
-    
-    switch (workview) {
-      case 'documents':
-        app.preferences.currentCorpus.get('documents', function(docs) {
-          var docs = new models.Documents(docs);
-          modules.documentsOverview = new modules.DocumentsOverview(docs, modules.documentsOverviewDefaults);
-          modules.documentsOverview.render()
-        });
-        break;
-      case 'lexicon':
-        modules.lexiconOverview = new modules.LexiconOverview(null, modules.lexiconOverviewDefaults);
-        modules.lexiconOverview.render();
-        break;
-      case 'media':
-        modules.mediaOverview = new modules.MediaOverview(null, modules.mediaOverviewDefaults);
-        modules.mediaOverview.render()
-        break;
-      case 'orthographies':
-        modules.orthographiesOverivew = new modules.OrthographiesOverview(null, modules.orthographiesOverviewDefaults);
-        modules.orthographiesOverivew.render()
-        break;
-      case 'tags':
-        modules.tagsOverview = new modules.TagsOverview(null, modules.tagsOverviewDefaults)
-        modules.tagsOverview.render();
-        break;
-      case 'texts':
-        app.preferences.currentCorpus.get('texts', function(texts) {
-          var texts = new models.Texts(texts);
-          modules.textsOverview = new modules.TextsOverview(texts, modules.textsOverviewDefaults);
-          modules.textsOverview.render();
-        });
-        break;
-      default:
-    }
-    
-    app.preferences.currentWorkview = workview;
-  },
+
+// NAV VIEWS
+appView.AppNav = function() {
+  Nav.call(this);
   
-  update: function(action, data) {
-    if (action == 'appNavClick') { this.setWorkview(data); }
-  }
-});
-
-
-// APP COMPONENT VIEWS
-var Nav = function(options) {
-  View.call(this, null, options);  
-  delete this.model;
-};
-
-var Module = function(model, options) {
-  View.call(this, model, options);
-  appView.observers.add('setWorkview', this);
-};
-
-var Popup = function(options) {
-  View.call(this, null, options);
-  delete this.model;
-};
-
-
-// APP COMPONENTS
-appView.appNav = new Nav({
-  el: $('#appNav'),
-  buttons: $('#appNav a'),
+  this.el = $('#appNav');
+  this.buttons = $('#appNav a');
   
-  handlers: [{
-    el: 'el',
-    evType: 'click',
-    functionCall: function(ev) { appView.appNav.notify('appNavClick', ev.target.textContent.toLowerCase()); }
-  }],
+  this.observers = [{ action: 'appNavClick', observer: appView }];
   
-  observers: [{ action: 'appNavClick', observer: appView }],
-  
-  setButton: function(workview) {
+  this.setButton = function(workview) {
     this.buttons.forEach(function(button) {
       button.classList.remove('underline');
       if (button.textContent.toLowerCase() == workview) { button.classList.add('underline'); }
     }, this);
-  },
-
-  update: function(action, data) {
+  };
+  
+  this.update = function(action, data) {
     if (data == 'boxIcon') {
-      appView.appNav.toggleDisplay();
+      this.toggleDisplay();
       appView.mainNav.hide();
     }
-  }
-});
+  }.bind(this);
+  
+  this.el.addEventListener('click', function(ev) {
+    appView.appNav.notify('appNavClick', ev.target.textContent.toLowerCase());
+  });
+};
 
-appView.corpusSelector = new View(null, {
-  el: $('#corpusSelector'),
+appView.CorpusSelector = function() {
+  Nav.call(this);
   
-  handlers: [{
-    el: 'el',
-    evType: 'change',
-    functionCall: function(ev) {
-      if (ev.target.value == 'manage') {
-        appView.corpusSelector.el.value = app.preferences.currentCorpus.id;
-        popups.manageCorpora.render();
-      } else if (ev.target.value != 'select') {
-        var setCorpus = function(results) {
-          app.preferences.currentCorpus = results[0];
-          appView.setWorkview(app.preferences.currentWorkview);
-        };
-        idb.get(Number(ev.target.value), 'corpora', setCorpus);
-      }
-    }
-  }],
+  this.el = $('#corpusSelector');
   
-  // Optionally takes a corpus ID to set the dropdown to after rendering
-  render: function(corpusID, callback) {
+  this.render = function(corpusID, callback) {
     idb.getAll('corpora', function(corpora) {
-      appView.corpusSelector.el.innerHTML = '';
+      this.el.innerHTML = '';
       
       var option = createElement('option', { textContent: 'Select a corpus', value: 'select' });
-      appView.corpusSelector.el.appendChild(option);
+      this.el.appendChild(option);
       option.classList.add('unicode');
       
       corpora.forEach(function(corpus) {
         var option = createElement('option', { textContent: corpus.name, value: corpus.id });
-        appView.corpusSelector.el.appendChild(option);
+        this.el.appendChild(option);
         option.classList.add('unicode');
       }, this);
       
       var option = createElement('option', { textContent: 'Manage corpora', value: 'manage' });
-      appView.corpusSelector.el.appendChild(option);
+      this.el.appendChild(option);
       option.classList.add('unicode');
 
       if (corpusID) {
-        appView.corpusSelector.el.value = corpusID;
+        this.el.value = corpusID;
       }
       
       if (typeof callback == 'function') { callback(); }
-    });
-  }
-});
-
-appView.mainNav = new Nav({
-  el: $('#mainNav'),
+    }.bind(this));
+  };
   
-  update: function(action, data) {
-    if (data == 'menuIcon') {
-      appView.mainNav.toggleDisplay();
-      appView.appNav.hide();
+  this.el.addEventListener('change', function(ev) {
+    if (ev.target.value == 'manage') {
+      this.el.value = app.preferences.currentCorpus.id;
+    } else if (ev.target.value != 'select') {
+      var setCorpus = function(results) {
+        app.preferences.currentCorpus = results[0];
+        appView.setWorkview(app.preferences.currentWorkview);
+      };
+      
+      idb.get(Number(ev.target.value), 'corpora', setCorpus);
     }
-  }
-});
-
-
-appView.navIcons = new Nav({
-  el: $('#navIcons'),
-  
-  handlers: [{
-    el: 'el',
-    evType: 'click',
-    functionCall: function(ev) { appView.navIcons.notify('navIconClick', ev.target.id); }
-  }],
-  
-  observers: [
-    { action: 'navIconClick', observer: appView.appNav },
-    { action: 'navIconClick', observer: appView.mainNav }
-  ]
-});
-
-
-// MODULES
-var modules = {};
-
-modules.DocumentsOverview = function(collection, options) {
-  Module.call(this, collection, options);
+  }.bind(this));
 };
 
-modules.documentsOverviewDefaults = {
-  el: $('#documentsOverview'),
-  workview: 'documents',
+appView.MainNav = function() {
+  Nav.call(this);
   
-  render: function() {
+  this.el = $('#mainNav');
+  
+  this.update = function(action, data) {
+    if (data == 'menuIcon') {
+      this.toggleDisplay();
+      appView.appNav.hide();
+    }
+  };
+};
+
+appView.NavIcons = function() {
+  Nav.call(this);
+  
+  this.el = $('#navIcons');
+  
+  this.observers = [
+    { action: 'navIconClick', observer: appView.appNav },
+    { action: 'navIconClick', observer: appView.mainNav }
+  ];
+  
+  this.el.addEventListener('click', function(ev) { this.notify('navIconClick', ev.target.id); }.bind(this));
+};
+
+
+// MODULE VIEWS
+var modules = {};
+
+modules.DocumentsOverview = function(collection) {
+  Module.call(this, collection);
+  this.workview = 'documents';
+  
+  this.el = $('documentsOverview');
+  
+  this.render = function() {
     this.display();
-  },
+  };
   
-  update: function(action, data) {
-    if (data != this.workview) { this.hide(); }
-    appView.observers.remove(this);
-  }
+  this.update = function(action, data) {
+    if (data != this.workview) {
+      this.hide();
+      appView.observers.remove(this);
+    }
+  };
 };
 
 modules.LexiconOverview = function(collection, options) {
