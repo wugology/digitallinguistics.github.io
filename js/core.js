@@ -43,6 +43,15 @@ function createElement(tagName, attributes) {
   return el;
 };
 
+function createList(wrapper, list, populateListItem) {
+  wrapper.innerHTML = '';
+  list.forEach(function(item) {
+    var li = createElement('li');
+    populateListItem(item, li);
+    wrapper.appendChild(li);
+  });
+};
+
 function hydrate(obj) {
   var newObj = new models[obj.model](obj);
   if (newObj.id) {
@@ -134,8 +143,9 @@ function IDBObj() {
         if (this.id) {
           var tableName = idb.tableList.filter(function(table) {
             return table.model == this.model;
-          })[0];
-          idb.remove(id, tableName, callback);
+          }, this)[0].name;
+          
+          idb.remove(this.id, tableName, callback);
         }
       }.bind(this)
     },
@@ -230,7 +240,7 @@ function Model(data) {
   Object.defineProperties(this, {
     'json': {
       get: function() {
-        return JSON.stringify(this);
+        return JSON.stringify(this, null, 2);
       }.bind(this)
     },
     

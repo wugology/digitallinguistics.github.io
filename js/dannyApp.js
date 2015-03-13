@@ -19,7 +19,7 @@ var app = {
       // Render the corpus selector and prompt for a new corpus if needed
       idb.getAll('corpora', function(corpora) {
         if (corpora.length == 0) {
-          popups.manageCorpora.display();
+          popups.manageCorpora.render();
           
         } else {
           if (app.preferences.currentCorpus) {
@@ -77,7 +77,7 @@ var appView = new View(null, {
         modules.orthographiesOverivew.render()
         break;
       case 'tags':
-        modules.tagsOverview = modules.TagsOverview(null, modules.tagsOverviewDefaults)
+        modules.tagsOverview = new modules.TagsOverview(null, modules.tagsOverviewDefaults)
         modules.tagsOverview.render();
         break;
       case 'texts':
@@ -152,9 +152,14 @@ appView.corpusSelector = new View(null, {
     evType: 'change',
     functionCall: function(ev) {
       if (ev.target.value == 'manage') {
-        popups.manageCorpora.display();
+        appView.corpusSelector.el.value = app.preferences.currentCorpus.id;
+        popups.manageCorpora.render();
       } else if (ev.target.value != 'select') {
-        idb.get(Number(ev.target.value), 'corpora', function(results) { results[0].setAsCurrent(); });
+        var setCorpus = function(results) {
+          app.preferences.currentCorpus = results[0];
+          appView.setWorkview(app.preferences.currentWorkview);
+        };
+        idb.get(Number(ev.target.value), 'corpora', setCorpus);
       }
     }
   }],
@@ -162,28 +167,28 @@ appView.corpusSelector = new View(null, {
   // Optionally takes a corpus ID to set the dropdown to after rendering
   render: function(corpusID, callback) {
     idb.getAll('corpora', function(corpora) {
-      this.el.innerHTML = '';
+      appView.corpusSelector.el.innerHTML = '';
       
       var option = createElement('option', { textContent: 'Select a corpus', value: 'select' });
-      this.el.appendChild(option);
+      appView.corpusSelector.el.appendChild(option);
       option.classList.add('unicode');
       
       corpora.forEach(function(corpus) {
         var option = createElement('option', { textContent: corpus.name, value: corpus.id });
-        this.el.appendChild(option);
+        appView.corpusSelector.el.appendChild(option);
         option.classList.add('unicode');
       }, this);
       
       var option = createElement('option', { textContent: 'Manage corpora', value: 'manage' });
-      this.el.appendChild(option);
+      appView.corpusSelector.el.appendChild(option);
       option.classList.add('unicode');
 
       if (corpusID) {
-        this.el.value = corpusID;
+        appView.corpusSelector.el.value = corpusID;
       }
       
       if (typeof callback == 'function') { callback(); }
-    }.bind(this));
+    });
   }
 });
 
@@ -348,6 +353,8 @@ modules.textsOverviewDefaults = {
           
           text.render(function(text) {
             modules.textsDetail = new modules.TextsDetail(text, modules.textsDetailDefaults);
+            modules.textsDetail.observers.add('titleChange', modules.textsOverview);
+            modules.textsDetail.observers.add('deleteText', modules.textsOverview);
             modules.textsDetail.render();
             text.setAsCurrent();
           });
@@ -356,19 +363,25 @@ modules.textsOverviewDefaults = {
     }
   ],
   
+  populateListItem: function (text, li) {
+    li.dataset.id = text.id;
+    li.classList.add('textsListItem');
+    var p = createElement('p', { textContent: text.titles.Eng || '[click to display this text]' });
+    li.appendChild(p);
+  },
+  
   render: function() {
-    var populateListItem = function(text, li) {
-      var p = createElement('p', { textContent: text.titles.Eng });
-      li.appendChild(p);
-    };
-    
-    this.model.list(this.textsList, populateListItem);
-    this.display();
+    modules.textsOverview.model.list(modules.textsOverview.textsList, modules.textsOverview.populateListItem);
+    modules.textsOverview.display();
   },
   
   update: function(action, data) {
-    if (data != this.workview) { this.hide(); }
-    appView.observers.remove(this);
+    if (action == 'setWorkview') {
+      if (data != this.workview) { this.hide(); }
+      appView.observers.remove(this);
+    } else if (action == 'deleteText' || action == 'titleChange') {
+      this.model.list(this.textsList, this.populateListItem);
+    }
   }
 };
 
@@ -470,6 +483,8 @@ modules.TextsDetail = function(model, options) {
 
 modules.textsDetailDefaults = {
   el: $('#textsDetail'),
+  deleteButton: $('#deleteTextButton'),
+  phrases: $('#textsDetail .phrases'),
   titles: $('#textsDetail .titles'),
   workview: 'texts',
   
@@ -487,7 +502,28 @@ modules.textsDetailDefaults = {
       functionCall: function(ev) {
         if (ev.keyCode == 13 || ev.keyCode == 27) {
           ev.target.blur();
+          modules.textsDetail.notify('titleChange');
           modules.textsDetail.model.store();
+        }
+      }
+    },
+    {
+      el: 'deleteButton',
+      evType: 'click',
+      functionCall: function(ev) {
+        modules.textsDetail.hide();
+        modules.textsDetail.model.removeFromCorpus();
+        modules.textsDetail.model.delete(function() { appView.setWorkview('texts'); });
+        app.preferences.currentText = null;
+        modules.textsDetail.notify('deleteText');
+      }
+    },
+    {
+      el: 'phrases',
+      evType: 'click',
+      functionCall: function(ev) {
+        if (ev.target.classList.contains('play')) {
+          console.log(ev.target.parentNode.dataset.breadcrumb);
         }
       }
     }
@@ -507,6 +543,10 @@ modules.textsDetailDefaults = {
       this.titles.appendChild(li);
       input.addEventListener('blur', modules.textsDetail.model.store);
     }, this);
+    
+    modules.textsDetail.phrases.innerHTML = '';
+    
+    modules.textsDetail.model.phrases.render(modules.textsDetail.phrases);
     
     this.display();
   },
@@ -547,8 +587,9 @@ popups.fileUpload = new Popup({
 });
 
 popups.manageCorpora = new Popup({
-  el: $('#manageCorporaPopup'),
+  corpusList: $('#corpusList'),
   button: $('#createCorpusButton'),
+  el: $('#manageCorporaPopup'),
   input: $('#corpusNameBox'),
   
   handlers: [{
@@ -566,7 +607,26 @@ popups.manageCorpora = new Popup({
       });
       popups.manageCorpora.hide();
     }
-  }]
+  }],
+  
+  render: function() {
+    var populateListItem = function(corpus, li) {
+      var input = createElement('input', { value: corpus.name, type: 'text' });
+      input.id = corpus.id;
+      li.appendChild(input);
+      input.addEventListener('input', function(ev) {
+        corpus.name = ev.target.value;
+        corpus.store(appView.corpusSelector.render);
+      });
+    };
+    
+    var renderList = function(corpora) {
+      createList(popups.manageCorpora.corpusList, corpora, populateListItem);
+      popups.manageCorpora.display();
+    };
+    
+    idb.getAll('corpora', renderList);
+  }.bind(this)
 });
 
 popups.settings = new Popup({

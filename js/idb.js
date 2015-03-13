@@ -51,7 +51,9 @@ var idb = {
             var cursor = request.result;
             
             if (cursor) {
-              results.push(cursor.value);
+              if (cursor.value) {
+                results.push(cursor.value);
+              }
               cursor.continue();
             }
           };
@@ -78,7 +80,9 @@ var idb = {
           var cursor = request.result;
           
           if (cursor) {
-            results.push(hydrate(cursor.value));
+            if (cursor.value) {
+              results.push(hydrate(cursor.value));
+            }
             cursor.continue();
           }
         };
@@ -99,7 +103,9 @@ var idb = {
             var request = table.get(id);
             
             request.onsuccess = function() {
-              results.push(hydrate(request.result));
+              if (request.result) {
+                results.push(hydrate(request.result));
+              }
             };
           });
         };
@@ -193,7 +199,9 @@ var idb = {
         value: request.result
       });
       
-      results.push(request.result);
+      if (request.result) {
+        results.push(request.result);
+      }
     };
   },
 

@@ -32,6 +32,21 @@ models.Corpus = function Corpus(data) {
       value: function() {
         app.preferences.currentCorpus = this;
       }.bind(this)
+    },
+    
+    'update': {
+      value: function(action, data) {
+        if (action == 'addToCorpus') {
+          this.texts.push(data.id);
+          data.observers.add('removeFromCorpus', this);
+          this.store();
+        } else if (action == 'removeFromCorpus') {
+          data.observers.remove('removeFromCorpus', this);
+          this.texts.forEach(function(textID, i) {
+            if (textID == data.id) { this.texts.splice(i, 1); }
+          });
+        }
+      }.bind(this)
     }
   });
 };
@@ -52,8 +67,10 @@ models.Text = function Text(data) {
     
     this.phrases = new models.Phrases(this.phrases);
   } else {
-    this.phrases = new models.Phrase([]);
+    this.phrases = new models.Phrases([]);
   }
+  
+  this.observers.add('addToCorpus', app.preferences.currentCorpus);
   
   this.abbreviation = this.abbreviation || '';
   this.type = this.type || '';
@@ -68,7 +85,7 @@ models.Text = function Text(data) {
   Object.defineProperties(this, {
     'addToCorpus': {
       value: function() {
-        app.preferences.currentCorpus.texts.push(this.id);
+        this.notify('addToCorpus', this);
       }.bind(this)
     },
     
@@ -76,6 +93,12 @@ models.Text = function Text(data) {
     'render': {
       value: function(renderFunction) {
         renderFunction(this);
+      }.bind(this)
+    },
+    
+    'removeFromCorpus': {
+      value: function() {
+        this.notify('removeFromCorpus', this);
       }.bind(this)
     },
     
@@ -164,16 +187,9 @@ models.Texts = function Texts(data) {
   var texts = new Collection(coll);
   
   // Displays a list of all the texts in this collection; each text gets a <li id=[breadcrumb]>
-  // populateListItem is a function that has a text and an empty <li> as its arguments; use this to populate the <li> with content from the text
+  // populateListItem is a function that has a text and an empty <li> as its arguments; use this to populate the <li> with content from the text  
   texts.list = function(wrapper, populateListItem) {
-    this.forEach(function(text) {
-      var li = createElement('li');
-      li.dataset.id = text.id;
-      populateListItem(text, li);
-      li.classList.add('textsListItem');
-      wrapper.appendChild(li);
-    });
-    
+    createList(wrapper, this, populateListItem);
   };
   
   return texts;
@@ -185,6 +201,16 @@ models.Phrases = function Phrases(data) {
   });
   
   var phrases = new Collection(coll);
+  
+  // populatePhrase is a function that takes a phrase a content wrapper for that phrase as its argument
+  Object.defineProperty(phrases, 'render', {
+    value: function(wrapper) {
+      phrases.forEach(function(phrase) {
+        var pv = new PhraseView(phrase);
+        pv.render(wrapper);
+      });
+    }.bind(this)
+  });
   
   return phrases;
 };
