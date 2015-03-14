@@ -270,13 +270,15 @@ modules.TextsOverview = function(collection) {
 // POPUP VIEWS
 var popups = {};
 
-popups.fileUpload = new Popup({
-  el: $('#fileUploadPopup'),
-  button: $('#fileUploadButton'),
-  input: $('#fileUpload'),
+popups.fileUpload = function() {
+  Popup.call(this);
   
+  this.button = $('#fileUploadButton');
+  this.el = $('#fileUploadPopup');
+  this.input = $('#fileUpload');
+
   // Applies the callback function to the uploaded file when the 'Go' button is clicked
-  render: function(goButtonCallback) {
+  this.render = function(goButtonCallback) {
     var processFile = function() {
       if (typeof goButtonCallback != 'function') {
         console.log('Define a function to run when the Go button is clicked.');
@@ -292,33 +294,18 @@ popups.fileUpload = new Popup({
     this.button.addEventListener('click', processFile);
     
     this.display();
-  }
-});
+  };
+};
 
-popups.manageCorpora = new Popup({
-  corpusList: $('#corpusList'),
-  button: $('#createCorpusButton'),
-  el: $('#manageCorporaPopup'),
-  input: $('#corpusNameBox'),
+popups.manageCorpora = function() {
+  Popup.call(this);
   
-  handlers: [{
-    el: 'button',
-    evType: 'click',
-    functionCall: function(ev) {
-      ev.preventDefault();
-      var data = { name: popups.manageCorpora.input.value };
-      var corpus = new models.Corpus(data);
-      corpus.store(function(corpusIDs) {
-        corpus.id = corpusIDs[0];
-        appView.corpusSelector.render(corpus.id);
-        corpus.setAsCurrent();
-        appView.setWorkview();
-      });
-      popups.manageCorpora.hide();
-    }
-  }],
+  this.button = $('#createCorpusButton');
+  this.corpusList = $('#corpusList');
+  this.el = $('#manageCorporaPopup');
+  this.input = $('#corpusNameBox');
   
-  render: function() {
+  this.render = function() {
     var populateListItem = function(corpus, li) {
       var input = createElement('input', { value: corpus.name, type: 'text' });
       input.id = corpus.id;
@@ -330,24 +317,35 @@ popups.manageCorpora = new Popup({
     };
     
     var renderList = function(corpora) {
-      createList(popups.manageCorpora.corpusList, corpora, populateListItem);
-      popups.manageCorpora.display();
+      createList(this.corpusList, corpora, populateListItem);
+      this.display();
     };
     
     idb.getAll('corpora', renderList);
-  }.bind(this)
-});
-
-popups.settings = new Popup({
-  el: $('#settingsPopup'),
-  icon: $('#settingsIcon'),
+  }.bind(this);
   
-  handlers: [{
-    el: 'icon',
-    evType: 'click',
-    functionCall: function() { popups.settings.toggleDisplay(); }
-  }]
-});
+  this.button.addEventListener('click', function(ev) {
+    ev.preventDefault();
+    var corpus = new models.Corpus({ name: this.input.value });
+    
+    var setCorpus = function(corpusIDs) {
+      corpus.id = corpusIDs[0];
+      appView.corpusSelector.render(corpus.id);
+      corpus.setAsCurrent();
+      appView.setWorkview();
+    };
+    
+    corpus.store(setCorpus);
+    this.hide();
+  });
+};
+
+popups.setting = function() {
+  this.el = $('#settingsPopup');
+  this.icon = $('#settingsIcon');
+  
+  this.icon.addEventListener('click', this.toggleDisplay);
+};
 
 
 // EVENT LISTENERS
