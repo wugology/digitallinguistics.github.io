@@ -14,6 +14,11 @@ var app = {
       appView.navIcons = new AppView.NavIcons(); // Needs to be ordered after mainNav and appNav
       appView.corpusSelector = new AppView.CorpusSelector();
       
+      // Initialize popups
+      popups.fileUpload = new popups.FileUpload();
+      popups.manageCorpora = new popups.ManageCorpora();
+      popups.settings = new popups.Settings();
+      
       // Set the current workview
       var setWorkview = function() {
         if (app.preferences.currentWorkview) {
@@ -26,7 +31,6 @@ var app = {
       // Render the corpus selector and prompt for a new corpus if needed
       idb.getAll('corpora', function(corpora) {
         if (corpora.length == 0) {
-          popups.manageCorpora = new popups.ManageCorpora();
           popups.manageCorpora.render();
           
         } else {
@@ -280,7 +284,7 @@ modules.TextsOverview = function(collection) {
   };
   
   // Event listeners
-  this.importButton.addEventListener('click', function() {
+  this.importButton.addEventListener('click', function() {    
     popups.fileUpload.render(function(file) {
       var importText = function(text) {
         var incorporate = function(textIDs) {
@@ -305,17 +309,17 @@ modules.TextsOverview = function(collection) {
       var text = this.collection.filter(function(text) {
         return text.id = Number(ev.target.parentNode.dataset.id);
       })[0];
+      
+      var renderFunction = function(text) {
+        var tv = new TextView(text);
+        tv.render();
+        tv.observers.add('titleChange', this);
+        tv.observers.add('deleteText', this);
+        text.setAsCurrent();
+      }.bind(this);
+
+      text.render(renderFunction);
     }
-    
-    var renderFunction = function(text) {
-      var tv = new TextView(text);
-      tv.render();
-      tv.observers.add('titleChange', this);
-      tv.observers.add('deleteText', this);
-      text.setAsCurrent();
-    };
-    
-    text.render(renderFunction);
   }.bind(this));
 };
 

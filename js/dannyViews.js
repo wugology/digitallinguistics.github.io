@@ -49,8 +49,8 @@ var TextView = function(model) {
   };
   
   this.render = function() {
-    var tv = this.template.content.cloneNode(true);
-    
+    var tv = this.template.content.querySelector('.text').cloneNode(true);
+
     Object.keys(this.model.titles).forEach(function(key) {
       var li = createElement('li', { id: key });
       var label = createElement('label', { htmlFor: key });
@@ -70,40 +70,40 @@ var TextView = function(model) {
     
     this.el = tv;
     
-    var phraseWrapper = this.el.querySelector('.phrases').innerHTML = '';
+    phraseWrapper = this.el.querySelector('.phrases');
     
     this.model.phrases.render(phraseWrapper);
+
+    // Event listeners
+    this.el.querySelector('#deleteTextButton').addEventListener('click', function(ev) {
+      this.hide();
+      this.model.removeFromCorpus();
+      this.model.delete(function() { appView.setWorkview('texts'); });
+      this.notify('deleteText');
+    });
+
+    this.el.querySelector('.titles').addEventListener('input', function(ev) {
+      this.model.titles[ev.target.id] = ev.target.value;
+    }.bind(this));
+    
+    this.el.querySelector('.titles').addEventListener('keyup', function(ev) {
+      if (ev.keyCode == 13 || ev.keyCode == 27) {
+        ev.target.blur();
+        this.notify('titleChange');
+        this.model.store();
+      }
+    }.bind(this));
+    
+    this.el.querySelector('.phrases').addEventListener('click', function(ev) {
+      if (ev.target.classList.contains('play')) {
+        console.log('Playing: ' + ev.target.parentNode.dataset.breadcrumb);
+      }
+    });
     
     this.display();
   };
   
   appView.observers.add('setWorkview', this);
-  
-  // Event listeners
-  /*this.el.querySelector('#deleteTextButton').addEventListener('click', function(ev) {
-    this.hide();
-    this.model.removeFromCorpus();
-    this.model.delete(function() { appView.setWorkview('texts'); });
-    this.notify('deleteText');
-  });
-
-  this.el.querySelector('.titles').addEventListener('input', function(ev) {
-    this.model.titles[ev.target.id] = ev.target.value;
-  });
-  
-  this.el.querySelector('.titles').addEventListener('keyup', function(ev) {
-    if (ev.keyCode == 13 || ev.keyCode == 27) {
-      ev.target.blur();
-      this.notify('titleChange');
-      this.model.store();
-    }
-  });
-  
-  this.el.querySelector('.phrases').addEventListener('click', function(ev) {
-    if (ev.target.classList.contains('play')) {
-      console.log('Playing: ' + ev.target.parentNode.dataset.breadcrumb);
-    }
-  });*/
 };
 
 var PhraseView = function(model) {
@@ -112,8 +112,8 @@ var PhraseView = function(model) {
   this.template = $('#phraseTemplate');
   
   this.render = function(wrapper, options) {
-    var pv = this.template.content.cloneNode(true);
-    pv.querySelector('.phrase').dataset.breadcrumb = model.breadcrumb;
+    var pv = this.template.content.querySelector('.phrase').cloneNode(true);
+    pv.dataset.breadcrumb = model.breadcrumb;
     var contentWrapper = pv.querySelector('.wrapper');
     
     renderTextContent(this.model.transcripts, contentWrapper);
