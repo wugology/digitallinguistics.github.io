@@ -8,10 +8,11 @@ var app = {
       if (localStorage.wugbotPreferences != 'undefined') { app.preferences = JSON.parse(localStorage.wugbotPreferences); }
       
       // Initialize app views
-      appView.mainNav = new appView.MainNav();
-      appView.appNav = new appView.AppNav();
-      appView.navIcons = new appView.NavIcons(); // Needs to be ordered after mainNav and appNav
-      appView.corpusSelector = new appView.CorpusSelector();
+      appView = new AppView();
+      appView.mainNav = new AppView.MainNav();
+      appView.appNav = new AppView.AppNav();
+      appView.navIcons = new AppView.NavIcons(); // Needs to be ordered after mainNav and appNav
+      appView.corpusSelector = new AppView.CorpusSelector();
       
       // Set the current workview
       var setWorkview = function() {
@@ -25,6 +26,7 @@ var app = {
       // Render the corpus selector and prompt for a new corpus if needed
       idb.getAll('corpora', function(corpora) {
         if (corpora.length == 0) {
+          popups.manageCorpora = new popups.ManageCorpora();
           popups.manageCorpora.render();
           
         } else {
@@ -53,9 +55,60 @@ var app = {
   preferences: {}
 };
 
+// APP VIEW
+var AppView = function() {
+  View.call(this);
+  
+  this.setWorkview = function(workview) {
+    if (!workview) { workview = 'texts'; }
+
+    this.appNav.setButton(workview);
+
+    this.notify('setWorkview', workview);
+    
+    switch (workview) {
+      case 'documents':
+        app.preferences.currentCorpus.get('documents', function(docs) {
+          var docs = new models.Documents(docs);
+          modules.documentsOverview = new modules.DocumentsOverview(docs);
+          modules.documentsOverview.render()
+        });
+        break;
+      case 'lexicon':
+        modules.lexiconOverview = new modules.LexiconOverview(null);
+        modules.lexiconOverview.render();
+        break;
+      case 'media':
+        modules.mediaOverview = new modules.MediaOverview(null);
+        modules.mediaOverview.render()
+        break;
+      case 'orthographies':
+        modules.orthographiesOverview = new modules.OrthographiesOverview(null);
+        modules.orthographiesOverview.render()
+        break;
+      case 'tags':
+        modules.tagsOverview = new modules.TagsOverview(null)
+        modules.tagsOverview.render();
+        break;
+      case 'texts':
+        app.preferences.currentCorpus.get('texts', function(texts) {
+          var texts = new models.Texts(texts);
+          modules.textsOverview = new modules.TextsOverview(texts);
+          modules.textsOverview.render();
+        });
+        break;
+      default:
+    }
+  };
+  
+  this.update = function(action, data) {
+    if (action == 'appNavClick') { this.setWorkview(data); }
+  };
+};
+
 
 // NAV VIEWS
-appView.AppNav = function() {
+AppView.AppNav = function() {
   Nav.call(this);
   
   this.el = $('#appNav');
@@ -82,7 +135,7 @@ appView.AppNav = function() {
   });
 };
 
-appView.CorpusSelector = function() {
+AppView.CorpusSelector = function() {
   Nav.call(this);
   
   this.el = $('#corpusSelector');
@@ -127,7 +180,7 @@ appView.CorpusSelector = function() {
   }.bind(this));
 };
 
-appView.MainNav = function() {
+AppView.MainNav = function() {
   Nav.call(this);
   
   this.el = $('#mainNav');
@@ -140,7 +193,7 @@ appView.MainNav = function() {
   };
 };
 
-appView.NavIcons = function() {
+AppView.NavIcons = function() {
   Nav.call(this);
   
   this.el = $('#navIcons');
@@ -198,7 +251,7 @@ modules.TagsOverview = function(collection) {
 };
 
 modules.TextsOverview = function(collection) {
-  Modules.call(this, collection);
+  Module.call(this, collection);
   
   this.workview = 'texts';
   
@@ -255,22 +308,22 @@ modules.TextsOverview = function(collection) {
     }
     
     var renderFunction = function(text) {
-      modules.textsDetail = new modules.TextsDetail(text);
-      modules.textsDetail.observers.add('titleChange', this);
-      modules.textsDetail.observers.add('deleteText', this);
-      modules.textsDetail.render();
+      var tv = new TextView(text);
+      tv.render();
+      tv.observers.add('titleChange', this);
+      tv.observers.add('deleteText', this);
       text.setAsCurrent();
     };
     
     text.render(renderFunction);
-  });
+  }.bind(this));
 };
 
 
 // POPUP VIEWS
 var popups = {};
 
-popups.fileUpload = function() {
+popups.FileUpload = function() {
   Popup.call(this);
   
   this.button = $('#fileUploadButton');
@@ -297,7 +350,7 @@ popups.fileUpload = function() {
   };
 };
 
-popups.manageCorpora = function() {
+popups.ManageCorpora = function() {
   Popup.call(this);
   
   this.button = $('#createCorpusButton');
@@ -319,13 +372,14 @@ popups.manageCorpora = function() {
     var renderList = function(corpora) {
       createList(this.corpusList, corpora, populateListItem);
       this.display();
-    };
+    }.bind(this);
     
     idb.getAll('corpora', renderList);
   }.bind(this);
   
   this.button.addEventListener('click', function(ev) {
     ev.preventDefault();
+
     var corpus = new models.Corpus({ name: this.input.value });
     
     var setCorpus = function(corpusIDs) {
@@ -337,10 +391,10 @@ popups.manageCorpora = function() {
     
     corpus.store(setCorpus);
     this.hide();
-  });
+  }.bind(this));
 };
 
-popups.setting = function() {
+popups.Settings = function() {
   this.el = $('#settingsPopup');
   this.icon = $('#settingsIcon');
   

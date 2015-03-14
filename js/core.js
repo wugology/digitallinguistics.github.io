@@ -172,17 +172,6 @@ function Events() {
     });
   }
   
-  if (!this.update) {
-    Object.defineProperty(this, 'update', {
-      configurable: true,
-      writable: true,
-      value: function(action, data) {
-        console.log('No update function has been set for this object yet.');
-        // Overwrite this function with an update function specific to the model, view, or collection
-      }
-    });
-  }
-  
   Object.defineProperty(this, 'notify', {
     value: function(action, data) {
       var subs = this.observers.filter(function(sub) {
@@ -194,7 +183,7 @@ function Events() {
       });
     }.bind(this)
   });
-
+    
   Object.defineProperties(this.observers, {
     'add': {
       value: function(action, observer) {
@@ -317,4 +306,11 @@ function View(model, template, options) {
   }.bind(this);
   
   Events.call(this);
+};
+
+function CollectionView(collection) {
+  View.call(this, collection);
+  
+  this.collection = this.model;
+  delete this.model;
 };

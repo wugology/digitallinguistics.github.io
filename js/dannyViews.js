@@ -10,66 +10,14 @@ function renderTextContent(textHash, wrapper) {
 };
 
 
-// APP VIEW
-var appView = new View(null, {
-  setWorkview: function(workview) {
-    if (!workview) { workview = 'texts'; }
-    
-    this.appNav.setButton(workview);
-    
-    this.notify('setWorkview', workview);
-    
-    switch (workview) {
-      case 'documents':
-        app.preferences.currentCorpus.get('documents', function(docs) {
-          var docs = new models.Documents(docs);
-          modules.documentsOverview = new modules.DocumentsOverview(docs);
-          modules.documentsOverview.render()
-        });
-        break;
-      case 'lexicon':
-        modules.lexiconOverview = new modules.LexiconOverview(null);
-        modules.lexiconOverview.render();
-        break;
-      case 'media':
-        modules.mediaOverview = new modules.MediaOverview(null);
-        modules.mediaOverview.render()
-        break;
-      case 'orthographies':
-        modules.orthographiesOverivew = new modules.OrthographiesOverview(null);
-        modules.orthographiesOverivew.render()
-        break;
-      case 'tags':
-        modules.tagsOverview = new modules.TagsOverview(null)
-        modules.tagsOverview.render();
-        break;
-      case 'texts':
-        app.preferences.currentCorpus.get('texts', function(texts) {
-          var texts = new models.Texts(texts);
-          modules.textsOverview = new modules.TextsOverview(texts);
-          modules.textsOverview.render();
-        });
-        break;
-      default:
-    }
-    
-    app.preferences.currentWorkview = workview;
-  },
-  
-  update: function(action, data) {
-    if (action == 'appNavClick') { this.setWorkview(data); }
-  }
-});
-
-
 // APP COMPONENT VIEWS
 var Nav = function() {
   View.call(this, null);  
   delete this.model;
 };
 
-var Module = function(model) {
-  View.call(this, model);
+var Module = function(collection) {
+  CollectionView.call(this, collection);
   
   if (!this.render) {
     this.render = function() { this.display(); };
@@ -91,8 +39,8 @@ var Popup = function() {
 
 
 // ITEM VIEWS
-var TextView = function(model, $('#textTemplate')) {
-  View.call(this, model, template);
+var TextView = function(model) {
+  View.call(this, model, $('#textTemplate'));
   
   workview = 'texts';
   
@@ -115,7 +63,10 @@ var TextView = function(model, $('#textTemplate')) {
       tv.querySelector('.titles').appendChild(li);
       
       input.addEventListener('blur', this.model.store);
+      
     }, this);
+    
+    $('#detailsPane').appendChild(tv);
     
     this.el = tv;
     
@@ -126,22 +77,21 @@ var TextView = function(model, $('#textTemplate')) {
     this.display();
   };
   
-  
   appView.observers.add('setWorkview', this);
   
   // Event listeners
-  tv.querySelector('#deleteTextButton').addEventListener('click', function(ev) {
+  /*this.el.querySelector('#deleteTextButton').addEventListener('click', function(ev) {
     this.hide();
     this.model.removeFromCorpus();
     this.model.delete(function() { appView.setWorkview('texts'); });
     this.notify('deleteText');
   });
 
-  tv.querySelector('.titles').addEventListener('input', function(ev) {
+  this.el.querySelector('.titles').addEventListener('input', function(ev) {
     this.model.titles[ev.target.id] = ev.target.value;
   });
   
-  tv.querySelector('.titles').addEventListener('keyup', function(ev) {
+  this.el.querySelector('.titles').addEventListener('keyup', function(ev) {
     if (ev.keyCode == 13 || ev.keyCode == 27) {
       ev.target.blur();
       this.notify('titleChange');
@@ -149,11 +99,11 @@ var TextView = function(model, $('#textTemplate')) {
     }
   });
   
-  tv.querySelector('.phrases').addEventListener('click', function(ev) {
+  this.el.querySelector('.phrases').addEventListener('click', function(ev) {
     if (ev.target.classList.contains('play')) {
       console.log('Playing: ' + ev.target.parentNode.dataset.breadcrumb);
     }
-  });
+  });*/
 };
 
 var PhraseView = function(model) {
