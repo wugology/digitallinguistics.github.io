@@ -85,7 +85,7 @@ Breadcrumb = {
   },
   
   parse: function(breadcrumb) {
-    return breadcrumb.split('_');
+    return breadcrumb.split('_').map(Number);
   },
   
   // Resets the breadcrumbs on every item within an item

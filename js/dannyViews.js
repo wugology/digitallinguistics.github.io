@@ -148,9 +148,18 @@ var TextView = function(model) {
     
     this.el.querySelector('.phrases').addEventListener('click', function(ev) {
       if (ev.target.classList.contains('play')) {
-        console.log('Playing: ' + ev.target.parentNode.dataset.breadcrumb);
+        var crumb = Breadcrumb.parse(ev.target.parentNode.dataset.breadcrumb);
+        var phrase = this.model.phrases[crumb[1]];
+        
+        var playMedia = function(media) {
+          var url = URL.createObjectURL(media[0].file);
+          var a = new Audio(url + '#t=' + phrase.startTime + ',' + phrase.endTime);
+          a.play();
+        };
+        
+        this.model.get('media', playMedia);
       }
-    });
+    }.bind(this));
     
     this.display();
   };
@@ -169,7 +178,7 @@ var PhraseView = function(model) {
   
   this.render = function(wrapper, options) {
     var pv = this.template.content.querySelector('.phrase').cloneNode(true);
-    pv.dataset.breadcrumb = model.breadcrumb;
+    pv.dataset.breadcrumb = Breadcrumb.stringify(model.breadcrumb);
     var contentWrapper = pv.querySelector('.wrapper');
     
     renderTextContent(this.model.transcripts, contentWrapper);
