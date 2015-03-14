@@ -41,6 +41,18 @@ var app = {
             appView.corpusSelector.render();
           }
         }
+        
+        if (app.preferences.display) {
+          if (app.preferences.display) {
+            if (app.preferences.display.overviewPane == 'closed') { appView.toggleOverviewPane(); }
+            if (app.preferences.display.toolbar == 'closed') { appView.toggleToolbar(); }
+          }
+        } else {
+          app.preferences.display = {
+            overviewPane: 'open',
+            toolbar: 'open'
+          };
+        }
       });
     };
     
@@ -111,12 +123,31 @@ var AppView = function() {
   };
   
   this.toggleOverviewPane = function() {
+    if ($('#overviewPane').classList.contains('open')) {
+      $('#collapseLeft').src = 'img/collapseLeft.svg';
+      app.preferences.display.overviewPane = 'closed';
+    } else {
+      $('#collapseLeft').src = 'img/collapseRight.svg';
+      app.preferences.display.overviewPane = 'open';
+    }
+    
     $('#overviewPane').classList.toggle('closed');
     $('#overviewPane').classList.toggle('open');
     $('#sideNav li:not(:first-child)').forEach(function(navButton) { navButton.classList.toggle('hideonDesktop'); });
   };
   
   this.toggleToolbar = function() {
+    if ($('#toolbar').classList.contains('open')) {
+      $('#collapseRight').src = 'img/collapseLeft.svg';
+      app.preferences.display.toolbar = 'closed';
+    } else {
+      $('#collapseRight').src = 'img/collapseRight.svg';
+      app.preferences.display.toolbar = 'open';
+    }
+    
+    $('#toolbar').classList.toggle('closed');
+    $('#toolbar').classList.toggle('open');
+    $('#toolbarNav li:not(:first-child)').classList.toggle('hideonDesktop');
   };
   
   this.update = function(action, data) {

@@ -1,11 +1,12 @@
 /* Styling for Danny's app */
 
 /* Styling by CSS rule(s) (alphabetical by CSS rule) */
-.media li, #mediaList li, {
+.media, #mediaList li, #searchField, .titles li {
   -webkit-align-items: center;
   align-items: center; }
 
 audio, .play {
+  -webkit-align-self: center;
   align-self: center; }
   
 footer, section {
@@ -20,7 +21,7 @@ footer, section {
 #mediaList li, icon, #textsList li {
   cursor: pointer; }
 
-.media li, #mediaList li, .phrase, #searchField, #textsList li, .titles li {
+.buttons, .media li, #mediaList li, .phrase, #searchField, #textsList li, .titles li {
   -webkit-flex-direction: row;
   flex-direction: row; }
 
@@ -86,18 +87,11 @@ legend {
   font-family: 'Gentium Plus';
   font-size: 150%;
   width: 90%; }
+
+#toolbar.closed #toolbarContent {
+  display: none; }
   
 /* Styling by DOM elements (organized by DOM structure) */
-#searchField, .titles li, #mediaList li {
-  -webkit-align-items: center;
-  align-items: center; }
-
-#sideNav {
-  left: 0; }
-
-#toolbarNav {
-  right: 0; }
-
 #corpusSelector {
   background-color: #3F93F9;
   border: 1px solid white;
@@ -107,8 +101,18 @@ legend {
 #corpusSelector:hover {
   box-shadow: 0 0 5px 0 white; }
 
-#textsDetail header {
-  align-items: stretch; }
+.buttons {
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-justify-content: center;
+  justify-content: center; }
 
-#textsDetail fieldset {
-  border: 1px solid black; }
+.text header {
+  -webkit-align-items: flex-start;
+  align-items: flex-start; }
+
+#sideNav {
+  left: 0; }
+
+#toolbarNav {
+  right: 0; }
