@@ -53,6 +53,8 @@ var app = {
             toolbar: 'open'
           };
         }
+        
+        if (!app.preferences.currentPhrase) { app.preferences.currentPhrase = null; }
       });
     };
     
@@ -487,6 +489,22 @@ popups.Settings = function() {
 // EVENT LISTENERS
 $('#popups').addEventListener('click', function(ev) {
   if (ev.target.classList.contains('icon')) { popups[ev.target.parentNode.id.replace('Popup', '')].hide(); }
+});
+document.body.addEventListener('keydown', function(ev) {
+  if (ev.keyCode == 9 && app.preferences.currentPhrase && app.preferences.currentWorkview == 'texts') {
+    ev.preventDefault();
+
+    if (app.preferences.currentPhrase[0] == app.preferences.currentText.id) {
+      app.preferences.currentText.phrases[app.preferences.currentPhrase[1]].play();
+      
+    } else {
+      var playAudio = function(results) {
+        results[0].phrases[app.preferences.currentPhrase[1]].play();
+      };
+      
+      idb.get(app.preferences.currentPhrase[0], 'texts', playAudio);
+    }
+  }
 });
 window.addEventListener('load', app.initialize);
 window.addEventListener('unload', app.save);

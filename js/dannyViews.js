@@ -134,17 +134,37 @@ var TextView = function(model) {
       this.model.delete(function() { appView.setWorkview('texts'); });
       this.notify('deleteText');
     }.bind(this));
+
+    this.el.querySelector('.phrases').addEventListener('blur', function(ev) {
+      app.preferences.currentText.store();
+    }, true);
     
+    this.el.querySelector('.phrases').addEventListener('click', function(ev) {
+      if (ev.target.classList.contains('play')) {
+        var crumb = Breadcrumb.parse(ev.target.parentNode.dataset.breadcrumb);
+        var phrase = this.model.phrases[crumb[1]];
+        phrase.play();
+      }
+      
+      if (ev.target.classList.contains('phrase')) {
+        $('.phrase').forEach(function(phraseEl) { phraseEl.classList.remove('selected'); });
+        ev.target.classList.add('selected');
+        app.preferences.currentPhrase = Breadcrumb.parse(ev.target.dataset.breadcrumb);
+      }
+      
+      if (ev.target.classList.contains('phraseContent')) {
+        $('.phrase').forEach(function(phraseEl) { phraseEl.classList.remove('selected'); });
+        ev.target.parentNode.parentNode.classList.add('selected');
+        app.preferences.currentPhrase = Breadcrumb.parse(ev.target.parentNode.parentNode.dataset.breadcrumb);
+      }
+    }.bind(this));
+
     this.el.querySelector('.phrases').addEventListener('input', function(ev) {
       if (ev.target.classList.contains('phraseContent')) {
         var crumb = Breadcrumb.parse(ev.target.parentNode.parentNode.dataset.breadcrumb);
         app.preferences.currentText.phrases[crumb[1]][ev.target.dataset.type][ev.target.dataset.ortho] = ev.target.textContent;
       }
     });
-    
-    this.el.querySelector('.phrases').addEventListener('blur', function(ev) {
-      app.preferences.currentText.store();
-    }, true);
     
     this.el.querySelector('.phrases').addEventListener('keydown', function(ev) {
       if (ev.keyCode == 13 || ev.keyCode == 27) {
@@ -163,14 +183,6 @@ var TextView = function(model) {
         ev.target.blur();
         this.notify('titleChange');
         this.model.store();
-      }
-    }.bind(this));
-    
-    this.el.querySelector('.phrases').addEventListener('click', function(ev) {
-      if (ev.target.classList.contains('play')) {
-        var crumb = Breadcrumb.parse(ev.target.parentNode.dataset.breadcrumb);
-        var phrase = this.model.phrases[crumb[1]];
-        phrase.play();
       }
     }.bind(this));
     
