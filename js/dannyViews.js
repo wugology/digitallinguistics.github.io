@@ -23,30 +23,30 @@ var appView = new View(null, {
       case 'documents':
         app.preferences.currentCorpus.get('documents', function(docs) {
           var docs = new models.Documents(docs);
-          modules.documentsOverview = new modules.DocumentsOverview(docs, modules.documentsOverviewDefaults);
+          modules.documentsOverview = new modules.DocumentsOverview(docs);
           modules.documentsOverview.render()
         });
         break;
       case 'lexicon':
-        modules.lexiconOverview = new modules.LexiconOverview(null, modules.lexiconOverviewDefaults);
+        modules.lexiconOverview = new modules.LexiconOverview(null);
         modules.lexiconOverview.render();
         break;
       case 'media':
-        modules.mediaOverview = new modules.MediaOverview(null, modules.mediaOverviewDefaults);
+        modules.mediaOverview = new modules.MediaOverview(null);
         modules.mediaOverview.render()
         break;
       case 'orthographies':
-        modules.orthographiesOverivew = new modules.OrthographiesOverview(null, modules.orthographiesOverviewDefaults);
+        modules.orthographiesOverivew = new modules.OrthographiesOverview(null);
         modules.orthographiesOverivew.render()
         break;
       case 'tags':
-        modules.tagsOverview = new modules.TagsOverview(null, modules.tagsOverviewDefaults)
+        modules.tagsOverview = new modules.TagsOverview(null)
         modules.tagsOverview.render();
         break;
       case 'texts':
         app.preferences.currentCorpus.get('texts', function(texts) {
           var texts = new models.Texts(texts);
-          modules.textsOverview = new modules.TextsOverview(texts, modules.textsOverviewDefaults);
+          modules.textsOverview = new modules.TextsOverview(texts);
           modules.textsOverview.render();
         });
         break;
@@ -70,6 +70,17 @@ var Nav = function() {
 
 var Module = function(model) {
   View.call(this, model);
+  
+  if (!this.render) {
+    this.render = function() { this.display(); };
+  }
+  
+  if (!this.update) {
+    this.update = function(action, data) {
+      if (data != this.workview) { this.hide(); }
+    };
+  }
+  
   appView.observers.add('setWorkview', this);
 };
 
@@ -80,6 +91,9 @@ var Popup = function() {
 
 
 // ITEM VIEWS
+var TextView = function(text) {
+};
+
 var PhraseView = function(model) {
   View.call(this, model);
   

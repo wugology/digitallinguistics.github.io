@@ -298,7 +298,6 @@ function View(model, options) {
   
   // The optional media elements specifies whether you would only like to display the element on one media type (desktop/mobile)
   this.display = function(media) {
-    console.log(this);
     if (media != 'mobile') { this.el.classList.remove('hideonDesktop'); }
     if (media != 'desktop') { this.el.classList.remove('hideonMobile'); }
   }.bind(this);

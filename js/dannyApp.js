@@ -159,257 +159,116 @@ var modules = {};
 
 modules.DocumentsOverview = function(collection) {
   Module.call(this, collection);
+  
   this.workview = 'documents';
   
-  this.el = $('documentsOverview');
+  this.el = $('#documentsOverview');
+};
+
+modules.LexiconOverview = function(collection) {
+  Module.call(this, collection);
   
-  this.render = function() {
-    this.display();
-  };
+  this.workview = 'lexicon';
   
-  this.update = function(action, data) {
-    if (data != this.workview) {
-      this.hide();
-      appView.observers.remove(this);
-    }
-  };
+  this.el = $('#lexiconOverview');
 };
 
-modules.LexiconOverview = function(collection, options) {
-  Module.call(this, collection, options);
-};
-
-modules.lexiconOverviewDefaults = {
-  el: $('#lexiconOverview'),
-  workview: 'lexicon',
+modules.MediaOverview = function(collection) {
+  Module.call(this, collection);
   
-  render: function() {
-    this.display();
-  },
-
-  update: function(action, data) {
-    if (data != this.workview) { this.hide(); }
-    appView.observers.remove(this);
-  }
-};
-
-modules.MediaOverview = function(collection, options) {
-  Module.call(this, collection, options);
-};
-
-modules.mediaOverviewDefaults = {
-  el: $('#mediaOverview'),
-  workview: 'media',
-
-  render: function() {
-    this.display();
-  },
+  this.workview = 'media';
   
-  update: function(action, data) {
-    if (data != this.workview) { this.hide(); }
-    appView.observers.remove(this);
-  }
+  this.el = $('#mediaOverview');
 };
 
-modules.OrthographiesOverview = function(collection, options) {
-  Module.call(this, collection, options);
-};
-
-modules.orthographiesOverviewDefaults = {
-  el: $('#orthographiesOverview'),
-  workview: 'orthographies',
+modules.OrthographiesOverview = function(collection) {
+  Module.call(this, collection);
   
-  render: function() {
-    this.display();
-  },
-
-  update: function(action, data) {
-    if (data != this.workview) { this.hide(); }
-    appView.observers.remove(this);
-  }
-};
-
-modules.TagsOverview = function(collection, options) {
-  Module.call(this, collection, options);
-};
-
-modules.tagsOverviewDefaults = {
-  el: $('#tagsOverview'),
-  workview: 'tags',
+  this.workview = 'orthographies';
   
-  render: function() {
-    this.display();
-  },
-
-  update: function(action, data) {
-    if (data != this.workview) { this.hide(); }
-    appView.observers.remove(this);
-  }
+  this.el = $('#orthographiesOverview');
 };
 
-modules.TextsOverview = function(collection, options) {
-  Module.call(this, collection, options);
+modules.TagsOverview = function(collection) {
+  Module.call(this, collection);
+  
+  this.workview = 'tags';
+  
+  this.el = $('#tagsOverview');
 };
 
-modules.textsOverviewDefaults = {
-  el: $('#textsOverview'),
-  importButton: $('#importTextButton'),
-  textsList: $('#textsList'),
-  workview: 'texts',
+modules.TextsOverview = function(collection) {
+  Modules.call(this, collection);
   
-  handlers: [
-    {
-      el: 'importButton',
-      evType: 'click',
-      functionCall: function() {
-        popups.fileUpload.render(function(file) {
-          var importText = function(text) {
-            text.store(function(textIDs) {
-              text.id = textIDs[0];
-              Breadcrumb.reset(text);
-              text.addToCorpus();
-              text.store(function() { appView.setWorkview('texts'); });
-            });
-          };
-          
-          tools.elan2json(file, ekegusiiColumns, importText);
-        });
-      }
-    },
-    {
-      el: 'textsList',
-      evType: 'click',
-      functionCall: function(ev) {
-        if (ev.target.parentNode.classList.contains('textsListItem')) {
-          var text = modules.textsOverview.model.filter(function(text) {
-            return text.id == Number(ev.target.parentNode.dataset.id);
-          })[0];
-          
-          text.render(function(text) {
-            modules.textsDetail = new modules.TextsDetail(text, modules.textsDetailDefaults);
-            modules.textsDetail.observers.add('titleChange', modules.textsOverview);
-            modules.textsDetail.observers.add('deleteText', modules.textsOverview);
-            modules.textsDetail.render();
-            text.setAsCurrent();
-          });
-        }
-      }
-    }
-  ],
+  this.workview = 'texts';
   
-  populateListItem: function (text, li) {
+  this.el = $('#textsOverview');
+  this.importButton = $('#importTextButton');
+  this.textsList = $('#textsList');
+  
+  var populateTextsListItem = function(text, li) {
     li.dataset.id = text.id;
     li.classList.add('textsListItem');
     var p = createElement('p', { textContent: text.titles.Eng || '[click to display this text]' });
     li.appendChild(p);
-  },
+  };
   
-  render: function() {
-    modules.textsOverview.model.list(modules.textsOverview.textsList, modules.textsOverview.populateListItem);
-    modules.textsOverview.display();
-  },
+  this.render = function() {
+    this.collection.list(this.textsList, populateTextsListItem);
+    this.display();
+  };
   
-  update: function(action, data) {
+  this.update = function(action, data) {
     if (action == 'setWorkview') {
       if (data != this.workview) { this.hide(); }
-      appView.observers.remove(this);
     } else if (action == 'deleteText' || action == 'titleChange') {
-      this.model.list(this.textsList, this.populateListItem);
+      this.collection.list(this.textsList, populateTextsListItem);
     }
-  }
+  };
+  
+  // Event listeners
+  this.importButton.addEventListener('click', function() {
+    popups.fileUpload.render(function(file) {
+      var importText = function(text) {
+        var incorporate = function(textIDs) {
+          text.id = textIDs[0];
+          Breadcrumb.reset(text);
+          text.addToCorpus();
+          
+          var setView = function() { appView.setWorkview('texts'); };
+          
+          text.store(setView);
+        };
+        
+        text.store(incorporate);
+      };
+      
+      tools.elan2json(file, ekegusiiColumns, importText);
+    });
+  });
+  
+  this.textsList.addEventListener('click', function(ev) {
+    if (ev.target.parentNode.classList.contains('textsListItem')) {
+      var text = this.collection.filter(function(text) {
+        return text.id = Number(ev.target.parentNode.dataset.id);
+      })[0];
+    }
+    
+    var renderFunction = function(text) {
+      modules.textsDetail = new modules.TextsDetail(text);
+      modules.textsDetail.observers.add('titleChange', this);
+      modules.textsDetail.observers.add('deleteText', this);
+      modules.textsDetail.render();
+      text.setAsCurrent();
+    };
+    
+    text.render(renderFunction);
+  });
 };
 
 
 // DETAIL MODULES
-modules.DocumentsDetail = function(model, options) {
-  Module.call(this, model, options);
-};
 
-modules.documentsDetailDefaults = {
-  el: $('#documentsDetail'),
-  workview: 'documents',
-  
-  render: function() {
-    this.display();
-  },
-
-  update: function(action, data) {
-    if (data != this.workview) { this.hide(); }
-    appView.observers.remove(this);
-  }
-};
-
-modules.LexiconDetail = function(model, options) {
-  Module.call(this, model, options);
-};
-
-modules.lexiconDetailDefaults = {
-  el: $('#lexiconDetail'),
-  workview: 'lexicon',
-  
-  render: function() {
-    this.display();
-  },
-  
-  update: function(action, data) {
-    if (data != this.workview) { this.hide(); }
-    appView.observers.remove(this);
-  }
-};
-
-modules.MediaDetail = function(model, options) {
-  Module.call(this, model, options);
-};
-
-modules.mediaDetailDefaults = {
-  el: $('#mediaDetail'),
-  workview: 'media',
-  
-  render: function() {
-    this.display();
-  },
-  
-  update: function(action, data) {
-    if (data != this.workview) { this.hide(); }
-    appView.observers.remove(this);
-  }
-};
-
-modules.OrthographiesDetail = function(model, options) {
-  Module.call(this, model, options);
-};
-
-modules.orthographiesDetailDefaults = {
-  el: $('#orthographiesDetail'),
-  workview: 'orthographies',
-  
-  render: function() {
-    this.display();
-  },
-
-  update: function(action, data) {
-    if (data != this.workview) { this.hide(); }
-    appView.observers.remove(this);
-  }
-};
-
-modules.TagsDetail = function(model, options) {
-  Module.call(this, model, options);
-};
-
-modules.tagsDetailDefaults = {
-  el: $('#tagsDetail'),
-  workview: 'tags',
-  
-  render: function() {
-    this.display();
-  },
-
-  update: function(action, data) {
-    if (data != this.workview) { this.hide(); }
-    appView.observers.remove(this);
-  }
-};
 
 modules.TextsDetail = function(model, options) {
   Module.call(this, model, options);
