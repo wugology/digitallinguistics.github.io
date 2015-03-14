@@ -168,10 +168,11 @@ AppView.CorpusSelector = function() {
       
       if (typeof callback == 'function') { callback(); }
     }.bind(this));
-  };
+  }.bind(this);
   
   this.el.addEventListener('change', function(ev) {
     if (ev.target.value == 'manage') {
+      popups.manageCorpora.render();
       this.el.value = app.preferences.currentCorpus.id;
     } else if (ev.target.value != 'select') {
       var setCorpus = function(results) {
@@ -399,6 +400,8 @@ popups.ManageCorpora = function() {
 };
 
 popups.Settings = function() {
+  Popup.call(this);
+  
   this.el = $('#settingsPopup');
   this.icon = $('#settingsIcon');
   
