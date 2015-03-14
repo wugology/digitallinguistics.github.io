@@ -34,6 +34,9 @@ models.Corpus = function Corpus(data) {
   if (!this.lexicons) { this.lexicons = []; }
   if (!this.media) { this.media = []; }
   if (!this.texts) { this.texts = []; }
+  if (!this.tags) { this.tags = []; }
+  
+  this.tags = new models.Tags(this.tags);
   
   Object.defineProperties(this, {
     // Retrieves all the specified type of object in this corpus from IndexedDB
@@ -88,15 +91,9 @@ models.Language = function Language(data) {
 models.Text = function Text(data) {
   Model.call(this, data);
   
-  if (this.phrases) {
-    this.phrases = this.phrases.map(function(phraseData) {
-      return new models.Phrase(phraseData);
-    });
-    
-    this.phrases = new models.Phrases(this.phrases);
-  } else {
-    this.phrases = new models.Phrases([]);
-  }
+  if (!this.phrases) { this.phrases = [];}
+  
+  this.phrases = new models.Phrases(this.phrases);
   
   this.observers.add('addToCorpus', app.preferences.currentCorpus);
   
@@ -198,12 +195,21 @@ models.Lexeme = function Lexeme(data, callback) {
 // Morphemes do not have a model - only lexemes
 
 // Abbr: cxn
-models.Construction = function Construction() {
-  Model.call(this, data);
-};
+models.Construction = function Construction(data) {};
 
-models.Tag = function Tag() {
-  Model.call(this, data);
+models.Tag = function Tag(data) {
+  if (data) { augment(this, data); }
+  
+  this.category = this.category || '';
+  this.value = this.value || '';
+  this.level = this.level || '';
+  
+  Object.defineProperties(this, {
+    'model': {
+      enumerable: true,
+      value: 'Tag'
+    }
+  });
 };
 
 
@@ -264,7 +270,7 @@ models.Phrases = function Phrases(data) {
   var coll = data.map(function(phraseData) {
     return new models.Phrase(phraseData);
   });
-  
+
   var phrases = new Collection(coll);
   
   // populatePhrase is a function that takes a phrase a content wrapper for that phrase as its argument
@@ -309,4 +315,14 @@ models.Lexicon = function Lexicon(data) {
   var lexicon = new Collection(coll);
   
   return lexicon;
+};
+
+models.Tags = function(data) {
+  var coll = data.map(function(tagData) {
+    return new models.Tag(tagData);
+  });
+  
+  var tags = new Collection(coll);
+  
+  return tags;
 };

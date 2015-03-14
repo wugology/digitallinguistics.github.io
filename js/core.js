@@ -250,24 +250,16 @@ function Model(data) {
 function Collection(data) {
   Events.call(data);
   
-  delete data.model;
-  
   Object.defineProperties(data, {
     'json': {
       get: function() {
-        return JSON.stringify(this);
+        return JSON.stringify(this, null, 2);
       }
     },
     
     'model': {
       enumerable: true,
       value: this.constructor.name
-    },
-    
-    'search': {
-      value: function() {
-        // A search function for collections
-      }
     }
   });
   

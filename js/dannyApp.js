@@ -43,6 +43,8 @@ var app = {
           }
         }
         
+        if (app.preferences.currentText) { app.preferences.currentText = hydrate(app.preferences.currentText); }
+        
         if (app.preferences.display) {
           if (app.preferences.display) {
             if (app.preferences.display.overviewPane == 'closed') { appView.toggleOverviewPane(); }
@@ -124,11 +126,10 @@ var AppView = function() {
         modules.orthographiesOverview.render()
         break;
       case 'tags':
-        modules.tagsOverview = new modules.TagsOverview(null)
+        modules.tagsOverview = new modules.TagsOverview(app.preferences.currentCorpus.tags)
         modules.tagsOverview.render();
         break;
       case 'texts':
-        
         app.preferences.currentCorpus.get('texts', function(texts) {
           var texts = new models.Texts(texts);
           modules.textsOverview = new modules.TextsOverview(texts);
@@ -338,6 +339,55 @@ modules.TagsOverview = function(collection) {
   this.workview = 'tags';
   
   this.el = $('#tagsOverview');
+  this.tagsList = $('#tagsList');
+  
+  this.listTags = function() {
+    this.collection.sort(function(a, b) {
+      return a.category > b.category;
+    });
+    
+    var getCategories = function() {
+      var categories = [];
+      
+      this.collection.forEach(function(tag) {
+        var matches = categories.filter(function(category) {
+          return tag.category == category;
+        });
+        
+        if (matches.length == 0) { categories.push(tag.category); }
+      });
+      
+      return categories;
+    }.bind(this);
+    
+    var displayByCategories = function() {
+      getCategories().forEach(function(category) {
+        var li = createElement('li');
+        var h2 = createElement('h2', { textContent: category});
+        li.appendChild(h2);
+        var ul = createElement('ul');
+        li.appendChild(ul);
+        
+        var tagsInCategory = this.collection.filter(function(tag) {
+          return tag.category == category;
+        });
+        
+        createList(ul, tagsInCategory, function(tag, li) {
+          li.dataset.tag = tag.category + ':' + tag.value;
+          li.textContent = tag.value;
+        });
+
+        this.tagsList.appendChild(li);
+      }, this);
+    }.bind(this);
+    
+    displayByCategories();
+  }.bind(this);
+  
+  this.render = function() {
+    this.listTags();
+    this.display();
+  };
 };
 
 modules.TextsOverview = function(collection) {
