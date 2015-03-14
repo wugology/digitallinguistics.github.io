@@ -1,7 +1,8 @@
 /* Styling for Danny's app */
 
 /* Styling by CSS rule(s) (alphabetical by CSS rule) */
-.media li {
+.media li, #mediaList li, {
+  -webkit-align-items: center;
   align-items: center; }
 
 audio, .play {
@@ -19,9 +20,13 @@ footer, section {
 #mediaList li, icon, #textsList li {
   cursor: pointer; }
 
-.media li, .phrase, #searchField, #textsList li, .titles li {
+.media li, #mediaList li, .phrase, #searchField, #textsList li, .titles li {
   -webkit-flex-direction: row;
   flex-direction: row; }
+
+#searchBox, #mediaList li p {
+  -webkit-flex-grow: 1;
+  flex-grow: 1; }
 
 .phrase {
   margin-top: 1rem; }
@@ -39,6 +44,9 @@ footer, section {
   top: 0; }
 
 /* Styling by classes or element type (alphabetical by class/element) */
+.closed {
+  max-width: 2.5rem; }
+
 img[src='img/close.svg'] {
   top: 0.5rem;
   right: 0.5rem;
@@ -49,9 +57,17 @@ legend {
 
 .mainSection {
   position: relative;
-  max-width: 100%;
   transition: max-width 1s;
   width: 33%; }
+
+.mainSection.closed .module {
+  display: none; }
+
+#mediaList li img {
+  height: 2rem; }
+  
+.open {
+  max-width: 100%; }
 
 .phrase {
   background-color: rgba(63, 147, 249, 0.25);
@@ -72,11 +88,8 @@ legend {
   width: 90%; }
   
 /* Styling by DOM elements (organized by DOM structure) */
-#searchBox {
-  -webkit-flex-grow: 1;
-  flex-grow: 1; }
-
-#searchField, .titles li {
+#searchField, .titles li, #mediaList li {
+  -webkit-align-items: center;
   align-items: center; }
 
 #sideNav {

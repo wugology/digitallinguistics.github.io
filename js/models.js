@@ -8,7 +8,22 @@ models.Document = function(data) {
 
 models.MediaFile = function MediaFile(data) {
   Model.call(this, data);
-  // Maybe some methods to read the file to an array buffer, etc.
+  
+  this.observers.add('addToCorpus', app.preferences.currentCorpus);
+
+  Object.defineProperties(this, {
+    'addToCorpus': {
+      value: function() {
+        this.notify('addToCorpus', this);
+      }.bind(this)
+    },
+    
+    'removeFromCorpus': {
+      value: function() {
+        this.notify('removeFromCorpus', this).bind(this);
+      }.bind(this)
+    }
+  });
 };
 
 models.Corpus = function Corpus(data) {
@@ -37,14 +52,27 @@ models.Corpus = function Corpus(data) {
     'update': {
       value: function(action, data) {
         if (action == 'addToCorpus') {
-          this.texts.push(data.id);
+          if (data.model == 'Text') {
+            this.texts.push(data.id);
+          } else if (data.model == 'MediaFile') {
+            this.media.push(data.id);
+          }
+          
           data.observers.add('removeFromCorpus', this);
           this.store();
+        
         } else if (action == 'removeFromCorpus') {
           data.observers.remove('removeFromCorpus', this);
-          this.texts.forEach(function(textID, i) {
-            if (textID == data.id) { this.texts.splice(i, 1); }
-          });
+          
+          if (data.model == 'Text') {
+            this.texts.forEach(function(textID, i) {
+              if (textID == data.id) { this.texts.splice(i, 1); }
+            });
+          } else if (data.model == 'MediaFile') {
+            this.media.forEach(function(mediaID, i) {
+              if (mediaID == data.id) { this.media.splice(i, 1); }
+            });
+          }
         }
       }.bind(this)
     }
@@ -171,6 +199,10 @@ models.MediaFiles = function MediaFiles(data) {
   });
   
   var media = new Collection(coll);
+  
+  media.list = function(wrapper, populateListItem) {
+    createList(wrapper, this, populateListItem);
+  };
   
   return media;
 };

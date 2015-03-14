@@ -115,13 +115,14 @@ var TextView = function(model) {
         
         var media = new models.MediaFile(data);
         
-        var addToText = function(mediaIDs) {
+        var addToCorpus = function(mediaIDs) {
+          media.addToCorpus();
           this.model.media.push(mediaIDs[0]);
           this.model.store();
           this.render();
         }.bind(this);
         
-        media.store(addToText);
+        media.store(addToCorpus);
       }.bind(this);
       
       popups.fileUpload.render(goButtonCallback);
@@ -154,14 +155,10 @@ var TextView = function(model) {
         
         var playMedia = function(media) {
           if (media.length == 0) { alert('No media files are associated with this text.'); }
-/*          var src = $('audio').src + '#t=' + phrase.startTime + ',' + phrase.endTime;
-          var a = new Audio(src);
-          a.play();
-        
+          
           var url = URL.createObjectURL(media[0].file);
           var a = new Audio(url + '#t=' + phrase.startTime + ',' + phrase.endTime);
           a.play();
-          URL.revokeObjectURL(media[0].file); */
         };
         
         this.model.get('media', playMedia);

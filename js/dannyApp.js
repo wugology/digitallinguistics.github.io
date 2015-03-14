@@ -83,8 +83,11 @@ var AppView = function() {
         modules.lexiconOverview.render();
         break;
       case 'media':
-        modules.mediaOverview = new modules.MediaOverview(null);
-        modules.mediaOverview.render()
+        app.preferences.currentCorpus.get('media', function(media) {
+          var media = new models.MediaFiles(media);
+          modules.mediaOverview = new modules.MediaOverview(media);
+          modules.mediaOverview.render()
+        });
         break;
       case 'orthographies':
         modules.orthographiesOverview = new modules.OrthographiesOverview(null);
@@ -103,11 +106,25 @@ var AppView = function() {
         break;
       default:
     }
+    
+    app.preferences.currentWorkview = workview;
+  };
+  
+  this.toggleOverviewPane = function() {
+    $('#overviewPane').classList.toggle('closed');
+    $('#overviewPane').classList.toggle('open');
+    $('#sideNav li:not(:first-child)').forEach(function(navButton) { navButton.classList.toggle('hideonDesktop'); });
+  };
+  
+  this.toggleToolbar = function() {
   };
   
   this.update = function(action, data) {
     if (action == 'appNavClick') { this.setWorkview(data); }
   };
+  
+  $('#collapseLeft').addEventListener('click', this.toggleOverviewPane);
+  $('#collapseRight').addEventListener('click', this.toggleToolbar);
 };
 
 
@@ -177,8 +194,9 @@ AppView.CorpusSelector = function() {
     } else if (ev.target.value != 'select') {
       var setCorpus = function(results) {
         app.preferences.currentCorpus = results[0];
+        this.notify('switchCorpus');
         appView.setWorkview(app.preferences.currentWorkview);
-      };
+      }.bind(this);
       
       idb.get(Number(ev.target.value), 'corpora', setCorpus);
     }
@@ -237,6 +255,23 @@ modules.MediaOverview = function(collection) {
   this.workview = 'media';
   
   this.el = $('#mediaOverview');
+  this.mediaList = $('#mediaList');
+  
+  var populateListItem = function(media, li) {
+    li.dataset.id = media.id;
+    var p = createElement('p', { textContent: media.file.name });
+    var img = createElement('img', { src: 'img/delete.svg', alt: 'remove this media file from this corpus'});
+    img.classList.add('icon');
+    li.appendChild(p);
+    li.appendChild(img);
+  };
+  
+  this.render = function() {
+    this.collection.list(this.mediaList, populateListItem);
+    this.display();
+  };
+  
+  this.mediaList.addEventListener();
 };
 
 modules.OrthographiesOverview = function(collection) {
@@ -268,6 +303,7 @@ modules.TextsOverview = function(collection) {
     li.dataset.id = text.id;
     li.classList.add('textsListItem');
     var p = createElement('p', { textContent: text.titles.Eng || '[click to display this text]' });
+    p.classList.add('unicode');
     li.appendChild(p);
   };
   
@@ -281,8 +317,12 @@ modules.TextsOverview = function(collection) {
       if (data != this.workview) { this.hide(); }
     } else if (action == 'deleteText' || action == 'titleChange') {
       this.collection.list(this.textsList, populateTextsListItem);
+    } else if (action == 'switchCorpus') {
+      this.textsList.removeEventListener('click', renderTextsList);
     }
   };
+  
+  appView.corpusSelector.observers.add('switchCorpus', this);
   
   // Event listeners
   this.importButton.addEventListener('click', function() {    
@@ -305,10 +345,10 @@ modules.TextsOverview = function(collection) {
     });
   });
   
-  this.textsList.addEventListener('click', function(ev) {
+  var renderTextsList = function renderTextsList(ev) {
     if (ev.target.parentNode.classList.contains('textsListItem')) {
       var text = this.collection.filter(function(text) {
-        return text.id = Number(ev.target.parentNode.dataset.id);
+        return text.id == Number(ev.target.parentNode.dataset.id);
       })[0];
       
       var renderFunction = function(text) {
@@ -321,7 +361,9 @@ modules.TextsOverview = function(collection) {
 
       text.render(renderFunction);
     }
-  }.bind(this));
+  }.bind(this);
+  
+  this.textsList.addEventListener('click', renderTextsList);
 };
 
 
