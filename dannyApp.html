@@ -98,51 +98,8 @@
       </div>
     </section>
     
-    <section id=detailsPane class=mainSection>
-      <header>
-        <h1>Details Pane</h1>
-      </header>
+    <section id=detailsPane class=mainSection></section>
       
-      <p>This is the details pane, where the user will be doing most of their work. Users will use the overview pane to pull up items to work on, and then input and edit those items here.</p>
-      <p>Each of the modules in this section will be hidden unless the user has selected the relevant view from the navigation menu at the top of the page.</p>
-
-      <div id=documentsDetail class='details module hideonDesktop hideonMobile'>
-        <p>This is a documents module. Details of individual documents - or perhaps the document itself - will be displayed here.</p>
-      </div>
-      
-      <div id=lexiconDetail class='details module hideonDesktop hideonMobile'>
-        <p>This is a lexicon module. Details of individual lexical entries will be displayed here.</p>
-      </div>
-      
-      <div id=mediaDetail class='details module hideonDesktop hideonMobile'>
-        <audio class=audioPlayer controls></audio>
-      </div>
-      
-      <div id=orthographiesDetail class='details module hideonDesktop hideonMobile'>
-        <p>This is an orthographies module. Details of individual orthographies will be displayed here.</p>
-      </div>
-      
-      <div id=tagsDetail class='details module hideonDesktop hideonMobile'>
-        <p>This is a tags module. Details of individual tags will be displayed here (for example, all the phrases a tag has been applied to).</p>
-      </div>
-      
-      <div id=textsDetail class='details module hideonDesktop hideonMobile'>
-        <button id=addTextMediaButton type=button value='Add a media file to this text'>Add a media file to this text</button>
-        <button id=deleteTextButton type=button value='Delete this text'>Delete this text</button>
-
-        <header>
-          <fieldset>
-            <legend>Title</legend>
-            <ul class='titles' spellcheck=false></ul>
-          </fieldset>
-        </header>
-        
-        <div class=media></div>
-        
-        <ol class=phrases></ol>
-      </div>
-    </section>
-    
     <section id=toolbar class=mainSection>
       <nav id=toolbarNav class=hideonMobile>
         <ul>
@@ -233,19 +190,34 @@
   </div>
   
   <div id=templates>
+    <template id=textTemplate>
+      <button id=addTextMediaButton type=button value='Add a media file to this text'>Add a media file to this text</button>
+      <button id=deleteTextButton type=button value='Delete this text'>Delete this text</button>
+      
+      <header>
+        <fieldset>
+          <legend>Title</legend>
+          <ul class=titles spellcheck=false></ul>
+        </fieldset>
+      </header>
+      
+      <div class=media></div>
+      
+      <ol class=phrases></ol>
+    </template>
+    
     <template id=phraseTemplate>
       <li class=phrase>
         <img src=img/play.svg alt='play audio for this phrase' class='play icon'>
         <div class=wrapper></div>
       </li>
     </template>
-  </div>
   
   <script src=js/site.js></script>
   <script src=js/idb.js></script>
   <script src=js/core.js></script>
   <script src=js/models.js></script>
-  <script src=js/dannyViews.js></script>
+  <script src=js/dannyViews .js></script>
   <script src=js/dannyApp.js></script>
   <script src=js/tools.js></script>
 </body>

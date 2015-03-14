@@ -287,9 +287,13 @@ function Collection(data) {
 
 
 // BASE VIEW
-function View(model, options) {
+function View(model, template, options) {
   if (model) {
     this.model = model;
+  }
+  
+  if (template) {
+    this.template = template;
   }
   
   if (options) {

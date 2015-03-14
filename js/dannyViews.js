@@ -91,7 +91,69 @@ var Popup = function() {
 
 
 // ITEM VIEWS
-var TextView = function(text) {
+var TextView = function(model, $('#textTemplate')) {
+  View.call(this, model, template);
+  
+  workview = 'texts';
+  
+  this.update = function(action, data) {
+    if (data != this.workview) { this.hide(); }
+  };
+  
+  this.render = function() {
+    var tv = this.template.content.cloneNode(true);
+    
+    Object.keys(this.model.titles).forEach(function(key) {
+      var li = createElement('li', { id: key });
+      var label = createElement('label', { htmlFor: key });
+      var p = createElement('p', { textContent: key });
+      var input = createElement('input', { value: this.model.titles[key] || '', id: key });
+      
+      label.appendChild(p);
+      label.appendChild(input);
+      li.appendChild(label);
+      tv.querySelector('.titles').appendChild(li);
+      
+      input.addEventListener('blur', this.model.store);
+    }, this);
+    
+    this.el = tv;
+    
+    var phraseWrapper = this.el.querySelector('.phrases').innerHTML = '';
+    
+    this.model.phrases.render(phraseWrapper);
+    
+    this.display();
+  };
+  
+  
+  appView.observers.add('setWorkview', this);
+  
+  // Event listeners
+  tv.querySelector('#deleteTextButton').addEventListener('click', function(ev) {
+    this.hide();
+    this.model.removeFromCorpus();
+    this.model.delete(function() { appView.setWorkview('texts'); });
+    this.notify('deleteText');
+  });
+
+  tv.querySelector('.titles').addEventListener('input', function(ev) {
+    this.model.titles[ev.target.id] = ev.target.value;
+  });
+  
+  tv.querySelector('.titles').addEventListener('keyup', function(ev) {
+    if (ev.keyCode == 13 || ev.keyCode == 27) {
+      ev.target.blur();
+      this.notify('titleChange');
+      this.model.store();
+    }
+  });
+  
+  tv.querySelector('.phrases').addEventListener('click', function(ev) {
+    if (ev.target.classList.contains('play')) {
+      console.log('Playing: ' + ev.target.parentNode.dataset.breadcrumb);
+    }
+  });
 };
 
 var PhraseView = function(model) {
