@@ -157,6 +157,31 @@ models.Phrase = function Phrase(data) {
     
     this.words = new models.Words(this.words);
   }
+
+  Object.defineProperty(this, 'play', {
+    value: function() {
+      var text;
+      
+      if (app.preferences.currentText.id == this.breadcrumb[0]) {
+        text = app.preferences.currentText;
+      } else {
+        var setText = function(t) {
+          text = t[0];
+        }.bind(this);
+        idb.getBreadcrumb(this.breadcrumb[0], setText);
+      }
+      
+      var playMedia = function(media) {
+        if (media.length == 0) { alert('No media files are associated with this text.'); }
+        
+        var url = URL.createObjectURL(media[0].file);
+        var a = new Audio(url + '#t=' + this.startTime + ',' + this.endTime);
+        a.play();
+      }.bind(this);
+      
+      text.get('media', playMedia);
+    }
+  });
 };
 
 // Abbr: w

@@ -3,7 +3,7 @@
 // HELPERS
 function renderTextContent(textHash, wrapper) {
   Object.keys(textHash).forEach(function(ortho) {
-    var p = createElement('p', { textContent: textHash[ortho] });
+    var p = createElement(p, { textContent: textHash[ortho] });
     p.classList.add('unicode');
     wrapper.appendChild(p);
   });
@@ -133,8 +133,27 @@ var TextView = function(model) {
       this.model.removeFromCorpus();
       this.model.delete(function() { appView.setWorkview('texts'); });
       this.notify('deleteText');
+    }.bind(this));
+    
+    this.el.querySelector('.phrases').addEventListener('input', function(ev) {
+      if (ev.target.classList.contains('phraseContent')) {
+        var crumb = Breadcrumb.parse(ev.target.parentNode.parentNode.dataset.breadcrumb);
+        app.preferences.currentText.phrases[crumb[1]][ev.target.dataset.type][ev.target.dataset.ortho] = ev.target.textContent;
+      }
     });
-
+    
+    this.el.querySelector('.phrases').addEventListener('blur', function(ev) {
+      app.preferences.currentText.store();
+    }, true);
+    
+    this.el.querySelector('.phrases').addEventListener('keydown', function(ev) {
+      if (ev.keyCode == 13 || ev.keyCode == 27) {
+        ev.preventDefault();
+        ev.target.blur();
+        app.preferences.currentText.store();
+      }
+    });
+    
     this.el.querySelector('.titles').addEventListener('input', function(ev) {
       this.model.titles[ev.target.id] = ev.target.value;
     }.bind(this));
@@ -147,21 +166,11 @@ var TextView = function(model) {
       }
     }.bind(this));
     
-    // This should be moved to a method on the phrase object
     this.el.querySelector('.phrases').addEventListener('click', function(ev) {
       if (ev.target.classList.contains('play')) {
         var crumb = Breadcrumb.parse(ev.target.parentNode.dataset.breadcrumb);
         var phrase = this.model.phrases[crumb[1]];
-        
-        var playMedia = function(media) {
-          if (media.length == 0) { alert('No media files are associated with this text.'); }
-          
-          var url = URL.createObjectURL(media[0].file);
-          var a = new Audio(url + '#t=' + phrase.startTime + ',' + phrase.endTime);
-          a.play();
-        };
-        
-        this.model.get('media', playMedia);
+        phrase.play();
       }
     }.bind(this));
     
@@ -185,11 +194,22 @@ var PhraseView = function(model) {
     pv.dataset.breadcrumb = Breadcrumb.stringify(model.breadcrumb);
     var contentWrapper = pv.querySelector('.wrapper');
     
-    renderTextContent(this.model.transcripts, contentWrapper);
-    renderTextContent(this.model.transcriptions, contentWrapper);
-    renderTextContent(this.model.translations, contentWrapper);
-    renderTextContent(this.model.notes, contentWrapper);
+    var renderText = function(textHash, type) {
+      Object.keys(textHash).forEach(function(ortho) {
+        var p = createElement('p', { textContent: textHash[ortho], contentEditable: true });
+        p.dataset.type = type;
+        p.dataset.ortho = ortho;
+        p.classList.add('phraseContent');
+        p.classList.add('unicode');
+        contentWrapper.appendChild(p);
+      });
+    };
     
+    renderText(this.model.transcripts, 'transcripts');
+    renderText(this.model.transcriptions, 'transcriptions');
+    renderText(this.model.translations, 'translations');
+    renderText(this.model.notes, 'notes');
+
     wrapper.appendChild(pv);
     
     this.el = pv;

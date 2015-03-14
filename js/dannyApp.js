@@ -110,6 +110,7 @@ var AppView = function() {
         modules.tagsOverview.render();
         break;
       case 'texts':
+        
         app.preferences.currentCorpus.get('texts', function(texts) {
           var texts = new models.Texts(texts);
           modules.textsOverview = new modules.TextsOverview(texts);
@@ -124,10 +125,10 @@ var AppView = function() {
   
   this.toggleOverviewPane = function() {
     if ($('#overviewPane').classList.contains('open')) {
-      $('#collapseLeft').src = 'img/collapseLeft.svg';
+      $('#collapseLeft').src = 'img/collapseRight.svg';
       app.preferences.display.overviewPane = 'closed';
     } else {
-      $('#collapseLeft').src = 'img/collapseRight.svg';
+      $('#collapseLeft').src = 'img/collapseLeft.svg';
       app.preferences.display.overviewPane = 'open';
     }
     
@@ -345,6 +346,7 @@ modules.TextsOverview = function(collection) {
   
   this.update = function(action, data) {
     if (action == 'setWorkview') {
+      this.textsList.removeEventListener('click', renderTextsList);
       if (data != this.workview) { this.hide(); }
     } else if (action == 'deleteText' || action == 'titleChange') {
       this.collection.list(this.textsList, populateTextsListItem);

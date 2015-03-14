@@ -29,7 +29,7 @@ var ekegusiiColumns = [
   {
     elan: 'Transcript',
     json: 'transcripts',
-    orthography: 'DT2 Phonemic'
+    orthography: 'DT2Phonemic'
   },
   {
     elan: 'Phonemic',

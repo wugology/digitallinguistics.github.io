@@ -15,8 +15,16 @@ footer, section {
 #sideNav a, #toolbarNav a {
   border: none; }
 
+.phrase > .wrapper > p {
+  border-radius: 5px; }
+
+.phrase {
+  border-radius: 10px; }
+
+/* box-shadow really bogs down Firefox
 .phrase:hover {
   box-shadow: 0px 0px 5px 0px #3F93F9; }
+*/
 
 #mediaList li, icon, #textsList li {
   cursor: pointer; }
@@ -34,6 +42,9 @@ footer, section {
 
 #corpusSelector, .titles {
   padding: 0 0.5rem; }
+
+.phrase > .wrapper > p {
+  padding: 0.25rem 0.5rem; }
 
 .phrase, #popups > div{
   padding: 1rem; }
@@ -71,8 +82,19 @@ legend {
   max-width: 100%; }
 
 .phrase {
-  background-color: rgba(63, 147, 249, 0.25);
-  border-radius: 10px; }
+  background-color: rgba(63, 147, 249, 0.25); }
+
+.phrase > .wrapper > p {
+  background-color: transparent; }
+
+.phrase > .wrapper > p:hover {
+  background-color: rgba(63, 147, 249, 0.5); }
+
+.phrase > .wrapper > p:focus {
+  background-color: rgba(63, 147, 249, 0.5); }
+
+.phrase > .wrapper {
+  width: 100%; }
 
 .play {
   max-height: 45px;
