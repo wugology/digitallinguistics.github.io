@@ -146,15 +146,22 @@ var TextView = function(model) {
       }
     }.bind(this));
     
+    // This should be moved to a method on the phrase object
     this.el.querySelector('.phrases').addEventListener('click', function(ev) {
       if (ev.target.classList.contains('play')) {
         var crumb = Breadcrumb.parse(ev.target.parentNode.dataset.breadcrumb);
         var phrase = this.model.phrases[crumb[1]];
         
         var playMedia = function(media) {
+          if (media.length == 0) { alert('No media files are associated with this text.'); }
+/*          var src = $('audio').src + '#t=' + phrase.startTime + ',' + phrase.endTime;
+          var a = new Audio(src);
+          a.play();
+        
           var url = URL.createObjectURL(media[0].file);
           var a = new Audio(url + '#t=' + phrase.startTime + ',' + phrase.endTime);
           a.play();
+          URL.revokeObjectURL(media[0].file); */
         };
         
         this.model.get('media', playMedia);
