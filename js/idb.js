@@ -380,7 +380,7 @@ var idb = {
     },
     {
       name: 'media',
-      model: 'Media'
+      model: 'MediaFile'
     },
     {
       name: 'texts',

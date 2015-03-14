@@ -1,6 +1,9 @@
 /* Styling for Danny's app */
 
 /* Styling by CSS rule(s) (alphabetical by CSS rule) */
+.media li {
+  align-items: center; }
+
 audio, .play {
   align-self: center; }
   
@@ -16,11 +19,11 @@ footer, section {
 #mediaList li, icon, #textsList li {
   cursor: pointer; }
 
-.phrase, #searchField, #textsList li, .titles li {
+.media li, .phrase, #searchField, #textsList li, .titles li {
   -webkit-flex-direction: row;
   flex-direction: row; }
 
-audio, .phrase {
+.phrase {
   margin-top: 1rem; }
 
 #corpusSelector, .titles {

@@ -88,6 +88,14 @@ models.Text = function Text(data) {
         this.notify('addToCorpus', this);
       }.bind(this)
     },
+
+    // Retrieves all the specified type of object in this text from IndexedDB
+    // - (only works on attributes that are arrays of IDs, e.g. Persons or Media)
+    'get': {
+      value: function(type, callback) {
+        idb.get(this[type], type, callback);
+      }.bind(this)
+    },
     
     // Pass this a function that has the text as its argument - this keeps app-specific rendering methods in the app
     'render': {

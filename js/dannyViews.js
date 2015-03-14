@@ -44,13 +44,12 @@ var TextView = function(model) {
   
   workview = 'texts';
   
-  this.update = function(action, data) {
-    if (data != this.workview) { this.hide(); }
-  };
-  
   this.render = function() {
+    $('#detailsPane').innerHTML = '';
+    
     var tv = this.template.content.querySelector('.text').cloneNode(true);
-
+    
+    // Render titles
     Object.keys(this.model.titles).forEach(function(key) {
       var li = createElement('li', { id: key });
       var label = createElement('label', { htmlFor: key });
@@ -70,11 +69,57 @@ var TextView = function(model) {
     
     this.el = tv;
     
+    // Render phrases
     phraseWrapper = this.el.querySelector('.phrases');
     
     this.model.phrases.render(phraseWrapper);
-
-    // Event listeners
+    
+    // Load media
+    var setMedia = function(media) {
+      media.forEach(function(mediaObj) {
+        var li = createElement('li', { id: mediaObj.id });
+        
+        var audio = createElement('audio', {
+          controls: true,
+          src: URL.createObjectURL(mediaObj.file)
+        });
+        
+        li.appendChild(audio);
+        
+        var img = createElement('img', { src: 'img/delete.svg', alt: 'delete this media from this text' });
+        img.classList.add('icon');
+        
+        li.appendChild(img);
+        
+        this.el.querySelector('.media').appendChild(li);
+      }, this);
+    }.bind(this);
+    
+    this.model.get('media', setMedia);
+    
+    // Add event listeners
+    this.el.querySelector('#addMediaToTextButton').addEventListener('click', function() {
+      var goButtonCallback = function(file) {
+        var data = {
+          file: file,
+          textStart: null,
+          textEnd: null
+        };
+        
+        var media = new models.MediaFile(data);
+        
+        var addToText = function(mediaIDs) {
+          this.model.media.push(mediaIDs[0]);
+          this.model.store();
+          this.render();
+        }.bind(this);
+        
+        media.store(addToText);
+      }.bind(this);
+      
+      popups.fileUpload.render(goButtonCallback);
+    }.bind(this));
+    
     this.el.querySelector('#deleteTextButton').addEventListener('click', function(ev) {
       this.hide();
       this.model.removeFromCorpus();
@@ -101,6 +146,10 @@ var TextView = function(model) {
     });
     
     this.display();
+  };
+  
+  this.update = function(action, data) {
+    if (data != this.workview) { this.hide(); }
   };
   
   appView.observers.add('setWorkview', this);
