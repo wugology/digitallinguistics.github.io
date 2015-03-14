@@ -46,6 +46,12 @@ var TextView = function(model) {
   
   this.nextPhrase = function() {
     var numPhrases = app.preferences.currentText.phrases.length;
+
+    var selected = $('.selected');
+    
+    if (selected) {
+      selected.classList.remove('selected');
+    }
     
     if (app.preferences.currentPhrase[1] == numPhrases-1) {
       app.preferences.currentPhrase[1] = 0;
@@ -53,17 +59,19 @@ var TextView = function(model) {
       app.preferences.currentPhrase[1] += 1;
     }
     
-    var selected = $('.selected')[0];
-    
-    if (selected) {
-      selected.classList.remove('selected');
-    }
-    
     var newSelected = $('.phrase').filter(function(phrase) {
       return checkAgainst(app.preferences.currentPhrase, Breadcrumb.parse(phrase.dataset.breadcrumb))
     })[0];
     
     newSelected.classList.add('selected');
+    var textItem = newSelected.querySelector('.wrapper p:first-child')
+    textItem.focus();
+    range = new Range();
+    range.selectNodeContents(textItem);
+    range.collapse(false);
+    selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
   },
   
   this.prevPhrase = function() {
@@ -178,7 +186,8 @@ var TextView = function(model) {
       }
       
       if (ev.target.classList.contains('phraseContent')) {
-        $('.selected')[0].classList.remove('selected');
+        var selected = $('.selected');
+        if (selected.length > 0) { selected[0].classList.remove('selected'); }
         ev.target.parentNode.parentNode.classList.add('selected');
         app.preferences.currentPhrase = Breadcrumb.parse(ev.target.parentNode.parentNode.dataset.breadcrumb);
       }
