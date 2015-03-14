@@ -32,7 +32,8 @@ var app = {
       idb.getAll('corpora', function(corpora) {
         if (corpora.length == 0) {
           popups.manageCorpora.render();
-          
+        
+        // Set preferences
         } else {
           if (app.preferences.currentCorpus) {
             app.preferences.currentCorpus = hydrate(app.preferences.currentCorpus);
@@ -55,6 +56,21 @@ var app = {
         }
         
         if (!app.preferences.currentPhrase) { app.preferences.currentPhrase = null; }
+        
+        // Key bindings (using Mousetrap)
+        Mousetrap.bindGlobal(['alt+right', 'alt+down'], function() {
+          if (app.preferences.currentPhrase && app.preferences.currentWorkview == 'texts') {
+            appView.notify('nextPhrase');
+          }
+          return false;
+        });
+
+        Mousetrap.bindGlobal(['alt+left', 'alt+up'], function() {
+          if (app.preferences.currentPhrase && app.preferences.currentWorkview == 'texts') {
+            appView.notify('prevPhrase');
+          }
+          return false;
+        });
       });
     };
     
@@ -81,7 +97,7 @@ var AppView = function() {
     if (!workview) { workview = 'texts'; }
 
     this.appNav.setButton(workview);
-
+    
     this.notify('setWorkview', workview);
     
     switch (workview) {
@@ -367,7 +383,7 @@ modules.TextsOverview = function(collection) {
           text.id = textIDs[0];
           Breadcrumb.reset(text);
           text.addToCorpus();
-          
+
           var setView = function() { appView.setWorkview('texts'); };
           
           text.store(setView);
@@ -490,7 +506,7 @@ popups.Settings = function() {
 $('#popups').addEventListener('click', function(ev) {
   if (ev.target.classList.contains('icon')) { popups[ev.target.parentNode.id.replace('Popup', '')].hide(); }
 });
-document.body.addEventListener('keydown', function(ev) {
+window.addEventListener('keydown', function(ev) {
   if (ev.keyCode == 9 && app.preferences.currentPhrase && app.preferences.currentWorkview == 'texts') {
     ev.preventDefault();
 

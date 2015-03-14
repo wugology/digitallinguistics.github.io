@@ -25,7 +25,7 @@ var Module = function(collection) {
   
   if (!this.update) {
     this.update = function(action, data) {
-      if (data != this.workview) { this.hide(); }
+      if (action == 'setWorkview' && data != this.workview) { this.hide(); }
     };
   }
   
@@ -43,6 +43,31 @@ var TextView = function(model) {
   View.call(this, model, $('#textTemplate'));
   
   workview = 'texts';
+  
+  this.nextPhrase = function() {
+    var numPhrases = app.preferences.currentText.phrases.length;
+    
+    if (app.preferences.currentPhrase[1] == numPhrases-1) {
+      app.preferences.currentPhrase[1] = 0;
+    } else {
+      app.preferences.currentPhrase[1] += 1;
+    }
+    
+    var selected = $('.selected')[0];
+    
+    if (selected) {
+      selected.classList.remove('selected');
+    }
+    
+    var newSelected = $('.phrase').filter(function(phrase) {
+      return checkAgainst(app.preferences.currentPhrase, Breadcrumb.parse(phrase.dataset.breadcrumb))
+    })[0];
+    
+    newSelected.classList.add('selected');
+  },
+  
+  this.prevPhrase = function() {
+  },
   
   this.render = function() {
     $('#detailsPane').innerHTML = '';
@@ -153,7 +178,7 @@ var TextView = function(model) {
       }
       
       if (ev.target.classList.contains('phraseContent')) {
-        $('.phrase').forEach(function(phraseEl) { phraseEl.classList.remove('selected'); });
+        $('.selected')[0].classList.remove('selected');
         ev.target.parentNode.parentNode.classList.add('selected');
         app.preferences.currentPhrase = Breadcrumb.parse(ev.target.parentNode.parentNode.dataset.breadcrumb);
       }
@@ -190,9 +215,14 @@ var TextView = function(model) {
   };
   
   this.update = function(action, data) {
-    if (data != this.workview) { this.hide(); }
+    if (action == 'setWorkview' && data != this.workview) { this.hide(); }
+    if (action == 'nextPhrase') { this.nextPhrase(); }
+    if (action == 'prevPhrase') { this.prevPhrase(); }
   };
   
+  // Event subscriptions
+  appView.observers.add('nextPhrase', this);
+  appView.observers.add('prevPhrase', this);
   appView.observers.add('setWorkview', this);
 };
 

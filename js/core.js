@@ -178,7 +178,7 @@ function Events() {
         return sub.action == action;
       });
       
-      this.observers.forEach(function(sub) {
+      subs.forEach(function(sub) {
         sub.observer.update(sub.action, data);
       });
     }.bind(this)
