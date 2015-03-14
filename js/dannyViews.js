@@ -77,7 +77,7 @@ var TextView = function(model) {
     // Load media
     var setMedia = function(media) {
       media.forEach(function(mediaObj) {
-        var li = createElement('li', { id: mediaObj.id });
+        var li = createElement('li');
         
         var audio = createElement('audio', {
           controls: true,
@@ -86,12 +86,19 @@ var TextView = function(model) {
         
         li.appendChild(audio);
         
-        var img = createElement('img', { src: 'img/delete.svg', alt: 'delete this media from this text' });
+        var img = createElement('img', { src: 'img/delete.svg', alt: 'delete this media from this text', id: mediaObj.id });
         img.classList.add('icon');
         
         li.appendChild(img);
         
         this.el.querySelector('.media').appendChild(li);
+        
+        img.addEventListener('click', function(ev) {
+          this.model.media.forEach(function(mediaID, i) {
+            if (mediaID = ev.target.id) { this.model.media.splice(i, 1); }
+            this.model.store(function() { this.render(); }.bind(this));
+          }, this);
+        }.bind(this));
       }, this);
     }.bind(this);
     
