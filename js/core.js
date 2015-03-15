@@ -249,7 +249,9 @@ function Model(data) {
     
     'hasTag': {
       value: function(category, value) {
-        this.tags.forEach(function(tag) {
+        app.searchResults = [];
+        
+        var some = this.tags.some(function(tag) {
           
           var checkCat = function() {
             if (category) {
@@ -267,12 +269,13 @@ function Model(data) {
             }
           };
           
-          if (checkCat() && checkVal()) {
-            app.searchResults.push(this);
-            return true;
-          }
+          return checkCat() && checkVal();
           
         }, this);
+        
+        if (some) { app.searchResults.push(this); }
+        
+        return some;
       }.bind(this)
     }
   });
