@@ -1,11 +1,15 @@
 /* Styling for Danny's app */
 
 /* Styling by CSS rule(s) (alphabetical by CSS rule) */
+.tags {
+  -webkit-align-content: flex-start;
+  align-content: flex-start; }
+
 .media, #mediaList li, #searchField, .titles li {
   -webkit-align-items: center;
   align-items: center; }
 
-.tags, .text header {
+.tags, .text header, #tagsList > li > ul {
   -webkit-align-items: flex-start;
   align-items: flex-start; }
 
@@ -75,10 +79,10 @@ footer, section {
 legend {
   font-weight: bold; }
 
-.tagCategory {
+.tagCategory, #tagPopup label {
   margin: 0.5rem; }
 
-.tagValue {
+.tagValue, .tags > p {
   margin: 0.25rem; }
   
 .phrase, #taggingList .tags {
@@ -136,6 +140,12 @@ img[src='img/close.svg'] {
 
 #sideNav li, #toolbarNav li {
   padding: 0; }
+
+#tagPopup p {
+  width: 30%; }
+
+#tagPopup input {
+  margin: 0; }
 
 #taggingList > li > .wrapper {
   max-width: 75%;

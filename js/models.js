@@ -75,7 +75,7 @@ models.Corpus = function Corpus(data) {
             text.searchText(attribute, searchExpr);
           });
           
-          if (typeof callback == 'function') { callback(app.searchResults); }
+          if (typeof callback == 'function') { callback(app.searchResults, 'phrase'); }
         };
         
         this.get('texts', search);

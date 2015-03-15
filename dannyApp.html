@@ -227,6 +227,24 @@
       <h1>Settings</h1>
       <button id=switchLayoutButton type=button value='Switch between mobile/desktop layout'>Switch between mobile/desktop layout.</button>
     </div>
+    
+    <div id=tagPopup class='hideonDesktop hideonMobile'>
+      <img src=img/close.svg alt='close this popup' class='icon'>
+      <h1>Add a Tag</h1>
+      <form>
+        <label for=categoryInput>
+          <p>Category</p>
+          <input id=categoryInput type=text placeholder='Enter tag category'>
+        </label>
+        
+        <label for=valueInput>
+          <p>Value</p>
+          <input id=valueInput type=text placeholder='Enter tag value'>
+        </label>
+        
+        <button id=tagButton type=submit value='Add tag'>Add tag</button>
+      </form>
+    </div>
   </div>
   
   <div id=templates>
@@ -261,7 +279,7 @@
       <li>
         <div class=wrapper></div>
         <ul class=tags></ul>
-        <img src=img/tag.svg alt='add a tag to this item' class=icon>
+        <img src=img/tag.svg alt='add a tag to this item' class='tag icon'>
       </li>
     </template>
   </div>

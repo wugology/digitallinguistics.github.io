@@ -90,12 +90,16 @@ Breadcrumb = {
   applyTo: function(breadcrumb, text, action) {
     if (breadcrumb.length == 1) {
       action(text);
+      return text;
     } else if (breadcrumb.length == 2) {
       action(text.phrases[breadcrumb[1]], breadcrumb[1], text.phrases);
+      return text;
     } else if (breadcrumb.length == 3) {
       action(text.phrases[breadcrumb[1]].words[breadcrumb[2]], breadcrumb[2], text.phrases[breadcrumb[1]].words);
+      return text;
     } else if (breadcrumb.length == 4) {
       action(text.phrases[breadcrumb[1]].words[breadcrumb[2]].morphemes[breadcrumb[3]], breadcrumb[3], text.phrases[breadcrumb[1]].words[breadcrumb[2]].morphemes);
+      return text;
     }
   },
   

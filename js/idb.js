@@ -295,11 +295,11 @@ var idb = {
           request.onsuccess = function() {
             var text = request.result;
             
-            Breadcrumb.applyTo(item.breadcrumb, text, function(obj) {
-              obj = item;
+            var newText = Breadcrumb.applyTo(item.breadcrumb, text, function(obj, i, arr) {
+              arr[i] = item;
             });
-            
-            idb.put(text, table, results);
+           
+            idb.put(newText, table, results);
           }; 
         });
       };

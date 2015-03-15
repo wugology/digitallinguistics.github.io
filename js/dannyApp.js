@@ -15,9 +15,11 @@ var app = {
       appView.corpusSelector = new AppView.CorpusSelector();
       
       // Initialize popups
+      popups.blank = new popups.Blank();
       popups.fileUpload = new popups.FileUpload();
       popups.manageCorpora = new popups.ManageCorpora();
       popups.settings = new popups.Settings();
+      popups.tag = new popups.Tag();
       
       // Set the current workview
       var setWorkview = function() {
@@ -98,8 +100,8 @@ var app = {
   searchText: function(attribute, searchExpr, callback) {
     searchExpr = new RegExp(searchExpr, 'g');
     app.searchResults = [];
-    app.preferences.currentCorpus.searchText(attribute, searchExpr, function(results) {
-      if (typeof callback == 'function') { callback(results); }
+    app.preferences.currentCorpus.searchText(attribute, searchExpr, function(results, lingType) {
+      if (typeof callback == 'function') { callback(results, lingType); }
     });
   },
   
@@ -191,6 +193,14 @@ var AppView = function() {
   
   this.update = function(action, data) {
     if (action == 'appNavClick') { this.setWorkview(data); }
+    if (action == 'newTagger') {
+      modules.tagsOverview = new modules.TagsOverview(app.preferences.currentCorpus.tags)
+      modules.tagsOverview.render();
+      if (data) {
+        modules.tagger = new modules.Tagger(data.results, { lingType: data.lingType });
+        modules.tagger.render();
+      }
+    }
   };
   
   $('#collapseLeft').addEventListener('click', this.toggleOverviewPane);
@@ -358,6 +368,7 @@ modules.Tagger = function(searchResults, options) {
   this.workview = 'tags';
   
   this.el = $('#tagger');
+  this.searchBar = $('#searchBar');
   this.searchBox = $('#tagSearchBox');
   this.taggingList = $('#taggingList');
   this.template = $('#tagItemTemplate');
@@ -367,13 +378,19 @@ modules.Tagger = function(searchResults, options) {
     
     switch (this.tagType) {
       case 'corpus':
-        this.collection.forEach(this.renderCorpus);
+        this.collection.forEach(function(corpus) {
+          this.renderCorpus(corpus);
+        }, this);
         break;
       case 'phrase':
-        this.collection.forEach(this.renderPhrase);
+        this.collection.forEach(function(phrase) {
+          this.renderPhrase(phrase);
+        }, this);
         break;
       default:
-        this.collection.forEach(this.renderPhrase);
+        this.collection.forEach(function(phrase) {
+          this.renderPhrase(phrase);
+        }, this);
     }
   };
   
@@ -382,41 +399,117 @@ modules.Tagger = function(searchResults, options) {
     this.display();
   };
   
+  this.addTag = function(tag, result, callback) {
+    result.tags.push(tag);
+    
+    var pushToCorpus = function() {
+      app.preferences.currentCorpus.tags.push(tag);
+      app.preferences.currentCorpus.store(callback);
+    };
+    
+    result.store(pushToCorpus);
+  };
+  
+  this.getTag = function(callback) {
+    var makeTag = function(category, value) {
+      var tag = new models.Tag({ type: this.lingType, category: category, value: value });
+      if (typeof callback == 'function') { callback(tag); }
+    }.bind(this);
+    
+    popups.tag.render(makeTag);
+  }.bind(this);
+  
   this.renderCorpus = function(corpus) {
   };
   
-  this.renderPhrase = function(phrase) {
+  this.renderPhrase = function(phrase, replaceNode) {
     var li = this.template.content.querySelector('li').cloneNode(true);
-    li.dataset.breadcrumb = phrase.breadcrumb;
+    li.dataset.breadcrumb = Breadcrumb.stringify(phrase.breadcrumb);
     
     var tagsWrapper = li.querySelector('.tags');
     
     phrase.tags.forEach(function(tag) {
-      var text = tag.value ? tag.category + ' : ' + tag.value : tag.category
+      var text = tag.value ? tag.category + ' : ' + tag.value : tag.category;
       var p = createElement('p', { textContent: text });
       tagsWrapper.appendChild(p);
     });
     
-    this.taggingList.appendChild(li);
-    
+    if (replaceNode) {
+      replaceNode.parentNode.insertBefore(li, replaceNode);
+      replaceNode.parentNode.removeChild(replaceNode);
+    } else {
+      this.taggingList.appendChild(li);
+    }
+
     var pv = new PhraseView(phrase);
     pv.render(li.querySelector('.wrapper'));
   }.bind(this);
   
-  $('#searchBar').addEventListener('submit', function(ev) {
+  var newTag = function(ev) {
+    if (ev.target.classList.contains('tag')) {
+      var listItem = ev.target.parentNode;
+      var crumb = Breadcrumb.parse(listItem.dataset.breadcrumb);
+      
+      var getTag = function(results) {
+        var addTag = function(tag) {
+          var notifyRender = function() {
+            this.notify('newTagger');
+            
+            var phrase = results[0];
+            var replaceNode = listItem;
+            this.renderPhrase(phrase, replaceNode);
+          }.bind(this);
+          
+          this.addTag(tag, results[0], notifyRender);
+        }.bind(this);
+        
+        this.getTag(addTag);
+      }.bind(this);
+      
+      idb.getBreadcrumb(crumb, getTag);
+    }
+  }.bind(this);
+  
+  this.search = function(attribute, searchExpr) {
+    var newTagger = function(results, lingType) {
+      this.searchBar.removeEventListener('submit', runSearch);
+      this.taggingList.removeEventListener('click', newTag);
+      this.notify('newTagger', { results: results, lingType: lingType });
+    }.bind(this);
+    
+    app.searchText(attribute, searchExpr, newTagger);
+  };
+  
+  var runSearch = function(ev) {
     ev.preventDefault();
     var options = Array.prototype.slice.call(document.getElementsByName('field'));
     var selected = options.filter(function(option) { return option.checked; });
-    var callback = function(results) {
-      modules.tagger = new modules.Tagger(results);
-      modules.tagger.render();
-    };
-    app.searchText(selected[0].value, this.searchBox.value, callback);
-  }.bind(this));
+    
+    this.search(selected[0].value, this.searchBox.value);
+  }.bind(this);
+  
+  this.observers.add('newTagger', appView);
+  
+  this.searchBar.addEventListener('submit', runSearch);
+  
+  this.taggingList.addEventListener('click', newTag);
 };
 
 modules.TagsOverview = function(collection) {
   Module.call(this, collection);
+  
+  this.collection.sort(function(a, b) {
+    if (a.type > b.type) {return 1; }
+    if (a.type < b.type) { return -1; } else {
+      if (a.category > b.category) { return 1; }
+      if (a.category < b.category) { return -1; } else {
+        if (a.value > b.value) { return 1; }
+        if (a.valueu < b.value) { return -1; } else {
+          return 0;
+        }
+      }
+    }
+  });
   
   this.workview = 'tags';
   
@@ -424,14 +517,7 @@ modules.TagsOverview = function(collection) {
   this.tagsList = $('#tagsList');
   
   this.listTags = function() {
-    this.collection.sort(function(a, b) {
-      if (a.type > b.type) { return true; }
-      if (a.type < b.type) { return false; }
-      if (a.category > b.category) { return true; }
-      if (a.category < b.category) { return false; }
-      if (a.value > b.value) { return true; }
-      if (a.value < b.value) { return false; }
-    });
+    this.tagsList.innerHTML = '';
     
     var types = getUnique('type', this.collection);
     
@@ -570,6 +656,19 @@ modules.TextsOverview = function(collection) {
 // POPUP VIEWS
 var popups = {};
 
+popups.Blank = function() {
+  Popup.call(this);
+  
+  this.displayArea = $('.displayArea');
+  this.el = $('#blankPopup');
+  
+  this.render = function(renderFunction) {
+    this.displayArea.innerHTML = '';
+    if (typeof renderFunction == 'function') { renderFunction(this.displayArea); }
+    this.display();
+  }.bind(this);
+};
+
 popups.FileUpload = function() {
   Popup.call(this);
   
@@ -648,6 +747,29 @@ popups.Settings = function() {
   this.icon = $('#settingsIcon');
   
   this.icon.addEventListener('click', this.toggleDisplay);
+};
+
+popups.Tag = function(callback) {
+  Popup.call(this);
+
+  this.el = $('#tagPopup');
+  this.form = $('#tagPopup form');
+  this.categoryInput = $('#categoryInput');
+  this.valueInput = $('#valueInput');
+  
+  
+  this.render = function(callback) {
+    var submit = function(ev) {
+      ev.preventDefault();
+      if (typeof callback == 'function') { callback(this.categoryInput.value, this.valueInput.value); }
+      this.form.removeEventListener(submit);
+      this.hide();
+    }.bind(this);
+
+    this.form.addEventListener('submit', submit);
+    this.display();
+    this.categoryInput.focus();
+  }.bind(this);
 };
 
 
