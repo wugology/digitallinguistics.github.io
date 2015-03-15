@@ -245,17 +245,6 @@ function Model(data) {
     'model': {
       enumerable: true,
       value: this.constructor.name
-    },
-    
-    // Takes a hash of search criteria as its argument
-    'search': {
-      configurable: true,
-      
-      value: function(criteria) {
-        checkAgainst(criteria, this);
-      }.bind(this),
-      
-      writable: true,
     }
   });
 };

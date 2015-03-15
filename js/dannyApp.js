@@ -88,6 +88,8 @@ var app = {
     localStorage.wugbotPreferences = JSON.stringify(app.preferences, null, 2);
   },
   
+  searchResults: [],
+  
   preferences: {}
 };
 
@@ -392,7 +394,7 @@ modules.TagsOverview = function(collection) {
   };
   
   this.tagsList.addEventListener('click', function(ev) {
-    console.log(ev.target.dataset.tag);
+    console.log(models.Tag.parse(ev.target.dataset.tag));
     
     // Run a tag search
   });

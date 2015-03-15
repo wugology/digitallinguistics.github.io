@@ -259,58 +259,6 @@ var idb = {
     
     idb.transact('texts', null, callback, removeByBreadcrumb);
   },
-
-  // lingType = the type of linguistic object being searched for (e.g. Phrase, Morpheme)
-     // - argument is PascalCase, so that it can be generated automatically using the .model or .constructor.name properties of an object if desired
-  // property = a property of the linguistic object to be checked for matches
-  // criteria = an expression that will return true whenever property == criteria
-  search: function(lingType, criteria) {
-    var results = [];
-    
-    var check = function(table) {
-      var request = table.openCursor();
-      
-      request.onsuccess = function() {
-        var cursor = request.result;
-        
-        if (cursor) {
-          var text = cursor.value;
-          
-          if (lingType != 'Text') {
-            text.phrases.forEach(function(phrase) {
-              if (lingType != 'Phrase') {
-                phrase.words.forEach(function(word) {
-                  if (lingType != 'Word') {
-                    word.morphemes.forEach(function(morpheme) {
-                      if (checkAgainst(criteria, morpheme)) {
-                        results.push(hydrate(morpheme));
-                      }
-                    });
-                  } else {
-                    if (checkAgainst(criteria, word)) {
-                      results.push(hydrate(word));
-                    }
-                  }
-                });
-              } else {
-                if (checkAgainst(criteria, phrase)) {
-                  results.push(hydrate(phrase));
-                }
-              }
-            });
-          } else {
-            if (checkAgainst(criteria, text)) {
-              results.push(hydrate(text));
-            }
-          }
-          
-          cursor.continue();
-        }
-      };
-    };
-    
-    idb.transact('texts', results, callback, check);
-  },
   
   // Adds or updates database items
   // Items may either be a single object or an array of objects (objects must have the same model)
