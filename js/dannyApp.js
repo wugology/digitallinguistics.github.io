@@ -95,6 +95,14 @@ var app = {
     });
   },
   
+  searchText: function(attribute, searchExpr, callback) {
+    searchExpr = new RegExp(searchExpr, 'g');
+    app.searchResults = [];
+    app.preferences.currentCorpus.searchText(attribute, searchExpr, function(results) {
+      if (typeof callback == 'function') { callback(results); }
+    });
+  },
+  
   searchResults: [],
   
   preferences: {}
@@ -137,6 +145,8 @@ var AppView = function() {
       case 'tags':
         modules.tagsOverview = new modules.TagsOverview(app.preferences.currentCorpus.tags)
         modules.tagsOverview.render();
+        modules.tagger = new modules.Tagger([]);
+        modules.tagger.render();
         break;
       case 'texts':
         app.preferences.currentCorpus.get('texts', function(texts) {
@@ -348,6 +358,7 @@ modules.Tagger = function(searchResults, options) {
   this.workview = 'tags';
   
   this.el = $('#tagger');
+  this.searchBox = $('#tagSearchBox');
   this.taggingList = $('#taggingList');
   this.template = $('#tagItemTemplate');
   
@@ -391,6 +402,17 @@ modules.Tagger = function(searchResults, options) {
     var pv = new PhraseView(phrase);
     pv.render(li.querySelector('.wrapper'));
   }.bind(this);
+  
+  $('#searchBar').addEventListener('submit', function(ev) {
+    ev.preventDefault();
+    var options = Array.prototype.slice.call(document.getElementsByName('field'));
+    var selected = options.filter(function(option) { return option.checked; });
+    var callback = function(results) {
+      modules.tagger = new modules.Tagger(results);
+      modules.tagger.render();
+    };
+    app.searchText(selected[0].value, this.searchBox.value, callback);
+  }.bind(this));
 };
 
 modules.TagsOverview = function(collection) {
@@ -456,12 +478,14 @@ modules.TagsOverview = function(collection) {
   };
   
   this.tagsList.addEventListener('click', function(ev) {
-    var renderTags = function(results, tagType) {
-      modules.tagger = new modules.Tagger(results, { tagType: tagType });
-      modules.tagger.render();
-    };
-    
-    app.searchByTag(models.Tag.parse(ev.target.dataset.tag), renderTags);
+    if (ev.target.dataset.tag) {
+      var renderTags = function(results, tagType) {
+        modules.tagger = new modules.Tagger(results, { tagType: tagType });
+        modules.tagger.render();
+      };
+      
+      app.searchByTag(models.Tag.parse(ev.target.dataset.tag), renderTags);
+    }
   });
 };
 

@@ -57,7 +57,7 @@ models.Corpus = function Corpus(data) {
           var search = function(texts) {
             texts.forEach(function(text) {
               text.searchByTag(tag);
-            }, this);
+            });
             
             if (typeof callback == 'function') { callback(app.searchResults, tag.type); }
           };
@@ -65,6 +65,20 @@ models.Corpus = function Corpus(data) {
           this.get('texts', search);
         }
         
+      }.bind(this)
+    },
+    
+    'searchText': {
+      value: function(attribute, searchExpr, callback) {
+        var search = function(texts) {
+          texts.forEach(function(text) {
+            text.searchText(attribute, searchExpr);
+          });
+          
+          if (typeof callback == 'function') { callback(app.searchResults); }
+        };
+        
+        this.get('texts', search);
       }.bind(this)
     },
     
@@ -169,6 +183,14 @@ models.Text = function Text(data) {
       }.bind(this)
     },
     
+    'searchText': {
+      value: function(attribute, searchExpr) {
+        this.phrases.forEach(function(phrase) {
+          phrase.searchText(attribute, searchExpr);
+        });
+      }.bind(this)
+    },
+    
     'setAsCurrent': {
       value: function() {
         app.preferences.currentText = this;
@@ -220,6 +242,33 @@ models.Phrase = function Phrase(data) {
           this.words.forEach(function(word) {
             word.searchByTag(tag);
           }, this);
+        }
+      }.bind(this)
+    },
+    
+    'searchText': {
+      value: function(attribute, searchExpr) {
+        var checkHash = function(hash, searchExpr) {
+          var some = Object.keys(hash).some(function(ortho) {
+            return hash[ortho].search(searchExpr) == 0;
+          }, this);
+          
+          return some;
+        };
+        
+        if (attribute == 'all') {
+          var attributes = ['transcripts', 'transcriptions', 'translations', 'notes'];
+          
+          var some = attributes.some(function(attribute) {
+            return checkHash(this[attribute], searchExpr);
+          }, this);
+          
+          
+          if (some) { app.searchResults.push(this); }
+        } else {
+          if (checkHash(this[attribute], searchExpr)) {
+            app.searchResults.push(this);
+          }
         }
       }.bind(this)
     }

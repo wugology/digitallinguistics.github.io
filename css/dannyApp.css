@@ -46,22 +46,33 @@ footer, section {
 .phrase.selected {
   box-shadow: 0px 0px 5px 0px #3F93F9; }
 
-icon, #mediaList li, #tagsList, #textsList li {
+.icon, #mediaList li, .tagCategory h3, .tagValue, #textsList li {
   cursor: pointer; }
 
-.buttons, .media li, #mediaList li, .phrase, #searchField, #taggingList > li, .tags, #tagsList > li > ul, #textsList li, .titles li {
+.buttons,
+.media li,
+#mediaList li,
+.phrase,
+.row,
+#searchBar,
+#searchField,
+#taggingList > li,
+.tags,
+#tagsList > li > ul,
+#textsList li,
+.titles li {
   -webkit-flex-direction: row;
   flex-direction: row; }
 
-#searchBox, #mediaList li p, #taggingList .tags {
+#mediaList li p, #searchBar > label, #searchBox, #taggingList .tags, #tagSearchBox {
   -webkit-flex-grow: 1;
   flex-grow: 1; }
 
-.buttons, .tags, #tagsList > li > ul {
+.buttons, .tags, #tagsList > li > ul, .wrap {
   -webkit-flex-wrap: wrap;
   flex-wrap: wrap; }
 
-legend, .tags > p {
+legend {
   font-weight: bold; }
 
 .tagCategory {
@@ -73,7 +84,7 @@ legend, .tags > p {
 .phrase, #taggingList .tags {
   margin-top: 1rem; }
 
-#corpusSelector, #taggingList .tags, .titles {
+#corpusSelector, #taggingList .tags, .titles, #searchBar > div > label {
   padding: 0 0.5rem; }
 
 .phrase > .wrapper > p, .tags > p, .tagValue {

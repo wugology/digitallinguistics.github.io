@@ -101,6 +101,41 @@
       <div id=tagger class='details module hideonDesktop hideonMobile'>
         <h1>Tagger</h1>
         
+        <form id=searchBar>
+          <label for=tagSearchBox>
+            <input id=tagSearchBox type=text class=unicode placeholder='Enter text or a regular expression to search'>
+          </label>
+          
+          <button id=tagSearchButton type=submit value=Search>Search</button>
+          
+          <div class='row wrap'>
+            <label for=allTagSearch>
+              <input id=allTagSearch type=radio name=field value=all checked>
+              <p>all</p>
+            </label>
+            
+            <label for=transcriptTagSearch>
+              <input id=transcriptTagSearch type=radio name=field value=transcripts>
+              <p>transcript</p>
+            </label>
+            
+            <label for=transcriptionTagSearch>
+              <input id=transcriptionTagSearch type=radio name=field value=transcriptions>
+              <p>transcriptions</p>
+            </label>
+
+            <label for=translationTagSearch>
+              <input id=translationTagSearch type=radio name=field value=translations>
+              <p>translations</p>
+            </label>
+            
+            <label for=notesTagSearch>
+              <input id=notesTagSearch type=radio name=field value=notes>
+              <p>notes</p>
+            </label>
+          </div>
+        </form>
+        
         <ul id=taggingList></ul>
       </div>
     </section>
