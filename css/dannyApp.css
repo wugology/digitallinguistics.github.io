@@ -57,7 +57,7 @@ icon, #mediaList li, #tagsList, #textsList li {
   -webkit-flex-grow: 1;
   flex-grow: 1; }
 
-.buttons, .tags {
+.buttons, .tags, #tagsList > li > ul {
   -webkit-flex-wrap: wrap;
   flex-wrap: wrap; }
 
@@ -65,7 +65,7 @@ legend, .tags > p {
   font-weight: bold; }
 
 .tagCategory {
-  margin: 0 0.5rem; }
+  margin: 0.5rem; }
 
 .tagValue {
   margin: 0.25rem; }
