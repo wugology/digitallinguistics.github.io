@@ -1,7 +1,3 @@
-var posTag = new models.Tag({ type: 'corpus', category: 'pos', value: 'verb' });
-var negTag = new models.Tag({ type: 'phrase', category: 'negation', value: 'participle' });
-var longTag = new models.Tag({ type: 'phrase', category: 'long' });
-
 // APP
 
 // Controls general app functionality
@@ -346,6 +342,30 @@ modules.OrthographiesOverview = function(collection) {
   this.el = $('#orthographiesOverview');
 };
 
+modules.Tagger = function(searchResults) {
+  Module.call(this, searchResults);
+  
+  this.workview = 'tags';
+  
+  this.el = $('#tagger');
+  this.taggingList = $('#taggingList');
+  
+  this.listResults = function() {
+    // Need to know the type of tag in order to know how to display these
+    // This should be passed by the search function as an option to the Tagger view
+    // Augmenting the object with options should be something that lives a level up the hierarchy
+    
+    this.collection.forEach(function(result) {
+      var li = createElement('li', {  });
+    }, this);
+  };
+  
+  this.render = function() {
+    this.listResults();
+    this.display();
+  };
+};
+
 modules.TagsOverview = function(collection) {
   Module.call(this, collection);
   
@@ -405,9 +425,12 @@ modules.TagsOverview = function(collection) {
   };
   
   this.tagsList.addEventListener('click', function(ev) {
-    console.log(models.Tag.parse(ev.target.dataset.tag));
+    var renderTags = function() {
+      modules.tagger = new modules.Tagger(app.searchResults);
+      modules.tagger.render();
+    };
     
-    // Run a tag search
+    app.searchByTag(models.Tag.parse(ev.target.dataset.tag), renderTags);
   });
 };
 
