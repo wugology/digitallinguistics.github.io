@@ -245,6 +245,35 @@ function Model(data) {
     'model': {
       enumerable: true,
       value: this.constructor.name
+    },
+    
+    'hasTag': {
+      value: function(category, value) {
+        this.tags.forEach(function(tag) {
+          
+          var checkCat = function() {
+            if (category) {
+              return tag.category == category;
+            } else {
+              return true;
+            }
+          };
+          
+          var checkVal = function() {
+            if (value) {
+              return tag.value == value;
+            } else {
+              return true;
+            }
+          };
+          
+          if (checkCat() && checkVal()) {
+            app.searchResults.push(this);
+            return true;
+          }
+          
+        }, this);
+      }.bind(this)
     }
   });
 };
