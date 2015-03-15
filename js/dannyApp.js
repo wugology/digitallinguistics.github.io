@@ -90,8 +90,8 @@ var app = {
   
   searchByTag: function(tag, callback) {
     app.searchResults = [];
-    app.preferences.currentCorpus.searchByTag(tag, function() {
-      if (typeof callback == 'function') { callback(app.searchResults); }
+    app.preferences.currentCorpus.searchByTag(tag, function(results, tagType) {
+      if (typeof callback == 'function') { callback(results, tagType); }
     });
   },
   
@@ -342,28 +342,55 @@ modules.OrthographiesOverview = function(collection) {
   this.el = $('#orthographiesOverview');
 };
 
-modules.Tagger = function(searchResults) {
-  Module.call(this, searchResults);
+modules.Tagger = function(searchResults, options) {
+  Module.call(this, searchResults, options);
   
   this.workview = 'tags';
   
   this.el = $('#tagger');
   this.taggingList = $('#taggingList');
+  this.template = $('#tagItemTemplate');
   
   this.listResults = function() {
-    // Need to know the type of tag in order to know how to display these
-    // This should be passed by the search function as an option to the Tagger view
-    // Augmenting the object with options should be something that lives a level up the hierarchy
+    this.taggingList.innerHTML = '';
     
-    this.collection.forEach(function(result) {
-      var li = createElement('li', {  });
-    }, this);
+    switch (this.tagType) {
+      case 'corpus':
+        this.collection.forEach(this.renderCorpus);
+        break;
+      case 'phrase':
+        this.collection.forEach(this.renderPhrase);
+        break;
+      default:
+        this.collection.forEach(this.renderPhrase);
+    }
   };
   
   this.render = function() {
     this.listResults();
     this.display();
   };
+  
+  this.renderCorpus = function(corpus) {
+  };
+  
+  this.renderPhrase = function(phrase) {
+    var li = this.template.content.querySelector('li').cloneNode(true);
+    li.dataset.breadcrumb = phrase.breadcrumb;
+    
+    var tagsWrapper = li.querySelector('.tags');
+    
+    phrase.tags.forEach(function(tag) {
+      var text = tag.value ? tag.category + ' : ' + tag.value : tag.category
+      var p = createElement('p', { textContent: text });
+      tagsWrapper.appendChild(p);
+    });
+    
+    this.taggingList.appendChild(li);
+    
+    var pv = new PhraseView(phrase);
+    pv.render(li.querySelector('.wrapper'));
+  }.bind(this);
 };
 
 modules.TagsOverview = function(collection) {
@@ -399,6 +426,7 @@ modules.TagsOverview = function(collection) {
         
         categories.forEach(function(category) {
           var catli = createElement('li');
+          catli.classList.add('tagCategory');
             var h3 = createElement('h3', { textContent: category });
             h3.dataset.tag = type + ':' + category;
             catli.appendChild(h3);
@@ -408,9 +436,12 @@ modules.TagsOverview = function(collection) {
             var ofTypeCat = ofType.filter(function(tag) { return tag.category == category; });
             
             ofTypeCat.forEach(function(tag) {
-              var valueli = createElement('li', { textContent: tag.value });
-              valueli.dataset.tag = tag.type + ':' + tag.category + ':' + tag.value;
-              valwrapper.appendChild(valueli);
+              if (tag.value) {
+                var valueli = createElement('li', { textContent: tag.value });
+                valueli.dataset.tag = tag.type + ':' + tag.category + ':' + tag.value;
+                valueli.classList.add('tagValue');
+                valwrapper.appendChild(valueli);
+              }
             }, this);
             
           catwrapper.appendChild(catli);
@@ -425,8 +456,8 @@ modules.TagsOverview = function(collection) {
   };
   
   this.tagsList.addEventListener('click', function(ev) {
-    var renderTags = function() {
-      modules.tagger = new modules.Tagger(app.searchResults);
+    var renderTags = function(results, tagType) {
+      modules.tagger = new modules.Tagger(results, { tagType: tagType });
       modules.tagger.render();
     };
     

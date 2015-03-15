@@ -51,7 +51,7 @@ models.Corpus = function Corpus(data) {
         
         if (tag.type == 'corpus') {
           this.hasTag(tag.category, tag.value);
-          if (typeof callback == 'function') { callback(app.searchResults); }
+          if (typeof callback == 'function') { callback(app.searchResults, tag.type); }
         
         } else {
           var search = function(texts) {
@@ -59,7 +59,7 @@ models.Corpus = function Corpus(data) {
               text.searchByTag(tag);
             }, this);
             
-            if (typeof callback == 'function') { callback(app.searchResults); }
+            if (typeof callback == 'function') { callback(app.searchResults, tag.type); }
           };
           
           this.get('texts', search);

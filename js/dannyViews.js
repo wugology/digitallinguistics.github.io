@@ -16,8 +16,8 @@ var Nav = function() {
   delete this.model;
 };
 
-var Module = function(collection) {
-  CollectionView.call(this, collection);
+var Module = function(collection, options) {
+  CollectionView.call(this, collection, options);
   
   if (!this.render) {
     this.render = function() { this.display(); };

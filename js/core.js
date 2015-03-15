@@ -342,8 +342,8 @@ function View(model, template, options) {
   Events.call(this);
 };
 
-function CollectionView(collection) {
-  View.call(this, collection);
+function CollectionView(collection, options) {
+  View.call(this, collection, null, options);
   
   this.collection = this.model;
   delete this.model;
