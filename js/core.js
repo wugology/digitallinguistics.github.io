@@ -249,8 +249,6 @@ function Model(data) {
     
     'hasTag': {
       value: function(category, value) {
-        app.searchResults = [];
-        
         var some = this.tags.some(function(tag) {
           
           var checkCat = function() {
@@ -296,6 +294,14 @@ function Collection(data) {
     'model': {
       enumerable: true,
       value: this.constructor.name
+    },
+    
+    'hasTag': {
+      value: function(category, value) {
+        return data.some(function(item) {
+          return item.hasTag(category, value);
+        });
+      }
     }
   });
   

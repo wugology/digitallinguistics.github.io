@@ -46,6 +46,28 @@ models.Corpus = function Corpus(data) {
       }.bind(this)
     },
     
+    'searchByTag': {
+      value: function(tag, callback) {
+        
+        if (tag.type == 'corpus') {
+          this.hasTag(tag.category, tag.value);
+          if (typeof callback == 'function') { callback(app.searchResults); }
+        
+        } else {
+          var search = function(texts) {
+            texts.forEach(function(text) {
+              text.searchByTag(tag);
+            }, this);
+            
+            if (typeof callback == 'function') { callback(app.searchResults); }
+          };
+          
+          this.get('texts', search);
+        }
+        
+      }.bind(this)
+    },
+    
     'setAsCurrent': {
       value: function() {
         app.preferences.currentCorpus = this;
@@ -135,6 +157,18 @@ models.Text = function Text(data) {
       }.bind(this)
     },
     
+    'searchByTag': {
+      value: function(tag) {
+        if (tag.type == 'text') {
+          this.hasTag(tag.category, tag.value);
+        } else {
+          this.phrases.forEach(function(phrase) {
+            phrase.searchByTag(tag);
+          }, this);
+        }
+      }.bind(this)
+    },
+    
     'setAsCurrent': {
       value: function() {
         app.preferences.currentText = this;
@@ -148,6 +182,7 @@ models.Phrase = function Phrase(data) {
   Model.call(this, data);
 
   if (!this.words) { this.words = [];}
+  if (!this.tags) {this.tags = []; }
   
   this.words = new models.Words(this.words);
 
@@ -175,6 +210,18 @@ models.Phrase = function Phrase(data) {
         
         text.get('media', playMedia);
       }.bind(this)
+    },
+    
+    'searchByTag': {
+      value: function(tag) {
+        if (tag.type == 'phrase') {
+          this.hasTag(tag.category, tag.value);
+        } else {
+          this.words.forEach(function(word) {
+            word.searchByTag(tag);
+          }, this);
+        }
+      }.bind(this)
     }
   });
 };
@@ -186,6 +233,20 @@ models.Word = function Word(data) {
   if (!this.morphemes) { this.morphemes = []; }
   
   this.morphemes = new models.Morphemes(this.morphemes);
+  
+  Object.defineProperties(this, {
+    'search': {
+      value: function(tag) {
+        if (tag.type == 'word') {
+          this.hasTag(tag.category, tag.value);
+        } else {
+          this.morphemes.forEach(function(morpheme) {
+            morpheme.hasTag(tag.category, tag.value);
+          }, this);
+        }
+      }.bind(this)
+    }
+  });
 };
 
 // Abbr: map

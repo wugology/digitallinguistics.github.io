@@ -1,3 +1,7 @@
+var posTag = new models.Tag({ type: 'corpus', category: 'pos', value: 'verb' });
+var negTag = new models.Tag({ type: 'phrase', category: 'negation', value: 'participle' });
+var longTag = new models.Tag({ type: 'phrase', category: 'long' });
+
 // APP
 
 // Controls general app functionality
@@ -86,6 +90,13 @@ var app = {
   
   save: function() {
     localStorage.wugbotPreferences = JSON.stringify(app.preferences, null, 2);
+  },
+  
+  searchByTag: function(tag, callback) {
+    app.searchResults = [];
+    app.preferences.currentCorpus.searchByTag(tag, function() {
+      if (typeof callback == 'function') { callback(app.searchResults); }
+    });
   },
   
   searchResults: [],
