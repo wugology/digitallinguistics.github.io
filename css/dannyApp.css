@@ -110,6 +110,10 @@ legend {
 .closed {
   max-width: 2.5rem; }
 
+.icon[src='img/tag.svg'] {
+  min-height: 2.5rem;
+  min-width: 2.5rem; }
+
 img[src='img/close.svg'] {
   top: 0.5rem;
   right: 0.5rem;
