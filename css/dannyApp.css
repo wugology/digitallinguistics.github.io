@@ -24,7 +24,7 @@ footer, section {
 .phrase.selected {
   box-shadow: 0px 0px 5px 0px #3F93F9; }
 
-#mediaList li, icon, #textsList li {
+icon, #mediaList li, #tagsList, #textsList li {
   cursor: pointer; }
 
 .buttons, .media li, #mediaList li, .phrase, #searchField, #textsList li, .titles li {

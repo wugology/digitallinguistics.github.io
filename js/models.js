@@ -200,9 +200,9 @@ models.Construction = function Construction(data) {};
 models.Tag = function Tag(data) {
   if (data) { augment(this, data); }
   
+  this.type = this.type || '';
   this.category = this.category || '';
   this.value = this.value || '';
-  this.level = this.level || '';
   
   Object.defineProperties(this, {
     'model': {
@@ -211,6 +211,18 @@ models.Tag = function Tag(data) {
     }
   });
 };
+
+Object.defineProperty(models.Tag.constructor.prototype, 'parse', {
+  value: function(tagString) {
+    var tagParts = tagString.split(':');
+    var tag = new models.Tag({
+      type: tagParts[0],
+      category: tagParts[1],
+      value: tagParts[2] || null
+    });
+    return tag;
+  }
+});
 
 
 // COLLECTIONS MODELS (PLURAL)

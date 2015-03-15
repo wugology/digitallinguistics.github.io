@@ -52,6 +52,21 @@ function createList(wrapper, list, populateListItem) {
   });
 };
 
+// Gets a list of unique values for a given attribute from an array of objects
+function getUnique(attribute, array) {
+  var values = [];
+  
+  array.forEach(function(obj) {
+    var matches = values.filter(function(value) {
+      return obj[attribute] == value;
+    });
+    
+    if (matches.length == 0) { values.push(obj[attribute]); }
+  });
+  
+  return values;
+};
+
 function hydrate(obj) {
   var newObj = new models[obj.model](obj);
   if (newObj.id) {

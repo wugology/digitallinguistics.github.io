@@ -343,51 +343,59 @@ modules.TagsOverview = function(collection) {
   
   this.listTags = function() {
     this.collection.sort(function(a, b) {
-      return a.category > b.category;
+      if (a.type > b.type) { return true; }
+      if (a.type < b.type) { return false; }
+      if (a.category > b.category) { return true; }
+      if (a.category < b.category) { return false; }
+      if (a.value > b.value) { return true; }
+      if (a.value < b.value) { return false; }
     });
     
-    var getCategories = function() {
-      var categories = [];
-      
-      this.collection.forEach(function(tag) {
-        var matches = categories.filter(function(category) {
-          return tag.category == category;
-        });
-        
-        if (matches.length == 0) { categories.push(tag.category); }
-      });
-      
-      return categories;
-    }.bind(this);
+    var types = getUnique('type', this.collection);
     
-    var displayByCategories = function() {
-      getCategories().forEach(function(category) {
-        var li = createElement('li');
-        var h2 = createElement('h2', { textContent: category});
-        li.appendChild(h2);
-        var ul = createElement('ul');
-        li.appendChild(ul);
+    types.forEach(function(type) {
+      var typeli = createElement('li');
+        var h2 = createElement('h2', { textContent: type });
+        h2.dataset.tag = type;
+        typeli.appendChild(h2);
+        var catwrapper = createElement('ul');
+        typeli.appendChild(catwrapper);
         
-        var tagsInCategory = this.collection.filter(function(tag) {
-          return tag.category == category;
-        });
+        var ofType = this.collection.filter(function(tag) { return tag.type == type; });
+        var categories = getUnique('category', ofType);
         
-        createList(ul, tagsInCategory, function(tag, li) {
-          li.dataset.tag = tag.category + ':' + tag.value;
-          li.textContent = tag.value;
-        });
-
-        this.tagsList.appendChild(li);
-      }, this);
-    }.bind(this);
-    
-    displayByCategories();
+        categories.forEach(function(category) {
+          var catli = createElement('li');
+            var h3 = createElement('h3', { textContent: category });
+            h3.dataset.tag = type + ':' + category;
+            catli.appendChild(h3);
+            var valwrapper = createElement('ul');
+            catli.appendChild(valwrapper);
+            
+            var ofTypeCat = ofType.filter(function(tag) { return tag.category == category; });
+            
+            ofTypeCat.forEach(function(tag) {
+              var valueli = createElement('li', { textContent: tag.value });
+              valueli.dataset.tag = tag.type + ':' + tag.category + ':' + tag.value;
+              valwrapper.appendChild(valueli);
+            }, this);
+            
+          catwrapper.appendChild(catli);
+        }, this);
+      this.tagsList.appendChild(typeli);
+    }, this);
   }.bind(this);
   
   this.render = function() {
     this.listTags();
     this.display();
   };
+  
+  this.tagsList.addEventListener('click', function(ev) {
+    console.log(ev.target.dataset.tag);
+    
+    // Run a tag search
+  });
 };
 
 modules.TextsOverview = function(collection) {
