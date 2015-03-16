@@ -114,6 +114,17 @@ var app = {
 var AppView = function() {
   View.call(this);
   
+  this.createTagger = function(results, options) {
+    if (modules.tagger) {
+      modules.tagger.bulkTagButton.removeEventListener('click', modules.tagger.bulkTag);
+      modules.tagger.searchBar.removeEventListener('submit', modules.tagger.runSearch);
+      modules.tagger.taggingList.removeEventListener('click', modules.tagger.newTag);
+    }
+
+    modules.tagger = new modules.Tagger(results, options);
+    modules.tagger.render();
+  };
+  
   this.setWorkview = function(workview) {
     if (!workview) { workview = 'texts'; }
 
@@ -147,8 +158,7 @@ var AppView = function() {
       case 'tags':
         modules.tagsOverview = new modules.TagsOverview(app.preferences.currentCorpus.tags)
         modules.tagsOverview.render();
-        modules.tagger = new modules.Tagger([]);
-        modules.tagger.render();
+        this.createTagger([]);
         break;
       case 'texts':
         app.preferences.currentCorpus.get('texts', function(texts) {
@@ -161,7 +171,7 @@ var AppView = function() {
     }
     
     app.preferences.currentWorkview = workview;
-  };
+  }.bind(this);
   
   this.toggleOverviewPane = function() {
     if ($('#overviewPane').classList.contains('open')) {
@@ -194,14 +204,13 @@ var AppView = function() {
   this.update = function(action, data) {
     if (action == 'appNavClick') { this.setWorkview(data); }
     if (action == 'newTagger') {
-      modules.tagsOverview = new modules.TagsOverview(app.preferences.currentCorpus.tags)
+      modules.tagsOverview = new modules.TagsOverview(app.preferences.currentCorpus.tags);
       modules.tagsOverview.render();
       if (data) {
-        modules.tagger = new modules.Tagger(data.results, { lingType: data.lingType });
-        modules.tagger.render();
+        this.createTagger(data.results, { lingType: data.lingType });
       }
     }
-  };
+  }.bind(this);
   
   $('#collapseLeft').addEventListener('click', this.toggleOverviewPane);
   $('#collapseRight').addEventListener('click', this.toggleToolbar);
@@ -350,8 +359,6 @@ modules.MediaOverview = function(collection) {
     this.collection.list(this.mediaList, populateListItem);
     this.display();
   };
-  
-  this.mediaList.addEventListener();
 };
 
 modules.OrthographiesOverview = function(collection) {
@@ -367,32 +374,12 @@ modules.Tagger = function(searchResults, options) {
   
   this.workview = 'tags';
   
+  this.bulkTagButton = $('#bulkTagButton');
   this.el = $('#tagger');
   this.searchBar = $('#searchBar');
   this.searchBox = $('#tagSearchBox');
   this.taggingList = $('#taggingList');
   this.template = $('#tagItemTemplate');
-  
-  this.listResults = function() {
-    this.taggingList.innerHTML = '';
-    
-    switch (this.tagType) {
-      case 'corpus':
-        this.collection.forEach(function(corpus) {
-          this.renderCorpus(corpus);
-        }, this);
-        break;
-      case 'phrase':
-        this.collection.forEach(function(phrase) {
-          this.renderPhrase(phrase);
-        }, this);
-        break;
-      default:
-        this.collection.forEach(function(phrase) {
-          this.renderPhrase(phrase);
-        }, this);
-    }
-  };
   
   this.render = function() {
     this.listResults();
@@ -409,6 +396,36 @@ modules.Tagger = function(searchResults, options) {
     
     result.store(pushToCorpus);
   };
+
+  this.bulkTag = function() {
+    var getCrumbs = function(tag) {
+      var crumbs = this.getSelected();
+      
+      var tagAll = function(results) {
+        results.forEach(function(result, i, arr) {
+          if (i == arr.length-1) {
+            this.addTag(tag, result, function() {
+              this.notify('newTagger', { results: this.collection, lingType: this.lingType });
+            }.bind(this));
+          } else {
+            this.addTag(tag, result);
+          }
+        }, this);
+      }.bind(this);
+      
+      idb.getBreadcrumb(crumbs, tagAll);
+    }.bind(this);
+
+    this.getTag(getCrumbs);
+  }.bind(this);
+  
+  // Returns the BREADCRUMBS of the selected phrases
+  this.getSelected = function() {
+    var checkboxes = $('input[name=tagCheckbox]');
+    var selected = checkboxes.filter(function(checkbox) { return checkbox.checked == true; });
+    var crumbs = selected.map(function(checkbox) { return Breadcrumb.parse(checkbox.value); });
+    return crumbs;
+  };
   
   this.getTag = function(callback) {
     var makeTag = function(category, value) {
@@ -418,6 +435,50 @@ modules.Tagger = function(searchResults, options) {
     
     popups.tag.render(makeTag);
   }.bind(this);
+
+  this.listResults = function() {
+    this.taggingList.innerHTML = '';
+    
+    switch (this.lingType) {
+      case 'corpus':
+        this.collection.forEach(function(corpus) {
+          this.renderCorpus(corpus);
+        }, this);
+        break;
+      case 'phrase':
+        this.collection.forEach(function(phrase) {
+          this.renderPhrase(phrase);
+        }, this);
+        break;
+      default:
+        this.collection.forEach(function(phrase) {
+          this.renderPhrase(phrase);
+        }, this);
+    }
+  };
+
+  this.newTag = function(ev) {
+    if (ev.target.classList.contains('tag')) {
+      var listItem = ev.target.parentNode;
+      var crumb = Breadcrumb.parse(listItem.dataset.breadcrumb);
+      
+      var getAndRenderTag = function(results) {
+        var addRender = function(tag) {
+          var render = function() {
+            var phrase = results[0];
+            var replaceNode = listItem;
+            this.renderPhrase(phrase, replaceNode); // Runs 2x
+          }.bind(this);
+
+          this.addTag(tag, results[0], render); // Runs 2x
+        }.bind(this);
+        
+        this.getTag(addRender); // Runs 1x
+      }.bind(this);
+      
+      idb.getBreadcrumb(crumb, getAndRenderTag);
+    }
+  }.bind(this);
   
   this.renderCorpus = function(corpus) {
   };
@@ -425,6 +486,7 @@ modules.Tagger = function(searchResults, options) {
   this.renderPhrase = function(phrase, replaceNode) {
     var li = this.template.content.querySelector('li').cloneNode(true);
     li.dataset.breadcrumb = Breadcrumb.stringify(phrase.breadcrumb);
+    li.querySelector('input').value = Breadcrumb.stringify(phrase.breadcrumb);
     
     var tagsWrapper = li.querySelector('.tags');
     
@@ -444,54 +506,28 @@ modules.Tagger = function(searchResults, options) {
     var pv = new PhraseView(phrase, { contentEditable: true });
     pv.render(li.querySelector('.wrapper'));
   }.bind(this);
-  
-  var newTag = function(ev) {
-    if (ev.target.classList.contains('tag')) {
-      var listItem = ev.target.parentNode;
-      var crumb = Breadcrumb.parse(listItem.dataset.breadcrumb);
-      
-      var getTag = function(results) {
-        var addTag = function(tag) {
-          var notifyRender = function() {
-            this.notify('newTagger');
-            
-            var phrase = results[0];
-            var replaceNode = listItem;
-            this.renderPhrase(phrase, replaceNode);
-          }.bind(this);
-          
-          this.addTag(tag, results[0], notifyRender);
-        }.bind(this);
-        
-        this.getTag(addTag);
-      }.bind(this);
-      
-      idb.getBreadcrumb(crumb, getTag);
-    }
-  }.bind(this);
-  
-  this.search = function(attribute, searchExpr) {
-    var newTagger = function(results, lingType) {
-      this.searchBar.removeEventListener('submit', runSearch);
-      this.taggingList.removeEventListener('click', newTag);
-      this.notify('newTagger', { results: results, lingType: lingType });
-    }.bind(this);
-    
-    app.searchText(attribute, searchExpr, newTagger);
-  };
-  
-  var runSearch = function(ev) {
+
+  this.runSearch = function(ev) {
     ev.preventDefault();
     var options = Array.prototype.slice.call(document.getElementsByName('field'));
     var selected = options.filter(function(option) { return option.checked; });
     
     this.search(selected[0].value, this.searchBox.value);
   }.bind(this);
+
+  this.search = function(attribute, searchExpr) {
+    var notify = function(results, lingType) {
+      this.notify('newTagger', { results: results, lingType: lingType });
+    }.bind(this);
+    
+    app.searchText(attribute, searchExpr, notify);
+  };
   
   this.observers.add('newTagger', appView);
   
-  this.searchBar.addEventListener('submit', runSearch);
-  this.taggingList.addEventListener('click', newTag);
+  this.bulkTagButton.addEventListener('click', this.bulkTag);
+  this.searchBar.addEventListener('submit', this.runSearch);
+  this.taggingList.addEventListener('click', this.newTag);
 };
 
 modules.TagsOverview = function(collection) {
@@ -562,14 +598,15 @@ modules.TagsOverview = function(collection) {
     this.display();
   };
   
+  appView.observers.add('newTagger', this);
+  
   this.tagsList.addEventListener('click', function(ev) {
     if (ev.target.dataset.tag) {
-      var renderTags = function(results, tagType) {
-        modules.tagger = new modules.Tagger(results, { tagType: tagType });
-        modules.tagger.render();
-      };
+      var notify = function(results, tagType) {
+        this.notify('newTagger', { results: results, lingType: lingType });
+      }.bind(this);
       
-      app.searchByTag(models.Tag.parse(ev.target.dataset.tag), renderTags);
+      app.searchByTag(models.Tag.parse(ev.target.dataset.tag), notify);
     }
   });
 };
@@ -748,7 +785,7 @@ popups.Settings = function() {
   this.icon.addEventListener('click', this.toggleDisplay);
 };
 
-popups.Tag = function(callback) {
+popups.Tag = function() {
   Popup.call(this);
 
   this.el = $('#tagPopup');
@@ -756,19 +793,19 @@ popups.Tag = function(callback) {
   this.categoryInput = $('#categoryInput');
   this.valueInput = $('#valueInput');
   
-  
   this.render = function(callback) {
-    var submit = function(ev) {
-      ev.preventDefault();
-      if (typeof callback == 'function') { callback(this.categoryInput.value, this.valueInput.value); }
-      this.form.removeEventListener(submit);
-      this.hide();
-    }.bind(this);
-
-    this.form.addEventListener('submit', submit);
+    this.callback = callback;
     this.display();
     this.categoryInput.focus();
   }.bind(this);
+  
+  this.submit = function(ev) {
+    ev.preventDefault();
+    if (typeof this.callback == 'function') { this.callback(this.categoryInput.value, this.valueInput.value); }
+    this.hide();
+  }.bind(this);
+  
+  this.form.addEventListener('submit', this.submit);
 };
 
 

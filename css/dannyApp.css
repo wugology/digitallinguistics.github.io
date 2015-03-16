@@ -17,6 +17,10 @@ audio, .play, #taggingList .icon {
   -webkit-align-self: center;
   align-self: center; }
 
+#bulkTagButton {
+  -webkit-align-self: flex-end;
+  align-self: flex-end; }
+
 .tagCategory { /* Tag category label */
   background-color: rgba(63, 249, 165, 0.25); }
 
@@ -85,7 +89,7 @@ legend {
 .tagValue, .tags > p {
   margin: 0.25rem; }
   
-.phrases > li, #taggingList .tags, #taggingList > li {
+.phrases > li, #taggingList > li {
   margin-top: 1rem; }
 
 #corpusSelector, #taggingList .tags, .titles, #searchBar > div > label {

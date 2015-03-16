@@ -84,6 +84,7 @@ function toArray(primitive) {
 };
 
 // A global Breadcrumb object that handles functions relating to breadcrumbs
+// Change this into a constructor, whose prototypes have the methods (like you did for the Tag constructor)
 Breadcrumb = {
   // Finds the given breadcrumb in a given text, and applies the given function to it
   // Action can take optional second and third arguments, which are the index of the object in the array, and the array that the object is in

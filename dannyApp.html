@@ -136,6 +136,8 @@
           </div>
         </form>
         
+        <button id=bulkTagButton type=button value='Add tag to selected'>Add tag to selected</button>
+        
         <ul id=taggingList></ul>
       </div>
     </section>
@@ -278,7 +280,7 @@
     <template id=tagItemTemplate>
       <li>
         <label>
-          <input type=checkbox>
+          <input type=checkbox name=tagCheckbox>
           <div class=wrapper></div>
         </label>
         <ul class=tags></ul>
