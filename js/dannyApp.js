@@ -441,7 +441,7 @@ modules.Tagger = function(searchResults, options) {
       this.taggingList.appendChild(li);
     }
 
-    var pv = new PhraseView(phrase);
+    var pv = new PhraseView(phrase, { contentEditable: true });
     pv.render(li.querySelector('.wrapper'));
   }.bind(this);
   
@@ -491,7 +491,6 @@ modules.Tagger = function(searchResults, options) {
   this.observers.add('newTagger', appView);
   
   this.searchBar.addEventListener('submit', runSearch);
-  
   this.taggingList.addEventListener('click', newTag);
 };
 

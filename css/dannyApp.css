@@ -29,7 +29,7 @@ audio, .play, #taggingList .icon {
 .phrase > .wrapper > p {
   background-color: transparent; }
 
-.phrase > .wrapper > p:hover {
+.text .phrase > .wrapper > p:hover {
   background-color: rgba(63, 147, 249, 0.5); }
 
 .phrase > .wrapper > p:focus {
@@ -79,13 +79,13 @@ footer, section {
 legend {
   font-weight: bold; }
 
-.tagCategory, #tagPopup label {
+.tagCategory, #tagPopup label, #taggingList input[type=checkbox] {
   margin: 0.5rem; }
 
 .tagValue, .tags > p {
   margin: 0.25rem; }
   
-.phrase, #taggingList .tags {
+.phrases > li, #taggingList .tags, #taggingList > li {
   margin-top: 1rem; }
 
 #corpusSelector, #taggingList .tags, .titles, #searchBar > div > label {
@@ -119,6 +119,10 @@ img[src='img/close.svg'] {
   right: 0.5rem;
   transform: translate(25%, -25%); }
 
+input[type=checkbox] {
+  min-height: 1rem;
+  min-width: 1rem; }
+
 .mainSection {
   position: relative;
   transition: max-width 1s;
@@ -133,7 +137,7 @@ img[src='img/close.svg'] {
 .open {
   max-width: 100%; }
 
-.phrase > .wrapper {
+.wrapper {
   width: 100%; }
 
 .play {
@@ -151,7 +155,7 @@ img[src='img/close.svg'] {
 #tagPopup input {
   margin: 0; }
 
-#taggingList > li > .wrapper {
+#taggingList > li > label {
   max-width: 75%;
   min-width: 75%; }
 

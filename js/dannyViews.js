@@ -235,8 +235,8 @@ var TextView = function(model) {
   appView.observers.add('setWorkview', this);
 };
 
-var PhraseView = function(model) {
-  View.call(this, model);
+var PhraseView = function(model, options) {
+  View.call(this, model, null, options);
   
   this.template = $('#phraseTemplate');
   
@@ -247,14 +247,17 @@ var PhraseView = function(model) {
     
     var renderText = function(textHash, type) {
       Object.keys(textHash).forEach(function(ortho) {
-        var p = createElement('p', { textContent: textHash[ortho], contentEditable: true, spellcheck: false });
+        var p = createElement('p', { textContent: textHash[ortho], spellcheck: false });
+        if (this.contentEditable == true) {
+          p.contentEditable == true
+        }
         p.dataset.type = type;
         p.dataset.ortho = ortho;
         p.classList.add('phraseContent');
         p.classList.add('unicode');
         contentWrapper.appendChild(p);
-      });
-    };
+      }, this);
+    }.bind(this);
     
     renderText(this.model.transcripts, 'transcripts');
     renderText(this.model.transcriptions, 'transcriptions');

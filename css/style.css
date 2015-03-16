@@ -42,7 +42,7 @@ button, label, header {
   -webkit-align-items: center;
   align-items: center; }
 
-label[type=checkbox], input[type=radio], label p + input {
+input[type=checkbox], input[type=radio], label p + input {
   -webkit-align-self: center;
   align-self: center; }
 
