@@ -52,6 +52,11 @@ function createList(wrapper, list, populateListItem) {
   });
 };
 
+function display(el, media) {
+  if (media != 'mobile') { el.classList.remove('hideonDesktop'); }
+  if (media != 'desktop') { el.classList.remove('hideonMobile'); }
+};
+
 // Gets a list of unique values for a given attribute from an array of objects
 function getUnique(attribute, array) {
   var values = [];
@@ -65,6 +70,11 @@ function getUnique(attribute, array) {
   });
   
   return values;
+};
+
+function hide(el, media) {
+  if (media != 'mobile') { el.classList.add('hideonDesktop'); }
+  if (media != 'desktop') { el.classList.add('hideonMobile'); }
 };
 
 function hydrate(obj) {
@@ -89,6 +99,11 @@ function renderTextContent(textHash, wrapper) {
 
 function toArray(primitive) {
   return [primitive];
+};
+
+function toggleDisplay(el) {
+  el.classList.toggle('hideonMobile');
+  el.classList.toggle('hideonDesktop');    
 };
 
 // A global Breadcrumb object that handles functions relating to breadcrumbs
@@ -345,18 +360,15 @@ function View(model, template, options) {
   
   // The optional media elements specifies whether you would only like to display the element on one media type (desktop/mobile)
   this.display = function(media) {
-    if (media != 'mobile') { this.el.classList.remove('hideonDesktop'); }
-    if (media != 'desktop') { this.el.classList.remove('hideonMobile'); }
+    display(this.el, media);
   }.bind(this);
   
   this.hide = function(media) {
-    if (media != 'mobile') { this.el.classList.add('hideonDesktop'); }
-    if (media != 'desktop') { this.el.classList.add('hideonMobile'); }
+    hide(this.el, media);
   }.bind(this);
   
-  this.toggleDisplay = function(media) {
-    this.el.classList.toggle('hideonMobile');
-    this.el.classList.toggle('hideonDesktop');    
+  this.toggleDisplay = function() {
+    toggleDisplay(this.el);
   }.bind(this);
   
   Events.call(this);

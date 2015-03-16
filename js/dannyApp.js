@@ -667,8 +667,10 @@ modules.TextsOverview = function(collection) {
     if (this.addExistingButton.textContent == 'Add existing text') {
       this.listExisting();
       this.addExistingButton.textContent = 'Add selected texts to corpus';
+      hide(this.removeSelectedButton);
     } else {
       this.addExistingButton.textContent = 'Add existing text';
+      display(this.removeSelectedButton);
       var selected = $('input[name=textCheckbox]:checked');
       if (!selected.length) { selected = toArray(selected); }
       this.textsList.innerHTML = '';

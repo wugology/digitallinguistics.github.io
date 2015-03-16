@@ -9,12 +9,10 @@ models.Document = function(data) {
 models.MediaFile = function MediaFile(data) {
   Model.call(this, data);
   
-  this.observers.add('addToCorpus', app.preferences.currentCorpus);
-
   Object.defineProperties(this, {
     'addToCorpus': {
       value: function() {
-        this.notify('addToCorpus', this);
+        app.preferences.currentCorpus.add(this.id, 'media');
       }.bind(this)
     },
     
@@ -39,6 +37,24 @@ models.Corpus = function Corpus(data) {
   this.tags = new models.Tags(this.tags);
   
   Object.defineProperties(this, {
+    'add': {
+      value: function(idsToAdd, type) {
+        if (!idsToAdd.length) { idsToAdd = toArray(idsToAdd); }
+        
+        idsToAdd.forEach(function(idToAdd) {
+          var matches = this[type].filter(function(id) {
+            return id == idToAdd;
+          });
+          
+          if (matches.length == 0) {
+            this[type].push(idToAdd);
+          }
+        }, this);
+        
+        this.store();
+      }.bind(this)
+    },
+    
     'cleanupTags': {
       value: function() {
         var searchTag = function(tag, i, arr) {
@@ -126,21 +142,6 @@ models.Corpus = function Corpus(data) {
       value: function() {
         app.preferences.currentCorpus = this;
       }.bind(this)
-    },
-    
-    'update': {
-      value: function(action, data) {
-        if (action == 'addToCorpus') {
-          if (data.model == 'Text') {
-            this.texts.push(data.id);
-          } else if (data.model == 'MediaFile') {
-            this.media.push(data.id);
-          }
-          
-          this.store();
-        
-        }
-      }.bind(this)
     }
   });
 };
@@ -158,8 +159,6 @@ models.Text = function Text(data) {
   
   this.phrases = new models.Phrases(this.phrases);
   
-  this.observers.add('addToCorpus', app.preferences.currentCorpus);
-  
   this.abbreviation = this.abbreviation || '';
   this.type = this.type || '';
   this.genre = this.genre || '';
@@ -173,7 +172,7 @@ models.Text = function Text(data) {
   Object.defineProperties(this, {
     'addToCorpus': {
       value: function() {
-        this.notify('addToCorpus', this);
+        app.preferences.currentCorpus.add(this.id, 'texts');
       }.bind(this)
     },
 

@@ -139,14 +139,14 @@ var TextView = function(model) {
         
         var media = new models.MediaFile(data);
         
-        var addToCorpus = function(mediaIDs) {
+        var addRender = function(mediaIDs) {
           media.addToCorpus();
           this.model.media.push(mediaIDs[0]);
           this.model.store();
           this.render();
         }.bind(this);
         
-        media.store(addToCorpus);
+        media.store(addRender);
       }.bind(this);
       
       popups.fileUpload.render(goButtonCallback);
