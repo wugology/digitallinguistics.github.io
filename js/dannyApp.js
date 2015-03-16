@@ -467,13 +467,13 @@ modules.Tagger = function(searchResults, options) {
           var render = function() {
             var phrase = results[0];
             var replaceNode = listItem;
-            this.renderPhrase(phrase, replaceNode); // Runs 2x
+            this.renderPhrase(phrase, replaceNode);
           }.bind(this);
 
-          this.addTag(tag, results[0], render); // Runs 2x
+          this.addTag(tag, results[0], render);
         }.bind(this);
         
-        this.getTag(addRender); // Runs 1x
+        this.getTag(addRender);
       }.bind(this);
       
       idb.getBreadcrumb(crumb, getAndRenderTag);

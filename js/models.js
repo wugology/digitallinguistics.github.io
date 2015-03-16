@@ -46,6 +46,15 @@ models.Corpus = function Corpus(data) {
       }.bind(this)
     },
     
+    'removeTag': {
+      value: function(tag) {
+        this.tags.forEach(function(t, i) {
+          if (checkAgainst(tag, t)) { this.tags.splice(i, 1); }
+        }, this);
+        this.store();
+      }.bind(this)
+    },
+    
     'searchByTag': {
       value: function(tag, callback) {
         
@@ -105,8 +114,23 @@ models.Corpus = function Corpus(data) {
           
           if (data.model == 'Text') {
             this.texts.forEach(function(textID, i) {
-              if (textID == data.id) { this.texts.splice(i, 1); }
-            });
+              if (textID == data.id) {
+                var text = this.texts.splice(i, 1);
+                
+                var searchTag = function(tag) {
+                  var checkToRemove = function(results) {
+                    if (results.length == 0) {
+                      this.removeTag(tag);
+                    }
+                  }.bind(this);
+                  
+                  this.searchByTag(tag, checkToRemove);
+                }.bind(this);
+                
+                text.tags.forEach(searchTag);
+              }
+            }, this);
+            
           } else if (data.model == 'MediaFile') {
             this.media.forEach(function(mediaID, i) {
               if (mediaID == data.id) { this.media.splice(i, 1); }
