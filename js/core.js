@@ -238,6 +238,13 @@ function Model(data) {
     augment(this, data);
   }
   
+  if (!this.custom) { this.custom = {}; }
+  if (!this.tags) { this.tags = []; }
+  
+  this.tags = this.tags.map(function(tag) {
+    return new models.Tag(tag);
+  });
+  
   delete this.model;
   
   Object.defineProperties(this, {

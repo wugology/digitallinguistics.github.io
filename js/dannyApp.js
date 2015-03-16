@@ -75,6 +75,8 @@ var app = {
           }
           return false;
         });
+        
+        convertChiti();
       });
     };
     

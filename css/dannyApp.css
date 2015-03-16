@@ -5,7 +5,7 @@
   -webkit-align-content: flex-start;
   align-content: flex-start; }
 
-.media, #mediaList li, #searchField, .titles li {
+.media, #mediaList li, #searchBar, #searchField, .titles li {
   -webkit-align-items: center;
   align-items: center; }
 

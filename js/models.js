@@ -233,8 +233,12 @@ models.Text = function Text(data) {
 models.Phrase = function Phrase(data) {
   Model.call(this, data);
 
-  if (!this.words) { this.words = [];}
+  if (!this.notes) { this.notes = {}; }
   if (!this.tags) {this.tags = []; }
+  if (!this.transcriptions) { this.transcriptions = {}; }
+  if (!this.transcripts) { this.transcripts = {}; }
+  if (!this.translations) { this.translations = {}; }
+  if (!this.words) { this.words = [];}
   
   this.words = new models.Words(this.words);
 
@@ -309,7 +313,9 @@ models.Phrase = function Phrase(data) {
 models.Word = function Word(data) {
   Model.call(this, data);
   
+  if (!this.glosses) { this.glosses = {}; }
   if (!this.morphemes) { this.morphemes = []; }
+  if (!this.transcriptions) { this.transcriptions = {}; }
   
   this.morphemes = new models.Morphemes(this.morphemes);
   
