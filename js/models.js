@@ -39,6 +39,20 @@ models.Corpus = function Corpus(data) {
   this.tags = new models.Tags(this.tags);
   
   Object.defineProperties(this, {
+    'cleanupTags': {
+      value: function() {
+        var searchTag = function(tag) {
+          var checkToRemove = function(results) {
+            if (results.length == 0) { this.remove(tag); }
+          };
+          
+          this.searchByTag(tag, checkToRemove);
+        };
+        
+        this.tags.forEach(searchTag);
+      }.bind(this)
+    },
+
     // Retrieves all the specified type of object in this corpus from IndexedDB
     'get': {
       value: function(type, callback) {
@@ -49,7 +63,9 @@ models.Corpus = function Corpus(data) {
     'removeTag': {
       value: function(tag) {
         this.tags.forEach(function(t, i) {
-          if (checkAgainst(tag, t)) { this.tags.splice(i, 1); }
+          if (t.type == tag.type && t.category == tag.category && t.value == tag.value) {
+            this.tags.splice(i, 1);
+          }
         }, this);
         this.store();
       }.bind(this)
@@ -116,20 +132,10 @@ models.Corpus = function Corpus(data) {
             this.texts.forEach(function(textID, i) {
               if (textID == data.id) {
                 var text = this.texts.splice(i, 1);
-                
-                var searchTag = function(tag) {
-                  var checkToRemove = function(results) {
-                    if (results.length == 0) {
-                      this.removeTag(tag);
-                    }
-                  }.bind(this);
-                  
-                  this.searchByTag(tag, checkToRemove);
-                }.bind(this);
-                
-                text.tags.forEach(searchTag);
               }
             }, this);
+            
+            this.cleanupTags();
             
           } else if (data.model == 'MediaFile') {
             this.media.forEach(function(mediaID, i) {
