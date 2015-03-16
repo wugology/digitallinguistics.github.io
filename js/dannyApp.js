@@ -598,17 +598,17 @@ modules.TagsOverview = function(collection) {
     this.display();
   };
   
-  appView.observers.add('newTagger', this);
+  this.observers.add('newTagger', appView);
   
   this.tagsList.addEventListener('click', function(ev) {
     if (ev.target.dataset.tag) {
-      var notify = function(results, tagType) {
+      var notify = function(results, lingType) {
         this.notify('newTagger', { results: results, lingType: lingType });
       }.bind(this);
       
       app.searchByTag(models.Tag.parse(ev.target.dataset.tag), notify);
     }
-  });
+  }.bind(this));
 };
 
 modules.TextsOverview = function(collection) {
