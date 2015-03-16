@@ -617,37 +617,24 @@ modules.TextsOverview = function(collection) {
   this.workview = 'texts';
   
   this.el = $('#textsOverview');
+  this.addExistingButton = $('#addExistingTextButton');
   this.importButton = $('#importTextButton');
   this.textsList = $('#textsList');
   
-  var populateTextsListItem = function(text, li) {
-    li.dataset.id = text.id;
-    li.classList.add('textsListItem');
-    var p = createElement('p', { textContent: text.titles.Eng || '[click to display this text]' });
-    p.classList.add('unicode');
-    li.appendChild(p);
-  };
-  
-  this.render = function() {
-    this.collection.list(this.textsList, populateTextsListItem);
-    this.display();
-  };
-  
-  this.update = function(action, data) {
-    if (action == 'setWorkview') {
-      this.textsList.removeEventListener('click', renderTextsList);
-      if (data != this.workview) { this.hide(); }
-    } else if (action == 'deleteText' || action == 'titleChange') {
-      this.collection.list(this.textsList, populateTextsListItem);
-    } else if (action == 'switchCorpus') {
-      this.textsList.removeEventListener('click', renderTextsList);
+  this.addExisting = function() {
+    if (this.addExistingButton.textContent == 'Add existing text') {
+      this.listExisting();
+      this.addExistingButton.textContent = 'Add selected texts to corpus';
+    } else {
+      this.addExistingButton.textContent = 'Add existing text';
+      var selected = $('input[type="checkbox"][name="textCheckbox"]');
+      this.textsList.innerHTML = '';
+      selected.forEach(function(checkbox) { app.preferences.currentCorpus.texts.push(checkbox.value); });
+      app.preferences.currentCorpus.store(this.render);
     }
-  };
+  }.bind(this);
   
-  appView.corpusSelector.observers.add('switchCorpus', this);
-  
-  // Event listeners
-  this.importButton.addEventListener('click', function() {    
+  this.importText = function() {    
     popups.fileUpload.render(function(file) {
       var importText = function(text) {
         var incorporate = function(textIDs) {
@@ -665,10 +652,35 @@ modules.TextsOverview = function(collection) {
       
       tools.elan2json(file, ekegusiiColumns, importText);
     });
-  });
+  };
   
-  var renderTextsList = function renderTextsList(ev) {
-    if (ev.target.parentNode.classList.contains('textsListItem')) {
+  this.listExisting = function() {
+    var render = function(texts) {
+      console.log(texts);
+      var allTexts = new models.Texts(texts);
+      allTexts.list(this.textsList, populateTextsListItem)
+    }.bind(this);
+    
+    idb.getAll('texts', render);
+  };
+  
+  var populateTextsListItem = function(text, li) {
+    li.dataset.id = text.id;
+    li.classList.add('textsListItem');
+    var checkbox = createElement('input', { type: 'checkbox', name: 'textCheckbox', value: text.id });
+    li.appendChild(checkbox);
+    var p = createElement('p', { textContent: text.titles.Eng || '[click to display this text]' });
+    p.classList.add('unicode');
+    li.appendChild(p);
+  };
+  
+  this.render = function() {
+    this.collection.list(this.textsList, populateTextsListItem);
+    this.display();
+  }.bind(this);
+
+  this.renderText = function renderText(ev) {
+    if (ev.target.tagName == 'P') {
       var text = this.collection.filter(function(text) {
         return text.id == Number(ev.target.parentNode.dataset.id);
       })[0];
@@ -685,7 +697,24 @@ modules.TextsOverview = function(collection) {
     }
   }.bind(this);
   
-  this.textsList.addEventListener('click', renderTextsList);
+  this.update = function(action, data) {
+    if (action == 'setWorkview') {
+      this.textsList.removeEventListener('click', this.renderText);
+      if (data != this.workview) { this.hide(); }
+    } else if (action == 'deleteText' || action == 'titleChange') {
+      this.collection.list(this.textsList, populateTextsListItem);
+    } else if (action == 'switchCorpus') {
+      this.textsList.removeEventListener('click', this.renderText);
+    }
+  };
+  
+  // Observers
+  appView.corpusSelector.observers.add('switchCorpus', this);
+  
+  // Event listeners
+  this.addExistingButton.addEventListener('click', this.addExisting);
+  this.importButton.addEventListener('click', this.importText);
+  this.textsList.addEventListener('click', this.renderText);
 };
 
 
