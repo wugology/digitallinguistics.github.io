@@ -13,7 +13,7 @@
   -webkit-align-items: flex-start;
   align-items: flex-start; }
 
-audio, .play, #taggingList .icon {
+audio, .play, #taggingList .icon, #textsList abbr {
   -webkit-align-self: center;
   align-self: center; }
 
@@ -83,22 +83,22 @@ footer, section {
 legend {
   font-weight: bold; }
 
-.tagCategory, #tagPopup label, #taggingList input[type=checkbox] {
+.tagCategory, #tagPopup label, #taggingList input[type=checkbox], .textsListItem input {
   margin: 0.5rem; }
 
 .tagValue, .tags > p {
   margin: 0.25rem; }
-  
+
 .phrases > li, #taggingList > li {
   margin-top: 1rem; }
 
-#corpusSelector, #taggingList .tags, .titles, #searchBar > div > label {
+#corpusSelector, #taggingList .tags, .titles, #searchBar > div > label, #textsList p {
   padding: 0 0.5rem; }
 
 .phrase > .wrapper > p, .tags > p, .tagValue {
   padding: 0.25rem 0.5rem; }
 
-.tagCategory {
+.tagCategory, .textsListItem {
   padding: 0.5rem; }
 
 .phrase, #popups > div {

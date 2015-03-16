@@ -114,15 +114,54 @@ var app = {
 var AppView = function() {
   View.call(this);
   
-  this.createTagger = function(results, options) {
-    if (modules.tagger) {
-      modules.tagger.bulkTagButton.removeEventListener('click', modules.tagger.bulkTag);
-      modules.tagger.searchBar.removeEventListener('submit', modules.tagger.runSearch);
-      modules.tagger.taggingList.removeEventListener('click', modules.tagger.newTag);
+  this.newModule = function(moduleType, data, options) {
+    switch (moduleType) {
+      case 'documentsOverview':
+        modules.documentsOverview = new modules.DocumentsOverview(data);
+        modules.documentsOverview.render();
+        break;
+      case 'lexiconOverview':
+        modules.lexiconOverview = new modules.LexiconOverview(data);
+        modules.lexiconOverview.render();
+        break;
+      case 'mediaOverview':
+        modules.mediaOverview = new modules.MediaOverview(data);
+        modules.mediaOverview.render();
+        break;
+      case 'orthographiesOverview':
+        modules.orthographiesOverview = new modules.OrthographiesOverview(data);
+        modules.orthographiesOverview.render();
+        break;
+      case 'tagsOverview':
+        if (modules.tagsOverview) {
+          modules.tagsOverview.tagsList.removeEventListener('click', modules.tagsOverview.listen);
+        }
+        modules.tagsOverview = new modules.TagsOverview(data);
+        modules.tagsOverview.render();
+        break;
+      case 'tagger':
+        if (modules.tagger) {
+          modules.tagger.bulkTagButton.removeEventListener('click', modules.tagger.bulkTag);
+          modules.tagger.searchBar.removeEventListener('submit', modules.tagger.runSearch);
+          modules.tagger.taggingList.removeEventListener('click', modules.tagger.newTag);
+        }
+        modules.tagger = new modules.Tagger(data, options);
+        modules.tagger.render();
+        break;
+      case 'textsOverview':
+        app.preferences.currentCorpus.get('texts', function(texts) {
+          if (modules.textsOverview) {
+            modules.textsOverview.addExistingButton.removeEventListener('click', modules.textsOverview.addExisting);
+            modules.textsOverview.importButton.removeEventListener('click', modules.textsOverview.importText);
+            modules.textsOverview.removeSelectedButton.removeEventListener('click', modules.textsOverview.removeSelected);
+            modules.textsOverview.textsList.removeEventListener('click', modules.textsOverview.renderText);
+          }
+          modules.textsOverview = new modules.TextsOverview(texts);
+          modules.textsOverview.render();
+        });
+        break;
+      default:
     }
-
-    modules.tagger = new modules.Tagger(results, options);
-    modules.tagger.render();
   };
   
   this.setWorkview = function(workview) {
@@ -135,37 +174,26 @@ var AppView = function() {
     switch (workview) {
       case 'documents':
         app.preferences.currentCorpus.get('documents', function(docs) {
-          var docs = new models.Documents(docs);
-          modules.documentsOverview = new modules.DocumentsOverview(docs);
-          modules.documentsOverview.render()
-        });
+          this.newModule('documentsOverview', docs);
+        }.bind(this));
         break;
       case 'lexicon':
-        modules.lexiconOverview = new modules.LexiconOverview(null);
-        modules.lexiconOverview.render();
+        this.newModule('lexiconOverview', null);
         break;
       case 'media':
         app.preferences.currentCorpus.get('media', function(media) {
-          var media = new models.MediaFiles(media);
-          modules.mediaOverview = new modules.MediaOverview(media);
-          modules.mediaOverview.render()
-        });
+          this.newModule('mediaOverview', media);
+        }.bind(this));
         break;
       case 'orthographies':
-        modules.orthographiesOverview = new modules.OrthographiesOverview(null);
-        modules.orthographiesOverview.render()
+        this.newModule('orthographiesOverview', null);
         break;
       case 'tags':
-        modules.tagsOverview = new modules.TagsOverview(app.preferences.currentCorpus.tags)
-        modules.tagsOverview.render();
-        this.createTagger([]);
+        this.newModule('tagsOverview', app.preferences.currentCorpus.tags);
+        this.newModule('tagger');
         break;
       case 'texts':
-        app.preferences.currentCorpus.get('texts', function(texts) {
-          var texts = new models.Texts(texts);
-          modules.textsOverview = new modules.TextsOverview(texts);
-          modules.textsOverview.render();
-        });
+        this.newModule('textsOverview');
         break;
       default:
     }
@@ -204,12 +232,12 @@ var AppView = function() {
   this.update = function(action, data) {
     if (action == 'appNavClick') { this.setWorkview(data); }
     if (action == 'newTagger') {
-      modules.tagsOverview = new modules.TagsOverview(app.preferences.currentCorpus.tags);
-      modules.tagsOverview.render();
+      this.newModule('tagsOverview', app.preferences.currentCorpus.tags);
       if (data) {
-        this.createTagger(data.results, { lingType: data.lingType });
+        this.newModule('tagger', data.results, data.options);
       }
     }
+    if (action == 'textsListChange') { this.newModule('textsOverview'); }
   }.bind(this);
   
   $('#collapseLeft').addEventListener('click', this.toggleOverviewPane);
@@ -283,7 +311,6 @@ AppView.CorpusSelector = function() {
     } else if (ev.target.value != 'select') {
       var setCorpus = function(results) {
         app.preferences.currentCorpus = results[0];
-        this.notify('switchCorpus');
         appView.setWorkview(app.preferences.currentWorkview);
       }.bind(this);
       
@@ -356,7 +383,7 @@ modules.MediaOverview = function(collection) {
   };
   
   this.render = function() {
-    this.collection.list(this.mediaList, populateListItem);
+    createList(this.mediaList, this.collection, populateListItem);
     this.display();
   };
 };
@@ -405,7 +432,7 @@ modules.Tagger = function(searchResults, options) {
         results.forEach(function(result, i, arr) {
           if (i == arr.length-1) {
             this.addTag(tag, result, function() {
-              this.notify('newTagger', { results: this.collection, lingType: this.lingType });
+              this.notify('newTagger', { results: this.collection, options: { lingType: this.lingType } });
             }.bind(this));
           } else {
             this.addTag(tag, result);
@@ -517,7 +544,7 @@ modules.Tagger = function(searchResults, options) {
 
   this.search = function(attribute, searchExpr) {
     var notify = function(results, lingType) {
-      this.notify('newTagger', { results: results, lingType: lingType });
+      this.notify('newTagger', { results: results, options: { lingType: lingType } });
     }.bind(this);
     
     app.searchText(attribute, searchExpr, notify);
@@ -600,15 +627,17 @@ modules.TagsOverview = function(collection) {
   
   this.observers.add('newTagger', appView);
   
-  this.tagsList.addEventListener('click', function(ev) {
+  this.listen = function(ev) {
     if (ev.target.dataset.tag) {
       var notify = function(results, lingType) {
-        this.notify('newTagger', { results: results, lingType: lingType });
+        this.notify('newTagger', { results: results, options: { lingType: lingType } });
       }.bind(this);
       
       app.searchByTag(models.Tag.parse(ev.target.dataset.tag), notify);
     }
-  }.bind(this));
+  }.bind(this);
+  
+  this.tagsList.addEventListener('click', this.listen);
 };
 
 modules.TextsOverview = function(collection) {
@@ -619,7 +648,20 @@ modules.TextsOverview = function(collection) {
   this.el = $('#textsOverview');
   this.addExistingButton = $('#addExistingTextButton');
   this.importButton = $('#importTextButton');
+  this.removeSelectedButton = $('#removeSelectedTextsButton');
   this.textsList = $('#textsList');
+
+  var populateTextsListItem = function(text, li) {
+    li.dataset.id = text.id;
+    li.classList.add('textsListItem');
+    var checkbox = createElement('input', { type: 'checkbox', name: 'textCheckbox', value: text.id });
+    li.appendChild(checkbox);
+    var abbr = createElement('abbr', { textContent: text.abbreviation });
+    li.appendChild(abbr);
+    var title = createElement('p', { textContent: text.titles.Eng || '[click to display this text]' });
+    title.classList.add('unicode');
+    li.appendChild(title);
+  };
   
   this.addExisting = function() {
     if (this.addExistingButton.textContent == 'Add existing text') {
@@ -627,10 +669,11 @@ modules.TextsOverview = function(collection) {
       this.addExistingButton.textContent = 'Add selected texts to corpus';
     } else {
       this.addExistingButton.textContent = 'Add existing text';
-      var selected = $('input[type="checkbox"][name="textCheckbox"]');
+      var selected = $('input[name=textCheckbox]:checked');
+      if (!selected.length) { selected = toArray(selected); }
       this.textsList.innerHTML = '';
-      selected.forEach(function(checkbox) { app.preferences.currentCorpus.texts.push(checkbox.value); });
-      app.preferences.currentCorpus.store(this.render);
+      selected.forEach(function(checkbox) { app.preferences.currentCorpus.texts.push(Number(checkbox.value)); });
+      app.preferences.currentCorpus.store(this.notify('textsListChange'));
     }
   }.bind(this);
   
@@ -656,26 +699,23 @@ modules.TextsOverview = function(collection) {
   
   this.listExisting = function() {
     var render = function(texts) {
-      console.log(texts);
       var allTexts = new models.Texts(texts);
-      allTexts.list(this.textsList, populateTextsListItem)
+      createList(this.textsList, allTexts, populateTextsListItem);
     }.bind(this);
     
     idb.getAll('texts', render);
   };
   
-  var populateTextsListItem = function(text, li) {
-    li.dataset.id = text.id;
-    li.classList.add('textsListItem');
-    var checkbox = createElement('input', { type: 'checkbox', name: 'textCheckbox', value: text.id });
-    li.appendChild(checkbox);
-    var p = createElement('p', { textContent: text.titles.Eng || '[click to display this text]' });
-    p.classList.add('unicode');
-    li.appendChild(p);
-  };
+  this.removeSelected = function() {
+    var selected = $('#textsList input:checked');
+    if (!selected.length) { selected = toArray(selected); }
+    var ids = selected.map(function(input) { return Number(input.value); });
+    app.preferences.currentCorpus.remove(ids, 'texts');
+    this.notify('textsListChange');
+  }.bind(this);
   
   this.render = function() {
-    this.collection.list(this.textsList, populateTextsListItem);
+    createList(this.textsList, this.collection, populateTextsListItem);
     this.display();
   }.bind(this);
 
@@ -703,17 +743,16 @@ modules.TextsOverview = function(collection) {
       if (data != this.workview) { this.hide(); }
     } else if (action == 'deleteText' || action == 'titleChange') {
       this.collection.list(this.textsList, populateTextsListItem);
-    } else if (action == 'switchCorpus') {
-      this.textsList.removeEventListener('click', this.renderText);
     }
   };
   
   // Observers
-  appView.corpusSelector.observers.add('switchCorpus', this);
+  this.observers.add('textsListChange', appView);
   
   // Event listeners
   this.addExistingButton.addEventListener('click', this.addExisting);
   this.importButton.addEventListener('click', this.importText);
+  this.removeSelectedButton.addEventListener('click', this.removeSelected);
   this.textsList.addEventListener('click', this.renderText);
 };
 

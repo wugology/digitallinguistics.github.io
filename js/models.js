@@ -20,7 +20,7 @@ models.MediaFile = function MediaFile(data) {
     
     'removeFromCorpus': {
       value: function() {
-        this.notify('removeFromCorpus', this).bind(this);
+        app.preferences.currentCorpus.remove(this.id, 'media');
       }.bind(this)
     }
   });
@@ -41,9 +41,10 @@ models.Corpus = function Corpus(data) {
   Object.defineProperties(this, {
     'cleanupTags': {
       value: function() {
-        var searchTag = function(tag) {
+        var searchTag = function(tag, i, arr) {
           var checkToRemove = function(results) {
             if (results.length == 0) { this.remove(tag); }
+            if (i == arr.length-1) { this.store(); }
           };
           
           this.searchByTag(tag, checkToRemove);
@@ -57,6 +58,20 @@ models.Corpus = function Corpus(data) {
     'get': {
       value: function(type, callback) {
         idb.get(this[type], type, callback);
+      }.bind(this)
+    },
+    
+    'remove': {
+      value: function(idsToRemove, type) {
+        if (!idsToRemove.length) { idsToRemove = toArray(idsToRemove); }
+        
+        idsToRemove.forEach(function(idToRemove) {
+          this[type].forEach(function(id, i) {
+            if (id == idToRemove) { this[type].splice(i, 1); }
+          }, this);
+        }, this);
+        
+        this.cleanupTags();
       }.bind(this)
     },
     
@@ -122,26 +137,8 @@ models.Corpus = function Corpus(data) {
             this.media.push(data.id);
           }
           
-          data.observers.add('removeFromCorpus', this);
           this.store();
         
-        } else if (action == 'removeFromCorpus') {
-          data.observers.remove('removeFromCorpus', this);
-          
-          if (data.model == 'Text') {
-            this.texts.forEach(function(textID, i) {
-              if (textID == data.id) {
-                var text = this.texts.splice(i, 1);
-              }
-            }, this);
-            
-            this.cleanupTags();
-            
-          } else if (data.model == 'MediaFile') {
-            this.media.forEach(function(mediaID, i) {
-              if (mediaID == data.id) { this.media.splice(i, 1); }
-            });
-          }
         }
       }.bind(this)
     }
@@ -197,7 +194,7 @@ models.Text = function Text(data) {
     
     'removeFromCorpus': {
       value: function() {
-        this.notify('removeFromCorpus', this);
+        app.preferences.currentCorpus.remove(this.id, 'texts');
       }.bind(this)
     },
     
@@ -393,10 +390,6 @@ models.MediaFiles = function MediaFiles(data) {
   
   var media = new Collection(coll);
   
-  media.list = function(wrapper, populateListItem) {
-    createList(wrapper, this, populateListItem);
-  };
-  
   return media;
 };
 
@@ -418,12 +411,6 @@ models.Texts = function Texts(data) {
   });
   
   var texts = new Collection(coll);
-  
-  // Displays a list of all the texts in this collection; each text gets a <li id=[breadcrumb]>
-  // populateListItem is a function that has a text and an empty <li> as its arguments; use this to populate the <li> with content from the text  
-  texts.list = function(wrapper, populateListItem) {
-    createList(wrapper, this, populateListItem);
-  };
   
   return texts;
 };

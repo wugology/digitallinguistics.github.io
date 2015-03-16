@@ -1,14 +1,5 @@
 // VIEWS
 
-// HELPERS
-function renderTextContent(textHash, wrapper) {
-  Object.keys(textHash).forEach(function(ortho) {
-    var p = createElement(p, { textContent: textHash[ortho] });
-    p.classList.add('unicode');
-    wrapper.appendChild(p);
-  });
-};
-
 
 // APP COMPONENT VIEWS
 var Nav = function() {

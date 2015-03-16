@@ -79,6 +79,14 @@ function hydrate(obj) {
   return newObj;
 };
 
+function renderTextContent(textHash, wrapper) {
+  Object.keys(textHash).forEach(function(ortho) {
+    var p = createElement(p, { textContent: textHash[ortho] });
+    p.classList.add('unicode');
+    wrapper.appendChild(p);
+  });
+};
+
 function toArray(primitive) {
   return [primitive];
 };
