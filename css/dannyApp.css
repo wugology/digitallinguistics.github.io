@@ -73,7 +73,7 @@ footer, section {
   -webkit-flex-direction: row;
   flex-direction: row; }
 
-#mediaList li p, #searchBar > label, #searchBox, #taggingList .tags, #tagSearchBox, .titles label, .wrapper {
+#mediaList li p, #resultsCounter, #searchBar > label, #searchBox, #taggingList .tags, #tagSearchBox, .titles label, .wrapper {
   -webkit-flex-grow: 1;
   flex-grow: 1; }
 

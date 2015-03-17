@@ -145,6 +145,7 @@ var AppView = function() {
         break;
       case 'tagger':
         if (modules.tagger) {
+          modules.tagger.selectAllButton.removeEventListener('click', modules.tagger.selectAll);
           modules.tagger.bulkTagButton.removeEventListener('click', modules.tagger.bulkTag);
           modules.tagger.searchBar.removeEventListener('submit', modules.tagger.runSearch);
           modules.tagger.taggingList.removeEventListener('click', modules.tagger.newTag);
@@ -410,21 +411,15 @@ modules.Tagger = function(searchResults, options) {
   this.resultsCounter = $('#resultsCounter');
   this.searchBar = $('#searchBar');
   this.searchBox = $('#tagSearchBox');
+  this.selectAllButton = $('#taggerSelectAllButton');
   this.taggingList = $('#taggingList');
   this.template = $('#tagItemTemplate');
   
   this.addTag = function(tag, result, callback) {
-    result.tags.push(tag);
+    tag.push(result.tags);
     
     var pushToCorpus = function() {
-      var matches = app.preferences.currentCorpus.tags.filter(function(t) {
-        return !(t.type == tag.type && t.category == tag.category && t.value == tag.value);
-      });
-      
-      if (!matches) {
-        app.preferences.currentCorpus.tags.push(tag);
-      }
-      
+      tag.push(app.preferences.currentCorpus.tags);
       app.preferences.currentCorpus.store(callback);
     };
     
@@ -565,10 +560,16 @@ modules.Tagger = function(searchResults, options) {
     app.searchText(attribute, searchExpr, notify);
   };
   
+  this.selectAll = function() {
+    var checkboxes = $('#taggingList input');
+    checkboxes.forEach(function(checkbox) { checkbox.checked = true; });
+  };
+  
   this.observers.add('newTagger', appView);
   
   this.bulkTagButton.addEventListener('click', this.bulkTag);
   this.searchBar.addEventListener('submit', this.runSearch);
+  this.selectAllButton.addEventListener('click', this.selectAll);
   this.taggingList.addEventListener('click', this.newTag);
 };
 

@@ -92,6 +92,26 @@ models.Corpus = function Corpus(data) {
       }.bind(this)
     },
     
+    'removeAllTags': {
+      value: function() {
+        app.preferences.currentCorpus.tags = [];
+        
+        var remove = function(texts) {
+          texts.forEach(function(text) {
+            text.tags = [];
+            
+            text.phrases.forEach(function(phrase) {
+              phrase.tags = [];
+            });
+            
+            text.store();
+          });
+        };
+        
+        this.get('texts', remove);
+      }.bind(this)
+    },
+    
     'removeTag': {
       value: function(tag) {
         var removeFromTagsList = function(tagsList) {
@@ -374,19 +394,33 @@ models.Tag = function Tag(data) {
     'model': {
       enumerable: true,
       value: 'Tag'
+    },
+    
+    'push': {
+      value: function(array) {
+        var matches = array.filter(function(t) {
+          return (t.type == this.type && t.category == this.category && t.value == this.value);
+        }.bind(this));
+        
+        if (matches.length == 0) {
+          array.push(this);
+        }
+      }.bind(this)
     }
   });
 };
 
-Object.defineProperty(models.Tag.constructor.prototype, 'parse', {
-  value: function(tagString) {
-    var tagParts = tagString.split(':');
-    var tag = new models.Tag({
-      type: tagParts[0],
-      category: tagParts[1],
-      value: tagParts[2] || null
-    });
-    return tag;
+Object.defineProperties(models.Tag.constructor.prototype, {
+  'parse': {
+    value: function(tagString) {
+      var tagParts = tagString.split(':');
+      var tag = new models.Tag({
+        type: tagParts[0],
+        category: tagParts[1],
+        value: tagParts[2] || null
+      });
+      return tag;
+    }
   }
 });
 

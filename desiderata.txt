@@ -1,0 +1,7 @@
+Desiderata:
+- Push tags to corpus on tag
+- Character palette
+- Notes field on the tag
+- Color field on tag
+
+\bgan[ .,ˋˊ]
