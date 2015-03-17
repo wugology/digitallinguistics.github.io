@@ -55,11 +55,28 @@ models.Corpus = function Corpus(data) {
       }.bind(this)
     },
     
+    // Adds floater tags to the corpus (tags that exist within the corpus but aren't in the tags array)
+    // Then removes any unused tags from the corpus' tags array
     'cleanupTags': {
       value: function() {
+        var pullTagsUp = function() {
+          var checkToRemove = function(texts) {
+            texts.forEach(function(text) {
+              text.forEach(function(tag) {
+                if (!text.hasTag(tag)) { tag.push(text.tags); }
+                text.phrases.forEach(function(phrase) {
+                  if (!phrase.hasTag(tag)) { tag.push(phrase.tags); }
+                });
+              });
+            });
+          };
+          
+          this.get('texts', checkToRemove);
+        };
+        
         var searchTag = function(tag, i, arr) {
           var checkToRemove = function(results) {
-            if (results.length == 0) { this.remove(tag); }
+            if (results.length == 0) { this.removeTag(tag); }
             if (i == arr.length-1) { this.store(); }
           }.bind(this);
           
@@ -147,7 +164,10 @@ models.Corpus = function Corpus(data) {
       value: function(tag, callback) {
         
         if (tag.type == 'corpus') {
-          this.hasTag(tag.category, tag.value);
+          if (this.hasTag(tag)) {
+            app.searchResults.push(this);
+          }
+          
           if (typeof callback == 'function') { callback(app.searchResults, tag.type); }
         
         } else {
@@ -241,7 +261,7 @@ models.Text = function Text(data) {
     'searchByTag': {
       value: function(tag) {
         if (tag.type == 'text') {
-          this.hasTag(tag.category, tag.value);
+          if (this.hasTag(tag)) { app.searchResults.push(this); }
         } else {
           this.phrases.forEach(function(phrase) {
             phrase.searchByTag(tag);
@@ -308,7 +328,7 @@ models.Phrase = function Phrase(data) {
     'searchByTag': {
       value: function(tag) {
         if (tag.type == 'phrase') {
-          this.hasTag(tag.category, tag.value);
+          if (this.hasTag(tag)) { app.searchResults.push(this); }
         } else {
           this.words.forEach(function(word) {
             word.searchByTag(tag);
@@ -359,10 +379,10 @@ models.Word = function Word(data) {
     'search': {
       value: function(tag) {
         if (tag.type == 'word') {
-          this.hasTag(tag.category, tag.value);
+          if (this.hasTag(tag)) { app.searchResults.push(this); }
         } else {
           this.morphemes.forEach(function(morpheme) {
-            morpheme.hasTag(tag.category, tag.value);
+            if (morpheme.hasTag(tag)) { app.searchResults.push(this); }
           }, this);
         }
       }.bind(this)

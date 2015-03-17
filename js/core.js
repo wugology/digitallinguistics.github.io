@@ -283,30 +283,10 @@ function Model(data) {
     },
     
     'hasTag': {
-      value: function(category, value) {
-        var some = this.tags.some(function(tag) {
-          
-          var checkCat = function() {
-            if (category) {
-              return tag.category == category;
-            } else {
-              return true;
-            }
-          };
-          
-          var checkVal = function() {
-            if (value) {
-              return tag.value == value;
-            } else {
-              return true;
-            }
-          };
-          
-          return checkCat() && checkVal();
-          
-        }, this);
-        
-        if (some) { app.searchResults.push(this); }
+      value: function(tag) {
+        var some = this.tags.some(function(t) {
+          return (t.type == this.type && t.category == this.category && t.value == this.value);
+        });
         
         return some;
       }.bind(this)
@@ -332,9 +312,9 @@ function Collection(data) {
     },
     
     'hasTag': {
-      value: function(category, value) {
+      value: function(tag) {
         return data.some(function(item) {
-          return item.hasTag(category, value);
+          return item.hasTag(tag);
         });
       }
     }
