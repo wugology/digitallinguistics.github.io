@@ -274,11 +274,11 @@ models.Phrase = function Phrase(data) {
         }
         
         var playMedia = function(media) {
-          if (media.length == 0) { alert('No media files are associated with this text.'); }
-          
-          var url = URL.createObjectURL(media[0].file);
-          var a = new Audio(url + '#t=' + this.startTime + ',' + this.endTime);
-          a.play();
+          if (media.length != 0) {
+            var url = URL.createObjectURL(media[0].file);
+            var a = new Audio(url + '#t=' + this.startTime + ',' + this.endTime);
+            a.play();
+          }
         }.bind(this);
         
         text.get('media', playMedia);
