@@ -102,7 +102,7 @@ var app = {
   
   searchText: function(attribute, searchExpr, callback) {
     this.lastSearch = { attribute: attribute, searchExpr: searchExpr };
-    searchExpr = new RegExp('/' + searchExpr + '/', 'g');
+    searchExpr = new RegExp(searchExpr, 'g');
     app.searchResults = [];
     app.preferences.currentCorpus.searchText(attribute, searchExpr, function(results, lingType) {
       if (typeof callback == 'function') { callback(results, lingType); }
@@ -407,6 +407,7 @@ modules.Tagger = function(searchResults, options) {
   
   this.bulkTagButton = $('#bulkTagButton');
   this.el = $('#tagger');
+  this.resultsCounter = $('#resultsCounter');
   this.searchBar = $('#searchBar');
   this.searchBox = $('#tagSearchBox');
   this.taggingList = $('#taggingList');
