@@ -512,9 +512,9 @@ models.Phrases = function Phrases(data) {
   
   // populatePhrase is a function that takes a phrase a content wrapper for that phrase as its argument
   Object.defineProperty(phrases, 'render', {
-    value: function(wrapper) {
+    value: function(wrapper, options) {
       phrases.forEach(function(phrase) {
-        var pv = new PhraseView(phrase);
+        var pv = new PhraseView(phrase, options);
         pv.render(wrapper);
       });
     }.bind(this)

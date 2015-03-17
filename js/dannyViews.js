@@ -96,7 +96,7 @@ var TextView = function(model) {
     // Render phrases
     phraseWrapper = this.el.querySelector('.phrases');
     
-    this.model.phrases.render(phraseWrapper);
+    this.model.phrases.render(phraseWrapper, { textAbbr: this.model.abbreviation });
     
     // Load media
     var setMedia = function(media) {
@@ -231,10 +231,13 @@ var PhraseView = function(model, options) {
   
   this.template = $('#phraseTemplate');
   
-  this.render = function(wrapper, options) {
+  this.render = function(wrapper) {
     var pv = this.template.content.querySelector('.phrase').cloneNode(true);
     pv.dataset.breadcrumb = Breadcrumb.stringify(model.breadcrumb);
     var contentWrapper = pv.querySelector('.wrapper');
+    
+    var key = createElement('abbr', { textContent: options.textAbbr + '.' + model.breadcrumb[1] });
+    contentWrapper.appendChild(key);
     
     var renderText = function(textHash, type) {
       Object.keys(textHash).forEach(function(ortho) {

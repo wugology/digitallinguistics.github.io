@@ -285,7 +285,7 @@ function Model(data) {
     'hasTag': {
       value: function(tag) {
         var some = this.tags.some(function(t) {
-          return (t.type == this.type && t.category == this.category && t.value == this.value);
+          return (t.type == tag.type && t.category == tag.category && t.value == tag.value);
         });
         
         return some;

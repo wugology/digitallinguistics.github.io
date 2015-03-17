@@ -957,6 +957,7 @@ popups.User = function() {
 $('#popups').addEventListener('click', function(ev) {
   if (ev.target.classList.contains('icon')) { popups[ev.target.parentNode.id.replace('Popup', '')].hide(); }
 });
+
 window.addEventListener('keydown', function(ev) {
   if (ev.keyCode == 9 && app.preferences.currentPhrase && app.preferences.currentWorkview == 'texts') {
     ev.preventDefault();
