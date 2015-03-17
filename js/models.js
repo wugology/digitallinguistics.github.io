@@ -65,12 +65,12 @@ models.Corpus = function Corpus(data) {
           var checkToPush = function(texts) {
             texts.forEach(function(text) {
               text.tags.forEach(function(tag) {
-                if (!this.hasTag(tag)) { tag.tag(this.tags); }
+                if (!this.hasTag(tag)) { tag.tag(this); }
               }, this);
               
               text.phrases.forEach(function(phrase) {
                 phrase.tags.forEach(function(tag) {
-                  if (!this.hasTag(tag)) { tag.tag(this.tags); }
+                  if (!this.hasTag(tag)) { tag.tag(this); }
                 }, this);
               }, this);
             }, this);
