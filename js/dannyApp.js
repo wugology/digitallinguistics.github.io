@@ -414,7 +414,7 @@ modules.Tagger = function(searchResults, options) {
   this.selectAllButton = $('#taggerSelectAllButton');
   this.taggingList = $('#taggingList');
   this.template = $('#tagItemTemplate');
-  
+
   this.addTag = function(tag, result, callback) {
     tag.tag(result);
     
@@ -466,6 +466,8 @@ modules.Tagger = function(searchResults, options) {
   }.bind(this);
 
   this.listResults = function() {
+    this.resultsCounter.innerHTML = 'Results found: ' + (this.collection.length || 0);
+    
     var renderResults = function(abbrevs) {
       this.taggingList.innerHTML = '';
       
@@ -565,7 +567,6 @@ modules.Tagger = function(searchResults, options) {
 
   this.search = function(attribute, searchExpr) {
     var notify = function(results, lingType) {
-      this.resultsCounter.innerHTML = 'Results found: ' + (results.length || 0);
       this.notify('newTagger', { results: results, options: { lingType: lingType } });
     }.bind(this);
     
