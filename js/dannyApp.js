@@ -20,6 +20,7 @@ var app = {
       popups.manageCorpora = new popups.ManageCorpora();
       popups.settings = new popups.Settings();
       popups.tag = new popups.Tag();
+      popups.user = new popups.User();
       
       // Set the current workview
       var setWorkview = function() {
@@ -478,9 +479,11 @@ modules.Tagger = function(searchResults, options) {
         }, this);
         break;
       default:
-        this.collection.forEach(function(phrase) {
-          this.renderPhrase(phrase);
-        }, this);
+        if (this.collection) {
+          this.collection.forEach(function(phrase) {
+            this.renderPhrase(phrase);
+          }, this);
+        }
     }
   };
 
@@ -650,18 +653,6 @@ modules.TextsOverview = function(collection) {
   this.importButton = $('#importTextButton');
   this.removeSelectedButton = $('#removeSelectedTextsButton');
   this.textsList = $('#textsList');
-
-  var populateTextsListItem = function(text, li) {
-    li.dataset.id = text.id;
-    li.classList.add('textsListItem');
-    var checkbox = createElement('input', { type: 'checkbox', name: 'textCheckbox', value: text.id });
-    li.appendChild(checkbox);
-    var abbr = createElement('abbr', { textContent: text.abbreviation });
-    li.appendChild(abbr);
-    var title = createElement('p', { textContent: text.titles.Eng || '[click to display this text]' });
-    title.classList.add('unicode');
-    li.appendChild(title);
-  };
   
   this.addExisting = function() {
     if (this.addExistingButton.textContent == 'Add existing text') {
@@ -701,8 +692,8 @@ modules.TextsOverview = function(collection) {
   
   this.listExisting = function() {
     var render = function(texts) {
-      var allTexts = new models.Texts(texts);
-      createList(this.textsList, allTexts, populateTextsListItem);
+      var tl = new TextsListView(texts);
+      tl.render(this.textsList);
     }.bind(this);
     
     idb.getAll('texts', render);
@@ -717,7 +708,8 @@ modules.TextsOverview = function(collection) {
   }.bind(this);
   
   this.render = function() {
-    createList(this.textsList, this.collection, populateTextsListItem);
+    var tl = new TextsListView(this.collection);
+    tl.render(this.textsList);
     this.display();
   }.bind(this);
 
@@ -744,9 +736,10 @@ modules.TextsOverview = function(collection) {
       this.textsList.removeEventListener('click', this.renderText);
       if (data != this.workview) { this.hide(); }
     } else if (action == 'deleteText' || action == 'titleChange') {
-      this.collection.list(this.textsList, populateTextsListItem);
+      var tl = new TextsListView(this.collection);
+      tl.render(this.textsList);
     }
-  };
+  }.bind(this);
   
   // Observers
   this.observers.add('textsListChange', appView);
@@ -876,6 +869,63 @@ popups.Tag = function() {
   }.bind(this);
   
   this.form.addEventListener('submit', this.submit);
+};
+
+popups.User = function() {
+  Popup.call(this);
+  
+  this.icon = $('#userIcon');
+  
+  var renderFunction = function(displayArea) {
+    var header = createElement('h1', { textContent: 'Texts I’ve Created' });
+    displayArea.appendChild(header);
+    var button = createElement('button', { textContent: 'Permanently delete selected texts', value: 'Permanently delete selected texts', type: 'button' });
+    displayArea.appendChild(button);
+    var textsList = createElement('ul');
+    displayArea.appendChild(textsList);
+    
+    var renderTextsList = function(texts) {
+      var tl = new TextsListView(texts);
+      tl.render(textsList);
+    };
+    
+    idb.getAll('texts', renderTextsList);
+    
+    button.addEventListener('click', function() {
+      var choice = confirm('Are you sure you want to permanently delete these texts?');
+      if (choice == true) {
+        popups.blank.hide();
+        var selected = $('#blankPopup input:checked');
+        if (!selected.length) { selected = toArray(selected); }
+        var ids = selected.map(function(input) { return Number(input.value); });
+        
+        var remove = function(corpora) {
+          app.preferences.currentCorpus.remove(ids, 'texts');
+          
+          corpora.forEach(function(corpus, i) {
+            if (i == corpora.length-1) {
+              var removeFromIDB = function() {
+                idb.remove(ids, 'texts', appView.setWorkview);
+              };
+              
+              corpus.remove(ids, 'texts', removeFromIDB);
+            } else {
+              corpus.remove(ids, 'texts');
+            }
+          });
+          
+        };
+        
+        idb.getAll('corpora', remove);
+      }
+    });
+  };
+  
+  this.render = function() {
+    popups.blank.render(renderFunction);
+  };
+  
+  this.icon.addEventListener('click', this.render);
 };
 
 

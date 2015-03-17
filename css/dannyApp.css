@@ -54,7 +54,7 @@ footer, section {
 .phrase.selected {
   box-shadow: 0px 0px 5px 0px #3F93F9; }
 
-.icon, #mediaList li, .tagCategory h3, .tagValue, #textsList li {
+.icon, #mediaList li, .tagCategory h3, .tagValue, .textsListItem {
   cursor: pointer; }
 
 .buttons,
@@ -67,7 +67,7 @@ footer, section {
 #taggingList > li,
 .tags,
 #tagsList > li > ul,
-#textsList li,
+.textsListItem,
 .titles li {
   -webkit-flex-direction: row;
   flex-direction: row; }

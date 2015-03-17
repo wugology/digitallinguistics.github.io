@@ -78,7 +78,7 @@ models.Corpus = function Corpus(data) {
     },
     
     'remove': {
-      value: function(idsToRemove, type) {
+      value: function(idsToRemove, type, callback) {
         if (!idsToRemove.length) { idsToRemove = toArray(idsToRemove); }
         
         idsToRemove.forEach(function(idToRemove) {
@@ -88,6 +88,7 @@ models.Corpus = function Corpus(data) {
         }, this);
         
         this.cleanupTags();
+        this.store(callback);
       }.bind(this)
     },
     

@@ -260,3 +260,24 @@ var PhraseView = function(model, options) {
     this.el = pv;
   }.bind(this);
 };
+
+var TextsListView = function(texts) {
+  CollectionView.call(this, texts);
+  
+  this.populateListItem = function(text, li) {
+    li.dataset.id = text.id;
+    li.classList.add('textsListItem');
+    var checkbox = createElement('input', { type: 'checkbox', name: 'textCheckbox', value: text.id });
+    li.appendChild(checkbox);
+    var abbr = createElement('abbr', { textContent: text.abbreviation });
+    li.appendChild(abbr);
+    var title = createElement('p', { textContent: text.titles.Eng || '[click to display this text]' });
+    title.classList.add('unicode');
+    li.appendChild(title);
+  };
+  
+  this.render = function(wrapper) {
+    wrapper.innerHTML = '';
+    createList(wrapper, this.collection, this.populateListItem);
+  }.bind(this);
+};
