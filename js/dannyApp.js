@@ -466,7 +466,9 @@ modules.Tagger = function(searchResults, options) {
   }.bind(this);
 
   this.listResults = function() {
-    this.resultsCounter.innerHTML = 'Results found: ' + (this.collection.length || 0);
+    if (this.collection) {
+      this.resultsCounter.innerHTML = 'Results found: ' + this.collection.length;
+    }
     
     var renderResults = function(abbrevs) {
       this.taggingList.innerHTML = '';
