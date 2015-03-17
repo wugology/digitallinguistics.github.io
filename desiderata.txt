@@ -1,4 +1,7 @@
 Desiderata:
+- Clicking on tag category renders all tags with that category (not just exact matches)
+- Delete tags via right click (both overview and details view)
+- Count of the number of items with each tag (overview view)
 - Character palette
 - Notes field on the tag
 - Color field on tag
