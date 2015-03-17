@@ -61,10 +61,10 @@ models.Corpus = function Corpus(data) {
           var checkToRemove = function(results) {
             if (results.length == 0) { this.remove(tag); }
             if (i == arr.length-1) { this.store(); }
-          };
+          }.bind(this);
           
           this.searchByTag(tag, checkToRemove);
-        };
+        }.bind(this);
         
         this.tags.forEach(searchTag);
       }.bind(this)

@@ -416,7 +416,14 @@ modules.Tagger = function(searchResults, options) {
     result.tags.push(tag);
     
     var pushToCorpus = function() {
-      app.preferences.currentCorpus.tags.push(tag);
+      var matches = app.preferences.currentCorpus.tags.filter(function(t) {
+        return !(t.type == tag.type && t.category == tag.category && t.value == tag.value);
+      });
+      
+      if (!matches) {
+        app.preferences.currentCorpus.tags.push(tag);
+      }
+      
       app.preferences.currentCorpus.store(callback);
     };
     
@@ -963,5 +970,6 @@ window.addEventListener('keydown', function(ev) {
     }
   }
 });
+
 window.addEventListener('load', app.initialize);
 window.addEventListener('unload', app.save);
