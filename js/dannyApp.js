@@ -973,3 +973,19 @@ window.addEventListener('keydown', function(ev) {
 
 window.addEventListener('load', app.initialize);
 window.addEventListener('unload', app.save);
+
+var removeAllTags = function() {
+  var remove1 = function(texts) {
+    texts.forEach(function(text) {
+      text.tags = [];
+      
+      text.phrases.forEach(function(phrase) {
+        phrase.tags = [];
+      });
+      
+      text.store();
+    });
+  };
+  
+  idb.getAll('texts', remove1);
+};
