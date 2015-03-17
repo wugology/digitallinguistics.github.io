@@ -69,7 +69,7 @@ var TextView = function(model) {
   },
   
   this.render = function() {
-    $('#detailsPane').innerHTML = '';
+    $('#detailsPane .displayArea').innerHTML = '';
     
     var tv = this.template.content.querySelector('.text').cloneNode(true);
     
