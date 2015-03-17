@@ -82,6 +82,8 @@ var app = {
     idb.open('WugbotDev', initSequence);
   },
   
+  lastSearch: null,
+  
   // Change this function to use popups.blank instead
   notify: function(text) {
     alert(text);
@@ -99,6 +101,7 @@ var app = {
   },
   
   searchText: function(attribute, searchExpr, callback) {
+    this.lastSearch = { attribute: attribute, searchExpr: searchExpr };
     searchExpr = new RegExp(searchExpr, 'g');
     app.searchResults = [];
     app.preferences.currentCorpus.searchText(attribute, searchExpr, function(results, lingType) {
@@ -409,11 +412,6 @@ modules.Tagger = function(searchResults, options) {
   this.taggingList = $('#taggingList');
   this.template = $('#tagItemTemplate');
   
-  this.render = function() {
-    this.listResults();
-    this.display();
-  };
-  
   this.addTag = function(tag, result, callback) {
     result.tags.push(tag);
     
@@ -433,7 +431,7 @@ modules.Tagger = function(searchResults, options) {
         results.forEach(function(result, i, arr) {
           if (i == arr.length-1) {
             this.addTag(tag, result, function() {
-              this.notify('newTagger', { results: this.collection, options: { lingType: this.lingType } });
+              this.search(app.lastSearch.attribute, app.lastSearch.searchExpr);
             }.bind(this));
           } else {
             this.addTag(tag, result);
@@ -509,6 +507,11 @@ modules.Tagger = function(searchResults, options) {
       idb.getBreadcrumb(crumb, getAndRenderTag);
     }
   }.bind(this);
+
+  this.render = function() {
+    this.listResults();
+    this.display();
+  };
   
   this.renderCorpus = function(corpus) {
   };
@@ -586,6 +589,12 @@ modules.TagsOverview = function(collection) {
     
     var types = getUnique('type', this.collection);
     
+    if (types.length == 0) {
+      var message = createElement('h3', { textContent: 'There are no tags in this corpus! Start adding some tags to your data and the tags will show up here.' });
+      message.classList.add('tagCategory');
+      this.tagsList.appendChild(message);
+    }
+    
     types.forEach(function(type) {
       var typeli = createElement('li');
         var h2 = createElement('h2', { textContent: type });
@@ -607,16 +616,15 @@ modules.TagsOverview = function(collection) {
             catli.appendChild(valwrapper);
             
             var ofTypeCat = ofType.filter(function(tag) { return tag.category == category; });
-            
-            ofTypeCat.forEach(function(tag) {
-              if (tag.value) {
-                var valueli = createElement('li', { textContent: tag.value });
-                valueli.dataset.tag = tag.type + ':' + tag.category + ':' + tag.value;
+            var values = getUnique('value', ofTypeCat);
+            values.forEach(function(value) {
+              if (value) {
+                var valueli = createElement('li', { textContent: value });
+                valueli.dataset.tag = type + ':' + category + ':' + value;
                 valueli.classList.add('tagValue');
                 valwrapper.appendChild(valueli);
               }
-            }, this);
-            
+            });
           catwrapper.appendChild(catli);
         }, this);
       this.tagsList.appendChild(typeli);

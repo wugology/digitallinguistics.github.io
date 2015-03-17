@@ -94,11 +94,31 @@ models.Corpus = function Corpus(data) {
     
     'removeTag': {
       value: function(tag) {
-        this.tags.forEach(function(t, i) {
-          if (t.type == tag.type && t.category == tag.category && t.value == tag.value) {
-            this.tags.splice(i, 1);
-          }
-        }, this);
+        var removeFromTagsList = function(tagsList) {
+          tagsList = tagsList.filter(function(t) {
+            return !(t.type == tag.type && t.category == tag.category && t.value == tag.value);
+          });
+        };
+        
+        removeFromTagsList(this.tags);
+        
+        var removeCrumbs = function(texts) {
+          texts.forEach(function(text) {
+            removeFromTagsList(text.tags);
+            text.phrases.forEach(function(phrase) {
+              removeFromTagsList(phrase.tags);
+              phrase.words.forEach(function(word) {
+                removeFromTagsList(word.tags);
+                word.morphemes.forEach(function(morpheme) {
+                  removeFromTagsList(morpheme.tags);
+                });
+              });
+            });
+          });
+        }.bind(this);
+        
+        this.get('texts', removeCrumbs);
+        
         this.store();
       }.bind(this)
     },
@@ -281,7 +301,7 @@ models.Phrase = function Phrase(data) {
       value: function(attribute, searchExpr) {
         var checkHash = function(hash, searchExpr) {
           var some = Object.keys(hash).some(function(ortho) {
-            return hash[ortho].search(searchExpr) == 0;
+            return hash[ortho].search(searchExpr) != -1;
           }, this);
           
           return some;
@@ -293,7 +313,6 @@ models.Phrase = function Phrase(data) {
           var some = attributes.some(function(attribute) {
             return checkHash(this[attribute], searchExpr);
           }, this);
-          
           
           if (some) { app.searchResults.push(this); }
         } else {

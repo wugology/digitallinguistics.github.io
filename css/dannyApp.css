@@ -72,7 +72,7 @@ footer, section {
   -webkit-flex-direction: row;
   flex-direction: row; }
 
-#mediaList li p, #searchBar > label, #searchBox, #taggingList .tags, #tagSearchBox {
+#mediaList li p, #searchBar > label, #searchBox, #taggingList .tags, #tagSearchBox, .titles label, .wrapper {
   -webkit-flex-grow: 1;
   flex-grow: 1; }
 
@@ -110,6 +110,9 @@ legend {
 #sideNav, #toolbarNav {
   top: 0; }
 
+.text fieldset {
+  width: 100%; }
+
 /* Styling by classes or element type (alphabetical by class/element) */
 .closed {
   max-width: 2.5rem; }
@@ -140,9 +143,6 @@ input[type=checkbox] {
   
 .open {
   max-width: 100%; }
-
-.wrapper {
-  width: 100%; }
 
 .play {
   max-height: 45px;
