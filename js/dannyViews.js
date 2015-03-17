@@ -30,7 +30,7 @@ var Popup = function() {
 
 
 // ITEM VIEWS
-var TextView = function(model) {
+var TextView = function(model, options) {
   View.call(this, model, $('#textTemplate'));
   
   workview = 'texts';
@@ -96,7 +96,9 @@ var TextView = function(model) {
     // Render phrases
     phraseWrapper = this.el.querySelector('.phrases');
     
-    this.model.phrases.render(phraseWrapper, { textAbbr: this.model.abbreviation });
+    options.textAbbr = this.model.abbreviation;
+
+    this.model.phrases.render(phraseWrapper, options);
     
     // Load media
     var setMedia = function(media) {
@@ -155,7 +157,7 @@ var TextView = function(model) {
     this.el.querySelector('#deleteTextButton').addEventListener('click', function(ev) {
       this.hide();
       this.model.removeFromCorpus();
-      this.model.delete(function() { appView.setWorkview('texts'); });
+      appView.setWorkview('texts');
       this.notify('deleteText');
     }.bind(this));
 
@@ -226,12 +228,12 @@ var TextView = function(model) {
   appView.observers.add('setWorkview', this);
 };
 
-var PhraseView = function(model, options) {
-  View.call(this, model, null, options);
+var PhraseView = function(model) {
+  View.call(this, model, null);
   
   this.template = $('#phraseTemplate');
   
-  this.render = function(wrapper) {
+  this.render = function(wrapper, options) {
     var pv = this.template.content.querySelector('.phrase').cloneNode(true);
     pv.dataset.breadcrumb = Breadcrumb.stringify(model.breadcrumb);
     var contentWrapper = pv.querySelector('.wrapper');
@@ -243,7 +245,7 @@ var PhraseView = function(model, options) {
       Object.keys(textHash).forEach(function(ortho) {
         var p = createElement('p', { textContent: textHash[ortho], spellcheck: false });
         if (options.contentEditable == true) {
-          p.contentEditable == true
+          p.contentEditable = true;
         }
         p.dataset.type = type;
         p.dataset.ortho = ortho;

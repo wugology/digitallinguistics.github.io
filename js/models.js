@@ -441,13 +441,13 @@ models.Tag = function Tag(data) {
     },
     
     'tag': {
-      value: function(array) {
-        var matches = array.filter(function(t) {
+      value: function(obj) {
+        var matches = obj.tags.filter(function(t) {
           return (t.type == this.type && t.category == this.category && t.value == this.value);
         }.bind(this));
         
         if (matches.length == 0) {
-          array.push(this);
+          obj.tags.push(this);
         }
       }.bind(this)
     },
@@ -531,8 +531,8 @@ models.Phrases = function Phrases(data) {
   Object.defineProperty(phrases, 'render', {
     value: function(wrapper, options) {
       phrases.forEach(function(phrase) {
-        var pv = new PhraseView(phrase, options);
-        pv.render(wrapper);
+        var pv = new PhraseView(phrase);
+        pv.render(wrapper, options);
       });
     }.bind(this)
   });

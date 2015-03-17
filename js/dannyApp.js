@@ -416,10 +416,10 @@ modules.Tagger = function(searchResults, options) {
   this.template = $('#tagItemTemplate');
   
   this.addTag = function(tag, result, callback) {
-    tag.tag(result.tags);
+    tag.tag(result);
     
     var pushToCorpus = function() {
-      tag.tag(app.preferences.currentCorpus.tags);
+      tag.tag(app.preferences.currentCorpus);
       app.preferences.currentCorpus.store(callback);
     };
     
@@ -502,7 +502,14 @@ modules.Tagger = function(searchResults, options) {
           var render = function() {
             var phrase = results[0];
             var replaceNode = listItem;
-            this.renderPhrase(phrase, { replaceNode: replaceNode });
+            
+            var renderPhrases = function(abbrevs) {
+              this.renderPhrase(phrase, { replaceNode: replaceNode, textAbbr: abbrevs[phrase.breadcrumb[0]] });
+            }.bind(this);
+            
+            app.preferences.currentCorpus.getAbbrevs(renderPhrases);
+            
+            appView.newModule('tagsOverview');
           }.bind(this);
 
           this.addTag(tag, results[0], render);
@@ -537,16 +544,15 @@ modules.Tagger = function(searchResults, options) {
     });
     
     if (options.replaceNode) {
-      options.replaceNode.parentNode.insertBefore(li, replaceNode);
-      options.replaceNode.parentNode.removeChild(replaceNode);
+      options.replaceNode.parentNode.insertBefore(li, options.replaceNode);
+      options.replaceNode.parentNode.removeChild(options.replaceNode);
     } else {
       this.taggingList.appendChild(li);
     }
     
     options.contentEditable = true;
-    
-    var pv = new PhraseView(phrase, options);
-    pv.render(li.querySelector('.wrapper'));
+    var pv = new PhraseView(phrase);
+    pv.render(li.querySelector('.wrapper'), options);
   }.bind(this);
 
   this.runSearch = function(ev) {
@@ -581,6 +587,8 @@ modules.Tagger = function(searchResults, options) {
 
 modules.TagsOverview = function(collection) {
   Module.call(this, collection);
+  
+  if (!collection) { this.collection = app.preferences.currentCorpus.tags; }
   
   this.collection.sort(function(a, b) {
     if (a.type > b.type) {return 1; }
@@ -681,12 +689,14 @@ modules.TextsOverview = function(collection) {
   this.resetAddExistingButton = function() {
     if (this.addExistingButton != 'Add existing text') {
       this.addExistingButton.textContent = 'Add existing text';
+      this.textsList.addEventListener('click', this.renderText);
       display(this.removeSelectedButton);
     }
   }.bind(this);
   
   this.addExisting = function() {
     if (this.addExistingButton.textContent == 'Add existing text') {
+      this.textsList.removeEventListener('click', this.renderText);
       this.listExisting();
       this.addExistingButton.textContent = 'Add selected texts to corpus';
       hide(this.removeSelectedButton);
@@ -750,7 +760,7 @@ modules.TextsOverview = function(collection) {
       })[0];
       
       var renderFunction = function(text) {
-        var tv = new TextView(text);
+        var tv = new TextView(text, { contentEditable: true });
         tv.render();
         tv.observers.add('titleChange', this);
         tv.observers.add('deleteText', this);

@@ -90,13 +90,15 @@ var idb = {
         
         var getEach = function(table) {
           ids.forEach(function(id) {
-            var request = table.get(id);
-            
-            request.onsuccess = function() {
-              if (request.result) {
-                results.push(hydrate(request.result));
-              }
-            };
+            if (id) {
+              var request = table.get(id);
+              
+              request.onsuccess = function() {
+                if (request.result) {
+                  results.push(hydrate(request.result));
+                }
+              };
+            }
           });
         };
         
