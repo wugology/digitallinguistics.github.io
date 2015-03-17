@@ -102,7 +102,7 @@ var app = {
   
   searchText: function(attribute, searchExpr, callback) {
     this.lastSearch = { attribute: attribute, searchExpr: searchExpr };
-    searchExpr = new RegExp(searchExpr, 'g');
+    searchExpr = new RegExp('/' + searchExpr + '/', 'g');
     app.searchResults = [];
     app.preferences.currentCorpus.searchText(attribute, searchExpr, function(results, lingType) {
       if (typeof callback == 'function') { callback(results, lingType); }
