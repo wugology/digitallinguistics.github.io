@@ -133,6 +133,22 @@ models.Corpus = function Corpus(data) {
       }.bind(this)
     },
     
+    'getAbbrevs': {
+      value: function(callback) {
+        var extractAbbrevs = function(texts) {
+          var abbrevs = [];
+          
+          texts.forEach(function(text) {
+            abbrevs[text.id] = text.abbreviation;
+          });
+          
+          if (typeof callback == 'function') { callback(abbrevs); }
+        };
+        
+        this.get('texts', extractAbbrevs);
+      }.bind(this)
+    },
+    
     'remove': {
       value: function(idsToRemove, type, callback) {
         if (!idsToRemove.length) { idsToRemove = toArray(idsToRemove); }

@@ -242,7 +242,7 @@ var PhraseView = function(model, options) {
     var renderText = function(textHash, type) {
       Object.keys(textHash).forEach(function(ortho) {
         var p = createElement('p', { textContent: textHash[ortho], spellcheck: false });
-        if (this.contentEditable == true) {
+        if (options.contentEditable == true) {
           p.contentEditable == true
         }
         p.dataset.type = type;

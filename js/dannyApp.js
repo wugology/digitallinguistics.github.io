@@ -466,26 +466,30 @@ modules.Tagger = function(searchResults, options) {
   }.bind(this);
 
   this.listResults = function() {
-    this.taggingList.innerHTML = '';
-    
-    switch (this.lingType) {
-      case 'corpus':
-        this.collection.forEach(function(corpus) {
-          this.renderCorpus(corpus);
-        }, this);
-        break;
-      case 'phrase':
-        this.collection.forEach(function(phrase) {
-          this.renderPhrase(phrase);
-        }, this);
-        break;
-      default:
-        if (this.collection) {
-          this.collection.forEach(function(phrase) {
-            this.renderPhrase(phrase);
+    var renderResults = function(abbrevs) {
+      this.taggingList.innerHTML = '';
+      
+      switch (this.lingType) {
+        case 'corpus':
+          this.collection.forEach(function(corpus) {
+            this.renderCorpus(corpus);
           }, this);
-        }
-    }
+          break;
+        case 'phrase':
+          this.collection.forEach(function(phrase) {
+            this.renderPhrase(phrase, {textAbbr: abbrevs[phrase.breadcrumb[0]] });
+          }, this);
+          break;
+        default:
+          if (this.collection) {
+            this.collection.forEach(function(phrase) {
+              this.renderPhrase(phrase, { textAbbr: abbrevs[phrase.breadcrumb[0]] });
+            }, this);
+          }
+      }
+    }.bind(this);
+    
+    app.preferences.currentCorpus.getAbbrevs(renderResults);
   };
 
   this.newTag = function(ev) {
@@ -498,7 +502,7 @@ modules.Tagger = function(searchResults, options) {
           var render = function() {
             var phrase = results[0];
             var replaceNode = listItem;
-            this.renderPhrase(phrase, replaceNode);
+            this.renderPhrase(phrase, { replaceNode: replaceNode });
           }.bind(this);
 
           this.addTag(tag, results[0], render);
@@ -519,7 +523,7 @@ modules.Tagger = function(searchResults, options) {
   this.renderCorpus = function(corpus) {
   };
   
-  this.renderPhrase = function(phrase, replaceNode) {
+  this.renderPhrase = function(phrase, options) {
     var li = this.template.content.querySelector('li').cloneNode(true);
     li.dataset.breadcrumb = Breadcrumb.stringify(phrase.breadcrumb);
     li.querySelector('input').value = Breadcrumb.stringify(phrase.breadcrumb);
@@ -532,14 +536,16 @@ modules.Tagger = function(searchResults, options) {
       tagsWrapper.appendChild(p);
     });
     
-    if (replaceNode) {
-      replaceNode.parentNode.insertBefore(li, replaceNode);
-      replaceNode.parentNode.removeChild(replaceNode);
+    if (options.replaceNode) {
+      options.replaceNode.parentNode.insertBefore(li, replaceNode);
+      options.replaceNode.parentNode.removeChild(replaceNode);
     } else {
       this.taggingList.appendChild(li);
     }
-
-    var pv = new PhraseView(phrase, { contentEditable: true });
+    
+    options.contentEditable = true;
+    
+    var pv = new PhraseView(phrase, options);
     pv.render(li.querySelector('.wrapper'));
   }.bind(this);
 
