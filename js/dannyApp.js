@@ -416,10 +416,10 @@ modules.Tagger = function(searchResults, options) {
   this.template = $('#tagItemTemplate');
   
   this.addTag = function(tag, result, callback) {
-    tag.push(result.tags);
+    tag.tag(result.tags);
     
     var pushToCorpus = function() {
-      tag.push(app.preferences.currentCorpus.tags);
+      tag.tag(app.preferences.currentCorpus.tags);
       app.preferences.currentCorpus.store(callback);
     };
     

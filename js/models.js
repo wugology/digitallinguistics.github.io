@@ -1,3 +1,5 @@
+// MODELS
+
 models = {};
 
 // ITEM MODELS (SINGULAR)
@@ -59,31 +61,68 @@ models.Corpus = function Corpus(data) {
     // Then removes any unused tags from the corpus' tags array
     'cleanupTags': {
       value: function() {
-        var pullTagsUp = function() {
-          var checkToRemove = function(texts) {
+        var pullTagsUp = function(callback) {
+          var checkToPush = function(texts) {
             texts.forEach(function(text) {
-              text.forEach(function(tag) {
-                if (!text.hasTag(tag)) { tag.push(text.tags); }
+              text.tags.forEach(function(tag) {
+                if (!this.hasTag(tag)) { tag.tag(this.tags); }
                 text.phrases.forEach(function(phrase) {
-                  if (!phrase.hasTag(tag)) { tag.push(phrase.tags); }
+                  phrase.tags.forEach(function(tag) {
+                    if (!this.hasTag(tag)) { tag.tag(this.tags); }
+                  }, this);
+                }, this);
+              }, this);
+            }, this);
+            
+            if (typeof callback == 'function') { callback(); }
+          }.bind(this);
+          
+          this.get('texts', checkToPush);
+        }.bind(this);
+        
+        var removeExtras = function() {
+          var checkToRemove = function(tag, i, arr) {
+            var checkTag = function(results) {
+              if (results.length == 0) { this.deleteTag(tag); }
+              if (i == arr.length-1) { this.store(); }
+            }.bind(this);
+            
+            this.searchByTag(tag, checkTag);
+          }.bind(this);
+          
+          this.tags.forEach(checkToRemove, this);
+        }.bind(this);
+        
+        pullTagsUp(removeExtras);
+      }.bind(this)
+    },
+
+    'deleteTag': {
+      value: function(tag) {
+        var removeTag = function(item) {
+          tag.untag(item);
+        };
+        
+        removeTag(this.tags);
+        
+        var removeCrumbs = function(texts) {
+          texts.forEach(function(text) {
+            removeTag(text);
+            text.phrases.forEach(function(phrase) {
+              removeTag(phrase);
+              phrase.words.forEach(function(word) {
+                removeTag(word);
+                word.morphemes.forEach(function(morpheme) {
+                  removeTag(morpheme);
                 });
               });
             });
-          };
-          
-          this.get('texts', checkToRemove);
-        };
-        
-        var searchTag = function(tag, i, arr) {
-          var checkToRemove = function(results) {
-            if (results.length == 0) { this.removeTag(tag); }
-            if (i == arr.length-1) { this.store(); }
-          }.bind(this);
-          
-          this.searchByTag(tag, checkToRemove);
+          });
         }.bind(this);
         
-        this.tags.forEach(searchTag);
+        this.get('texts', removeCrumbs);
+        
+        this.store();
       }.bind(this)
     },
 
@@ -104,7 +143,6 @@ models.Corpus = function Corpus(data) {
           }, this);
         }, this);
         
-        this.cleanupTags();
         this.store(callback);
       }.bind(this)
     },
@@ -126,37 +164,6 @@ models.Corpus = function Corpus(data) {
         };
         
         this.get('texts', remove);
-      }.bind(this)
-    },
-    
-    'removeTag': {
-      value: function(tag) {
-        var removeFromTagsList = function(tagsList) {
-          tagsList = tagsList.filter(function(t) {
-            return !(t.type == tag.type && t.category == tag.category && t.value == tag.value);
-          });
-        };
-        
-        removeFromTagsList(this.tags);
-        
-        var removeCrumbs = function(texts) {
-          texts.forEach(function(text) {
-            removeFromTagsList(text.tags);
-            text.phrases.forEach(function(phrase) {
-              removeFromTagsList(phrase.tags);
-              phrase.words.forEach(function(word) {
-                removeFromTagsList(word.tags);
-                word.morphemes.forEach(function(morpheme) {
-                  removeFromTagsList(morpheme.tags);
-                });
-              });
-            });
-          });
-        }.bind(this);
-        
-        this.get('texts', removeCrumbs);
-        
-        this.store();
       }.bind(this)
     },
     
@@ -376,7 +383,7 @@ models.Word = function Word(data) {
   this.morphemes = new models.Morphemes(this.morphemes);
   
   Object.defineProperties(this, {
-    'search': {
+    'searchByTag': {
       value: function(tag) {
         if (tag.type == 'word') {
           if (this.hasTag(tag)) { app.searchResults.push(this); }
@@ -416,7 +423,7 @@ models.Tag = function Tag(data) {
       value: 'Tag'
     },
     
-    'push': {
+    'tag': {
       value: function(array) {
         var matches = array.filter(function(t) {
           return (t.type == this.type && t.category == this.category && t.value == this.value);
@@ -425,6 +432,14 @@ models.Tag = function Tag(data) {
         if (matches.length == 0) {
           array.push(this);
         }
+      }.bind(this)
+    },
+    
+    'untag': {
+      value: function(array) {
+        array = array.filter(function(t) {
+          return !(t.type == this.type && t.category == this.category && t.value == this.value);
+        }, this);
       }.bind(this)
     }
   });

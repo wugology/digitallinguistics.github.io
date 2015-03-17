@@ -1,4 +1,5 @@
 Desiderata:
+- Display breadcrumb with phrase
 - Character palette
 - Notes field on the tag
 - Color field on tag
