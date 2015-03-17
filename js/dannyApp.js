@@ -788,7 +788,7 @@ var popups = {};
 popups.Blank = function() {
   Popup.call(this);
   
-  this.displayArea = $('.displayArea');
+  this.displayArea = $('#blankPopup .displayArea');
   this.el = $('#blankPopup');
   
   this.render = function(renderFunction) {
@@ -907,10 +907,12 @@ popups.User = function() {
   this.icon = $('#userIcon');
   
   var renderFunction = function(displayArea) {
+    var exportButton = createElement('button', { textContent: 'Export entire database', value: 'Export entire database', type: 'button' });
+    displayArea.appendChild(exportButton);
     var header = createElement('h1', { textContent: 'Texts I’ve Created' });
     displayArea.appendChild(header);
-    var button = createElement('button', { textContent: 'Permanently delete selected texts', value: 'Permanently delete selected texts', type: 'button' });
-    displayArea.appendChild(button);
+    var deleteButton = createElement('button', { textContent: 'Permanently delete selected texts', value: 'Permanently delete selected texts', type: 'button' });
+    displayArea.appendChild(deleteButton);
     var textsList = createElement('ul');
     displayArea.appendChild(textsList);
     
@@ -921,7 +923,7 @@ popups.User = function() {
     
     idb.getAll('texts', renderTextsList);
     
-    button.addEventListener('click', function() {
+    deleteButton.addEventListener('click', function() {
       var choice = confirm('Are you sure you want to permanently delete these texts?');
       if (choice == true) {
         popups.blank.hide();
@@ -948,6 +950,17 @@ popups.User = function() {
         
         idb.getAll('corpora', remove);
       }
+    });
+    
+    exportButton.addEventListener('click', function() {
+      var download = function(exported) {
+        var file = new Blob([JSON.stringify(exported, null, 2)], { type: 'application/json' });
+        var url = URL.createObjectURL(file);
+        var a = createElement('a', { download: idb.database.name + '.json', href: url, textContent: 'link' });
+        a.click();
+      };
+      
+      idb.export(download);
     });
   };
   

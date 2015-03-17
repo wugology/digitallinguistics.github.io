@@ -34,36 +34,26 @@ var idb = {
     idb.exported = {};
     var tableNames = Array.prototype.slice.call(idb.database.objectStoreNames);
     
-    if (tableNames.length > 0) {
-      var transaction = idb.database.transaction(tableNames);
-
-      transaction.oncomplete = function() {
-        if (typeof callback == 'function') { callback(idb.exported); }
+    var transaction = idb.database.transaction(tableNames);
+    
+    transaction.oncomplete = function() {
+      callback(idb.exported);
+    };
+    
+    tableNames.forEach(function(tableName) {
+      idb.exported[tableName] = [];
+      
+      var table = transaction.objectStore(tableName);
+      
+      table.openCursor().onsuccess = function(ev) {
+        var cursor = ev.target.result;
+        
+        if (cursor) {
+          if (cursor.value) { idb.exported[tableName].push(cursor.value); }
+          cursor.continue();
+        }
       };
-
-      tableNames.forEach(function(tableName) {
-        var results = idb.exported[tableName] = [];
-        
-        var getAll = function(table) {
-          var request = table.openCursor;
-          
-          request.onsuccess = function() {
-            var cursor = request.result;
-            
-            if (cursor) {
-              if (cursor.value) {
-                results.push(cursor.value);
-              }
-              cursor.continue();
-            }
-          };
-        };
-        
-        idb.transact(tableName, null, null, getAll);
-      });
-    } else {
-      callback();
-    }
+    });
   },
 
   // Gets items from the database by an ID (does not accept breadcrumbs)
