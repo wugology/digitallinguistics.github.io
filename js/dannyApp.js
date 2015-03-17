@@ -558,6 +558,7 @@ modules.Tagger = function(searchResults, options) {
 
   this.search = function(attribute, searchExpr) {
     var notify = function(results, lingType) {
+      this.resultsCounter.innerHTML = 'Results found: ' + (results.length || 0);
       this.notify('newTagger', { results: results, options: { lingType: lingType } });
     }.bind(this);
     

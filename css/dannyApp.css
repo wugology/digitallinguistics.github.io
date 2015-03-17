@@ -5,7 +5,7 @@
   -webkit-align-content: flex-start;
   align-content: flex-start; }
 
-.media, #mediaList li, #searchBar, #searchField, .titles li {
+.media, #mediaList li, #resultsBar, #searchBar, #searchField, .titles li {
   -webkit-align-items: center;
   align-items: center; }
 
@@ -61,6 +61,7 @@ footer, section {
 .media li,
 #mediaList li,
 .phrase,
+#resultsBar,
 .row,
 #searchBar,
 #searchField,
@@ -82,6 +83,10 @@ footer, section {
 
 legend {
   font-weight: bold; }
+
+#resultsBar {
+  -webkit-justify-content: space-between;
+  justify-content: space-between; }
 
 .tagCategory, #tagPopup label, #taggingList input[type=checkbox], .textsListItem input {
   margin: 0.5rem; }
