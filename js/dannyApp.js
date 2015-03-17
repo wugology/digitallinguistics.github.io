@@ -654,14 +654,20 @@ modules.TextsOverview = function(collection) {
   this.removeSelectedButton = $('#removeSelectedTextsButton');
   this.textsList = $('#textsList');
   
+  this.resetAddExistingButton = function() {
+    if (this.addExistingButton != 'Add existing text') {
+      this.addExistingButton.textContent = 'Add existing text';
+      display(this.removeSelectedButton);
+    }
+  }.bind(this);
+  
   this.addExisting = function() {
     if (this.addExistingButton.textContent == 'Add existing text') {
       this.listExisting();
       this.addExistingButton.textContent = 'Add selected texts to corpus';
       hide(this.removeSelectedButton);
     } else {
-      this.addExistingButton.textContent = 'Add existing text';
-      display(this.removeSelectedButton);
+      this.resetAddExistingButton();
       var selected = $('input[name=textCheckbox]:checked');
       if (!selected.length) { selected = toArray(selected); }
       this.textsList.innerHTML = '';

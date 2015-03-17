@@ -13,7 +13,7 @@
   -webkit-align-items: flex-start;
   align-items: flex-start; }
 
-audio, .play, #taggingList .icon, #textsList abbr {
+audio, .play, #taggingList .icon, .textsListItem abbr {
   -webkit-align-self: center;
   align-self: center; }
 
@@ -92,7 +92,7 @@ legend {
 .phrases > li, #taggingList > li {
   margin-top: 1rem; }
 
-#corpusSelector, #taggingList .tags, .titles, #searchBar > div > label, #textsList p {
+#corpusSelector, #taggingList .tags, .titles, #searchBar > div > label, .textsListItem p {
   padding: 0 0.5rem; }
 
 .phrase > .wrapper > p, .tags > p, .tagValue {

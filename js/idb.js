@@ -214,9 +214,12 @@ var idb = {
     var removeByID = function(table) {
       if (typeof ids == 'number') {
         ids = toArray(ids);
-        ids.forEach(function(id) { table.delete(id); });
-      } else if (ids == 'all') {
+      }
+      
+      if (ids == 'all') {
         table.clear();
+      } else {
+        ids.forEach(function(id) { table.delete(id); });
       }
     };
     
