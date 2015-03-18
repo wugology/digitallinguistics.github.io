@@ -492,7 +492,7 @@ modules.Tagger = function(searchResults, options) {
   
   this.getTag = function(callback) {
     var makeTag = function(category, value) {
-      var tag = new models.Tag({ type: this.lingType, category: category, value: value });
+      var tag = new models.Tag({ lingType: this.lingType, category: category, value: value });
       if (typeof callback == 'function') { callback(tag); }
     }.bind(this);
     
@@ -637,8 +637,8 @@ modules.TagsOverview = function(collection) {
   if (!collection) { this.collection = app.preferences.currentCorpus.tags; }
   
   this.collection.sort(function(a, b) {
-    if (a.type > b.type) {return 1; }
-    if (a.type < b.type) { return -1; } else {
+    if (a.lingType > b.lingType) {return 1; }
+    if (a.lingType < b.lingType) { return -1; } else {
       if (a.category > b.category) { return 1; }
       if (a.category < b.category) { return -1; } else {
         if (a.value > b.value) { return 1; }
@@ -657,47 +657,47 @@ modules.TagsOverview = function(collection) {
   this.listTags = function() {
     this.tagsList.innerHTML = '';
     
-    var types = getUnique('type', this.collection);
+    var lingTypes = getUnique('lingType', this.collection);
     
-    if (types.length == 0) {
+    if (lingTypes.length == 0) {
       var message = createElement('h3', { textContent: 'There are no tags in this corpus! Start adding some tags to your data and the tags will show up here.' });
       message.classList.add('tagCategory');
       this.tagsList.appendChild(message);
     }
     
-    types.forEach(function(type) {
-      var typeli = createElement('li');
-        var h2 = createElement('h2', { textContent: type });
-        h2.dataset.tag = type;
-        typeli.appendChild(h2);
+    lingTypes.forEach(function(lingType) {
+      var lingTypeli = createElement('li');
+        var h2 = createElement('h2', { textContent: lingType });
+        h2.dataset.tag = lingType;
+        lingTypeli.appendChild(h2);
         var catwrapper = createElement('ul');
-        typeli.appendChild(catwrapper);
+        lingTypeli.appendChild(catwrapper);
         
-        var ofType = this.collection.filter(function(tag) { return tag.type == type; });
-        var categories = getUnique('category', ofType);
+        var oflingType = this.collection.filter(function(tag) { return tag.lingType == lingType; });
+        var categories = getUnique('category', oflingType);
         
         categories.forEach(function(category) {
           var catli = createElement('li');
           catli.classList.add('tagCategory');
             var h3 = createElement('h3', { textContent: category });
-            h3.dataset.tag = type + ':' + category;
+            h3.dataset.tag = lingType + ':' + category;
             catli.appendChild(h3);
             var valwrapper = createElement('ul');
             catli.appendChild(valwrapper);
             
-            var ofTypeCat = ofType.filter(function(tag) { return tag.category == category; });
-            var values = getUnique('value', ofTypeCat);
+            var oflingTypeCat = oflingType.filter(function(tag) { return tag.category == category; });
+            var values = getUnique('value', oflingTypeCat);
             values.forEach(function(value) {
               if (value) {
                 var valueli = createElement('li', { textContent: value });
-                valueli.dataset.tag = type + ':' + category + ':' + value;
+                valueli.dataset.tag = lingType + ':' + category + ':' + value;
                 valueli.classList.add('tagValue');
                 valwrapper.appendChild(valueli);
               }
             });
           catwrapper.appendChild(catli);
         }, this);
-      this.tagsList.appendChild(typeli);
+      this.tagsList.appendChild(lingTypeli);
     }, this);
   }.bind(this);
   
@@ -891,7 +891,7 @@ popups.ManageCorpora = function() {
   
   this.render = function() {
     var populateListItem = function(corpus, li) {
-      var input = createElement('input', { value: corpus.name, type: 'text' });
+      var input = createElement('input', { value: corpus.name, lingType: 'text' });
       input.id = corpus.id;
       li.appendChild(input);
       input.addEventListener('input', function(ev) {

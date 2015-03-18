@@ -297,7 +297,7 @@ function Model(data) {
     'hasTag': {
       value: function(tag) {
         var some = this.tags.some(function(t) {
-          if (t.type == tag.type && t.category == tag.category && t.value == tag.value) {
+          if (t.lingType == tag.lingType && t.category == tag.category && t.value == tag.value) {
             return true;
           };
         });

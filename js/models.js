@@ -195,7 +195,7 @@ models.Corpus = function Corpus(data) {
       value: function(tag, callback) {
         var results = [];
         
-        if (tag.type == 'corpus') {
+        if (tag.lingType == 'corpus') {
           if (this.hasTag(tag)) {
             results.push(this);
           }
@@ -294,7 +294,7 @@ models.Text = function Text(data) {
       value: function(tag) {
         var results = [];
         
-        if (tag.type == 'text') {
+        if (tag.lingType == 'text') {
           if (this.hasTag(tag)) { results.push(this); }
         } else {
           this.phrases.forEach(function(phrase) {
@@ -365,7 +365,7 @@ models.Phrase = function Phrase(data) {
       value: function(tag) {
         var results = [];
         
-        if (tag.type == 'phrase') {
+        if (tag.lingType == 'phrase') {
           if (this.hasTag(tag)) { results.push(this); }
         } else {
           this.words.forEach(function(word) {
@@ -421,7 +421,7 @@ models.Word = function Word(data) {
       value: function(tag) {
         var results = [];
         
-        if (tag.type == 'word') {
+        if (tag.lingType == 'word') {
           if (this.hasTag(tag)) { results.push(this); }
         } else {
           this.morphemes.forEach(function(morpheme) {
@@ -451,7 +451,7 @@ models.Construction = function Construction(data) {};
 models.Tag = function Tag(data) {
   if (data) { augment(this, data); }
   
-  this.type = this.type || '';
+  this.lingType = this.lingType || '';
   this.category = this.category || '';
   this.value = this.value || '';
   
@@ -464,7 +464,7 @@ models.Tag = function Tag(data) {
     'tag': {
       value: function(obj) {
         var matches = obj.tags.filter(function(t) {
-          return (t.type == this.type && t.category == this.category && t.value == this.value);
+          return (t.lingType == this.lingType && t.category == this.category && t.value == this.value);
         }.bind(this));
         
         if (matches.length == 0) {
@@ -476,7 +476,7 @@ models.Tag = function Tag(data) {
     'untag': {
       value: function(obj) {
         var filtered = obj.tags.filter(function(tag) {
-          if (tag.type == this.type && tag.category == this.category && tag.value == this.value) {
+          if (tag.lingType == this.lingType && tag.category == this.category && tag.value == this.value) {
             return false;
           } else { return true; }
         }, this)
@@ -492,7 +492,7 @@ Object.defineProperties(models.Tag.constructor.prototype, {
     value: function(tagString) {
       var tagParts = tagString.split(':');
       var tag = new models.Tag({
-        type: tagParts[0],
+        lingType: tagParts[0],
         category: tagParts[1],
         value: tagParts[2] || null
       });
