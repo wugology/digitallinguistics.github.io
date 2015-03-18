@@ -57,11 +57,12 @@ models.Corpus = function Corpus(data) {
     'cleanupTags': {
       value: function() {
         var addMissingTags = function() {
-          this.pullTags().forEach(function(tag) {
-            tag.tag(this);
-          }, this);
-          
-          this.store();
+          this.pullTags(function(tags) {
+            tags.forEach(function(tag, i) {
+              tag.tag(this);
+              if (i == tags.length-1) { this.store( removeUnusedTags ); }
+            }, this);
+          }.bind(this));
         }.bind(this);
         
         var checkToRemove = function(results, tag) {
@@ -71,11 +72,10 @@ models.Corpus = function Corpus(data) {
         var removeUnusedTags = function() {
           this.tags.forEach(function(tag, i, arr) {
             this.searchByTag(tag, checkToRemove);
-            if (i == arr.length-1) { addMissingTags(); }
           }, this);
         }.bind(this);
 
-        removeUnusedTags();
+        addMissingTags();
       }.bind(this)
     },
 
@@ -131,22 +131,34 @@ models.Corpus = function Corpus(data) {
     },
 
     'pullTags': {
-      value: function() {
+      value: function(callback) {
         var tagsHolder = { tags: [] };
         
-        var transferTags = function(results) {
-          results.forEach(function(result) {
-            result.tags.forEach(function(tag) {
-              tag.tag(tagsHolder);
+        var getTags = function(texts) {
+          texts.forEach(transferTags);
+          texts.forEach(function(text) {
+            text.phrases.forEach(transferTags);
+            text.phrases.forEach(function(phrase) {
+              phrase.words.forEach(transferTags);
+              phrase.words.forEach(function(word) {
+                word.morphemes.forEach(transferTags);
+              });
             });
           });
+          
+          if (typeof callback == 'function') { callback(tagsHolder.tags); }
+        };
+
+        var tagHolder = function(tag) {
+          tag.tag(tagsHolder);
+        };
+
+        var transferTags = function(result) {
+          result.tags.forEach(tagHolder);
         };
         
-        this.tags.forEach(function(tag) {
-          this.searchByTag(transferTags);
-        }, this);
-        
-        return tagsHolder.tags;
+        this.get('texts', getTags);
+
       }.bind(this)
     },
     
@@ -192,7 +204,7 @@ models.Corpus = function Corpus(data) {
         } else {
           var search = function(texts) {
             texts.forEach(function(text) {
-              results.concat(text.searchByTag(tag));
+              results = results.concat(text.searchByTag(tag));
             });
             
             if (typeof callback == 'function') { callback(results, tag); }
@@ -285,7 +297,7 @@ models.Text = function Text(data) {
           if (this.hasTag(tag)) { results.push(this); }
         } else {
           this.phrases.forEach(function(phrase) {
-            results.concat(phrase.searchByTag(tag));
+            results = results.concat(phrase.searchByTag(tag));
           }, this);
         }
         
@@ -356,7 +368,7 @@ models.Phrase = function Phrase(data) {
           if (this.hasTag(tag)) { results.push(this); }
         } else {
           this.words.forEach(function(word) {
-            results.concat(word.searchByTag(tag));
+            results = results.concat(word.searchByTag(tag));
           }, this);
         }
         
