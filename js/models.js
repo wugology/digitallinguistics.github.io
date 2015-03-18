@@ -451,6 +451,10 @@ models.Construction = function Construction(data) {};
 models.Tag = function Tag(data) {
   if (data) { augment(this, data); }
   
+  if (this.type) {
+    this.lingType = this.type;
+    delete this.type;
+  }
   this.lingType = this.lingType || '';
   this.category = this.category || '';
   this.value = this.value || '';
