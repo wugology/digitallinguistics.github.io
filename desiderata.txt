@@ -1,5 +1,7 @@
 Desiderata:
+- Remove tag from selected (then remove the IPFV tag from all the PFV instances of PART)
 - Count of the number of items with each tag (overview view)
+- Ability to view multiple tag sets at once (maybe with ctrl + click; if ctrl is down, display both)
 - Tags overview list still isn't sorting correctly (you should just filter the tags into new arrays, and display only those arrays) in order
 - Delete tags via right click (both overview and details view)
 - Clicking on tag category renders all tags with that category (not just exact matches)
@@ -7,10 +9,11 @@ Desiderata:
 - Notes field on the tag
 - Color field on tag
 - Ability to rename tags (combine add and delete process)
-- Ability to view multiple tag sets at once (maybe with ctrl + click; if ctrl is down, display both)
 - Clicking the manage corpora box, then clicking outside of it, seems to reset the workview - stop this behavior
 - Hide the results counter when the tagger module is hidden (it displays the last result when the user comes back to it)
 - Ability to search for things that *don't* have a particular tag
 - Ability to search within results
 - Tagger results should not be contentEditable
 - Edit tags in place (in the overview pane only)
+- Pressing escape when a popup is open should close it
+- Order the phrase-level tags alphabetically as well

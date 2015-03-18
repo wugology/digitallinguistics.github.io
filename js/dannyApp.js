@@ -101,6 +101,7 @@ var app = {
   },
   
   searchText: function(attribute, searchExpr, callback) {
+    console.log(this.lastSearch);
     this.lastSearch = { attribute: attribute, searchExpr: searchExpr };
     searchExpr = new RegExp(searchExpr, 'g');
     app.searchResults = [];
