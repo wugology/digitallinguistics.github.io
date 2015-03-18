@@ -724,19 +724,25 @@ modules.TagsOverview = function(collection) {
     this.display();
   };
   
-  this.selectedTags = [];
-  
   this.observers.add('newTagger', appView);
   
   this.listen = function(ev) {
     if (ev.target.dataset.tag) {
-      this.selectedTags.push(models.Tag.parse(ev.target.dataset.tag));
+      appView.selectedTags = [];
+      
+      var tag = models.Tag.parse(ev.target.dataset.tag);
+      
+      if (ev.ctrlKey) {
+        appView.selectedTags.push(tag);
+      } else {
+        appView.selectedTags = [tag];
+      }
       
       var notify = function(results, tags) {
         this.notify('newTagger', { results: results, options: { lingType: tags[0].lingType } });
       }.bind(this);
       
-      app.tagSearch(this.selectedTags, notify);
+      app.tagSearch(appView.selectedTags, notify);
     }
   }.bind(this);
   

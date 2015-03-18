@@ -197,9 +197,7 @@ models.Corpus = function Corpus(data) {
         if (!tags.length) { tags = toArray(tags); }
         
         if (tags[0].lingType == 'corpus') {
-          if (this.hasTags(tags)) {
-            results.push(this);
-          }
+          if (this.hasTags(tags)) { results.push(this); }
           
           if (typeof callback == 'function') { callback(results, tags); }
         
