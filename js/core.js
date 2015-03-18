@@ -283,17 +283,6 @@ function Model(data) {
   delete this.model;
   
   Object.defineProperties(this, {
-    'json': {
-      get: function() {
-        return JSON.stringify(this, null, 2);
-      }.bind(this)
-    },
-    
-    'model': {
-      enumerable: true,
-      value: this.constructor.name
-    },
-    
     'hasTag': {
       value: function(tag) {
         var some = this.tags.some(function(t) {
@@ -304,6 +293,29 @@ function Model(data) {
         
         return some;
       }.bind(this)
+    },
+    
+    'hasTags': {
+      value: function(tags) {
+        if (!tags.length) { tags = toArray(tags); }
+        
+        var every = tags.every(function(t) {
+          return this.hasTag(t);
+        }, this);
+        
+        return every;
+      }.bind(this)
+    },
+    
+    'json': {
+      get: function() {
+        return JSON.stringify(this, null, 2);
+      }.bind(this)
+    },
+    
+    'model': {
+      enumerable: true,
+      value: this.constructor.name
     }
   });
 };

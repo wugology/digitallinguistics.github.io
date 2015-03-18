@@ -1,6 +1,8 @@
 Desiderata:
-- Count of the number of items with each tag (overview view)
+- Ability to search within results
 - Ability to view multiple tag sets at once (maybe with ctrl + click; if ctrl is down, display both)
+- Redisplay tagger after bulk tag
+- Count of the number of items with each tag (overview view)
 - Name of Add tag button in popup needs to change depending on whether you're adding or removing tags
 - Tags overview list still isn't sorting correctly (you should just filter the tags into new arrays, and display only those arrays) in order
 - Delete tags via right click (both overview and details view)
@@ -12,10 +14,10 @@ Desiderata:
 - Clicking the manage corpora box, then clicking outside of it, seems to reset the workview - stop this behavior
 - Hide the results counter when the tagger module is hidden (it displays the last result when the user comes back to it)
 - Ability to search for things that *don't* have a particular tag
-- Ability to search within results
 - Tagger results should not be contentEditable
 - Edit tags in place (in the overview pane only)
 - Pressing escape when a popup is open should close it
 - Order the phrase-level tags alphabetically as well
 - Ability to deselect all results
 - Create .tagUp() and .tagDown() functions, to apply a tag at one level to every object at the level immediately above/below it
+- User icon should toggle the user popup, not just display it

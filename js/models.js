@@ -192,23 +192,24 @@ models.Corpus = function Corpus(data) {
     
     // Callback arguments: results, tag
     'tagSearch': {
-      value: function(tag, callback) {
+      value: function(tags, callback) {
         var results = [];
+        if (!tags.length) { tags = toArray(tags); }
         
-        if (tag.lingType == 'corpus') {
-          if (this.hasTag(tag)) {
+        if (tags[0].lingType == 'corpus') {
+          if (this.hasTags(tags)) {
             results.push(this);
           }
           
-          if (typeof callback == 'function') { callback(results, tag); }
+          if (typeof callback == 'function') { callback(results, tags); }
         
         } else {
           var search = function(texts) {
             texts.forEach(function(text) {
-              results = results.concat(text.tagSearch(tag));
+              results = results.concat(text.tagSearch(tags));
             });
             
-            if (typeof callback == 'function') { callback(results, tag); }
+            if (typeof callback == 'function') { callback(results, tags); }
           };
           
           this.get('texts', search);
@@ -291,14 +292,15 @@ models.Text = function Text(data) {
     },
     
     'tagSearch': {
-      value: function(tag) {
+      value: function(tags) {
         var results = [];
+        if (!tags.length) { tags = toArray(tags); }
         
-        if (tag.lingType == 'text') {
-          if (this.hasTag(tag)) { results.push(this); }
+        if (tags[0].lingType == 'text') {
+          if (this.hasTags(tags)) { results.push(this); }
         } else {
           this.phrases.forEach(function(phrase) {
-            results = results.concat(phrase.tagSearch(tag));
+            results = results.concat(phrase.tagSearch(tags));
           }, this);
         }
         
@@ -362,14 +364,15 @@ models.Phrase = function Phrase(data) {
     },
     
     'tagSearch': {
-      value: function(tag) {
+      value: function(tags) {
         var results = [];
+        if (!tags.length) { tags = toArray(tags); }
         
-        if (tag.lingType == 'phrase') {
-          if (this.hasTag(tag)) { results.push(this); }
+        if (tags[0].lingType == 'phrase') {
+          if (this.hasTags(tags)) { results.push(this); }
         } else {
           this.words.forEach(function(word) {
-            results = results.concat(word.tagSearch(tag));
+            results = results.concat(word.tagSearch(tags));
           }, this);
         }
         
@@ -418,14 +421,15 @@ models.Word = function Word(data) {
   
   Object.defineProperties(this, {
     'tagSearch': {
-      value: function(tag) {
+      value: function(tags) {
         var results = [];
+        if (!tags.length) { tags = toArray(tags);}
         
-        if (tag.lingType == 'word') {
-          if (this.hasTag(tag)) { results.push(this); }
+        if (tags[0].lingType == 'word') {
+          if (this.hasTags(tags)) { results.push(this); }
         } else {
           this.morphemes.forEach(function(morpheme) {
-            if (morpheme.hasTag(tag)) { results.push(this); }
+            if (morpheme.hasTags(tags)) { results.push(this); }
           }, this);
         }
         

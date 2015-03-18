@@ -95,10 +95,10 @@ var app = {
     localStorage.wugbotPreferences = JSON.stringify(app.preferences, null, 2);
   },
   
-  tagSearch: function(tag, callback) {
-    this.lastTagSearch = tag;
-    app.preferences.currentCorpus.tagSearch(tag, function(results, tag) {
-      if (typeof callback == 'function') { callback(results, tag); }
+  tagSearch: function(tags, callback) {
+    this.lastTagSearch = tags;
+    app.preferences.currentCorpus.tagSearch(tags, function(results, tags) {
+      if (typeof callback == 'function') { callback(results, tags); }
     });
   }.bind(this),
   
@@ -609,13 +609,13 @@ modules.Tagger = function(searchResults, options) {
     this.textSearch(selected[0].value, this.searchBox.value);
   }.bind(this);
 
-  this.tagSearch = function(tag) {
-    var notify = function(results, tag) {
-      app.lastTagSearch = tag;
-      this.notify('newTagger', { results: results, options: { lingType: lingType } });
+  this.tagSearch = function(tags) {
+    var notify = function(results, tags) {
+      app.lastTagSearch = tags;
+      this.notify('newTagger', { results: results, options: { lingType: tags[0].lingType } });
     }.bind(this);
 
-    app.tagSearch(tag, notify);
+    app.tagSearch(tags, notify);
   }.bind(this);
   
   this.textSearch = function(attribute, searchExpr) {
@@ -724,15 +724,19 @@ modules.TagsOverview = function(collection) {
     this.display();
   };
   
+  this.selectedTags = [];
+  
   this.observers.add('newTagger', appView);
   
   this.listen = function(ev) {
     if (ev.target.dataset.tag) {
-      var notify = function(results, tag) {
-        this.notify('newTagger', { results: results, options: { lingType: tag.lingType } });
+      this.selectedTags.push(models.Tag.parse(ev.target.dataset.tag));
+      
+      var notify = function(results, tags) {
+        this.notify('newTagger', { results: results, options: { lingType: tags[0].lingType } });
       }.bind(this);
       
-      app.tagSearch(models.Tag.parse(ev.target.dataset.tag), notify);
+      app.tagSearch(this.selectedTags, notify);
     }
   }.bind(this);
   
