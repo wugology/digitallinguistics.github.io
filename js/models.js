@@ -453,8 +453,8 @@ models.Tag = function Tag(data) {
     },
     
     'untag': {
-      value: function(array) {
-        array = array.filter(function(t) {
+      value: function(obj) {
+        obj.tags = obj.tags.filter(function(t) {
           return !(t.type == this.type && t.category == this.category && t.value == this.value);
         }, this);
       }.bind(this)
