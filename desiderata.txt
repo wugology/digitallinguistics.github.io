@@ -1,8 +1,8 @@
 Desiderata:
-- Prompt to select all if user already has some items selected
+- Count of the number of items with each tag (overview view)
+- Tags overview list still isn't sorting correctly (you should just filter the tags into new arrays, and display only those arrays) in order
 - Delete tags via right click (both overview and details view)
 - Clicking on tag category renders all tags with that category (not just exact matches)
-- Count of the number of items with each tag (overview view)
 - Character palette
 - Notes field on the tag
 - Color field on tag
@@ -13,5 +13,4 @@ Desiderata:
 - Ability to search for things that *don't* have a particular tag
 - Ability to search within results
 - Tagger results should not be contentEditable
-- Edit tags in place
-- Tags overview list still isn't sorting correctly (you should just filter the tags into new arrays, and display only those arrays) in order
+- Edit tags in place (in the overview pane only)
