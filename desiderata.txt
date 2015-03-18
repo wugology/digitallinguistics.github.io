@@ -1,7 +1,7 @@
 Desiderata:
-- Remove tag from selected (then remove the IPFV tag from all the PFV instances of PART)
 - Count of the number of items with each tag (overview view)
 - Ability to view multiple tag sets at once (maybe with ctrl + click; if ctrl is down, display both)
+- Name of Add tag button in popup needs to change depending on whether you're adding or removing tags
 - Tags overview list still isn't sorting correctly (you should just filter the tags into new arrays, and display only those arrays) in order
 - Delete tags via right click (both overview and details view)
 - Clicking on tag category renders all tags with that category (not just exact matches)
