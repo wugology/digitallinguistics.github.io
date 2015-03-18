@@ -30,7 +30,7 @@ ul.bulletedList li {
   border: 1px solid black;
   box-shadow: 3px 3px 3px 0px gray;
   left: 50%;
-  position: absolute;
+  position: fixed;
   top: 20%;
   transform: translateX(-50%); }
 

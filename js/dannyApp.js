@@ -107,7 +107,7 @@ var app = {
     app.preferences.currentCorpus.searchText(attribute, searchExpr, function(results, lingType) {
       if (typeof callback == 'function') { callback(results, lingType); }
     });
-  },
+  }.bind(this),
   
   searchResults: [],
   
