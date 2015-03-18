@@ -577,7 +577,12 @@ modules.Tagger = function(searchResults, options) {
   
   this.selectAll = function() {
     var checkboxes = $('#taggingList input');
-    checkboxes.forEach(function(checkbox) { checkbox.checked = true; });
+    if (checkboxes.some(function(checkbox) { return checkbox.checked == true; })) {
+      var response = confirm('You already have some items selected. Are you sure you want to select all items instead?');
+      if (response) {
+        checkboxes.forEach(function(checkbox) { checkbox.checked = true; });
+      }
+    }
   };
   
   this.observers.add('newTagger', appView);
