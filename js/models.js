@@ -55,12 +55,11 @@ models.Corpus = function Corpus(data) {
     // Removes any unused tags from the corpus' tags array
     // Then finds all tags in the corpus, and makes sure they're in the corpus tags array
     'cleanupTags': {
-      value: function() {
+      value: function(callback) {
         var addMissingTags = function() {
           this.pullTags(function(tags) {
             tags.forEach(function(tag, i) {
               tag.tag(this);
-              if (i == tags.length-1) { this.store( removeUnusedTags ); }
             }, this);
           }.bind(this));
         }.bind(this);
@@ -74,8 +73,10 @@ models.Corpus = function Corpus(data) {
             this.searchByTag(tag, checkToRemove);
           }, this);
         }.bind(this);
-
+        
         addMissingTags();
+        removeUnusedTags();
+        if (typeof callback == 'function') { callback(); }
       }.bind(this)
     },
 
@@ -393,6 +394,7 @@ models.Phrase = function Phrase(data) {
             return checkHash(this[attribute], searchExpr);
           }, this);
           
+          
           if (some) { app.searchResults.push(this); }
         } else {
           if (checkHash(this[attribute], searchExpr)) {
@@ -473,11 +475,13 @@ models.Tag = function Tag(data) {
     
     'untag': {
       value: function(obj) {
-        obj.tags = obj.tags.filter(function(t) {
-          if (t.type == this.type && t.category == this.category && t.value == this.value) {
-            return true;
-          }
-        }, this);
+        var filtered = obj.tags.filter(function(tag) {
+          if (tag.type == this.type && tag.category == this.category && tag.value == this.value) {
+            return false;
+          } else { return true; }
+        }, this)
+        
+        obj.tags = new models.Tags(filtered);
       }.bind(this)
     }
   });

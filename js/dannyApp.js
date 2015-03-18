@@ -463,8 +463,10 @@ modules.Tagger = function(searchResults, options) {
     }.bind(this);
     
     var onLastResult = function() {
-      app.preferences.currentCorpus.cleanupTags();
-      app.preferences.currentCorpus.store( this.notify('newTagger') );
+      app.preferences.currentCorpus.store();
+      app.preferences.currentCorpus.cleanupTags(function() {
+        this.search(app.lastSearch.attribute, app.lastSearch.searchExpr);
+      }.bind(this));
     }.bind(this);
 
     var removeTag = function(results) {
@@ -481,6 +483,8 @@ modules.Tagger = function(searchResults, options) {
   // Returns the BREADCRUMBS of the selected phrases
   this.getSelected = function() {
     var checkboxes = $('input[name=tagCheckbox]');
+    if (!checkboxes.length) { checkboxes = toArray(checkboxes); }
+    
     var selected = checkboxes.filter(function(checkbox) { return checkbox.checked == true; });
     var crumbs = selected.map(function(checkbox) { return Breadcrumb.parse(checkbox.value); });
     return crumbs;
@@ -584,7 +588,6 @@ modules.Tagger = function(searchResults, options) {
       this.taggingList.appendChild(li);
     }
     
-    options.contentEditable = true;
     var pv = new PhraseView(phrase);
     pv.render(li.querySelector('.wrapper'), options);
   }.bind(this);
@@ -599,6 +602,7 @@ modules.Tagger = function(searchResults, options) {
 
   this.search = function(attribute, searchExpr) {
     var notify = function(results, lingType) {
+      app.lastSearch = { attribute: attribute, searchExpr: searchExpr };
       this.notify('newTagger', { results: results, options: { lingType: lingType } });
     }.bind(this);
     
@@ -607,6 +611,8 @@ modules.Tagger = function(searchResults, options) {
   
   this.selectAll = function() {
     var checkboxes = $('#taggingList input');
+    if (!checkboxes.length) { checkboxes = toArray(checkboxes); }
+    
     if (checkboxes.some(function(checkbox) { return checkbox.checked == true; })) {
       var response = confirm('You already have some items selected. Are you sure you want to select all items instead?');
     } else { var response = true; }
