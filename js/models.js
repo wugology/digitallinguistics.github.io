@@ -192,7 +192,7 @@ models.Corpus = function Corpus(data) {
     // Callback arguments: results, tag
     'searchByTag': {
       value: function(tag, callback) {
-        results = [];
+        var results = [];
         
         if (tag.type == 'corpus') {
           if (this.hasTag(tag)) {
@@ -474,7 +474,9 @@ models.Tag = function Tag(data) {
     'untag': {
       value: function(obj) {
         obj.tags = obj.tags.filter(function(t) {
-          return !(t.type == this.type && t.category == this.category && t.value == this.value);
+          if (t.type == this.type && t.category == this.category && t.value == this.value) {
+            return true;
+          }
         }, this);
       }.bind(this)
     }

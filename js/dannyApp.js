@@ -465,7 +465,7 @@ modules.Tagger = function(searchResults, options) {
     var onLastResult = function() {
       app.preferences.currentCorpus.cleanupTags();
       app.preferences.currentCorpus.store( this.notify('newTagger') );
-    };
+    }.bind(this);
 
     var removeTag = function(results) {
       results.forEach(function(result, i) {
