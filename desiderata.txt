@@ -23,3 +23,4 @@ Desiderata:
 - Create .tagUp() and .tagDown() functions, to apply a tag at one level to every object at the level immediately above/below it
 - User icon should toggle the user popup, not just display it
 - Add .selected highlighting to tags when clicked, and when ctrl+clicked (this probably means that the tagsOverview module shouldn't rerender for a new search - only when the corpus tag data changes)
+- stick results / search bar at top
