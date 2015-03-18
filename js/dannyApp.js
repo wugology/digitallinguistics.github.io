@@ -170,6 +170,8 @@ var AppView = function() {
     }
   };
   
+  this.selectedTags = [];
+  
   this.setWorkview = function(workview) {
     if (!workview) { workview = 'texts'; }
 
@@ -728,8 +730,6 @@ modules.TagsOverview = function(collection) {
   
   this.listen = function(ev) {
     if (ev.target.dataset.tag) {
-      appView.selectedTags = [];
-      
       var tag = models.Tag.parse(ev.target.dataset.tag);
       
       if (ev.ctrlKey) {
