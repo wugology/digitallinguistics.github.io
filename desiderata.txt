@@ -5,5 +5,3 @@ Desiderata:
 - Character palette
 - Notes field on the tag
 - Color field on tag
-
-\bgan[ .,ˋˊ]

@@ -118,6 +118,7 @@ models.Corpus = function Corpus(data) {
                 });
               });
             });
+            text.store();
           });
         }.bind(this);
         
