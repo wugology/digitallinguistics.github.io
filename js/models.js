@@ -70,7 +70,7 @@ models.Corpus = function Corpus(data) {
         
         var removeUnusedTags = function() {
           this.tags.forEach(function(tag, i, arr) {
-            this.searchByTag(tag, checkToRemove);
+            this.tagSearch(tag, checkToRemove);
           }, this);
         }.bind(this);
         
@@ -191,7 +191,7 @@ models.Corpus = function Corpus(data) {
     },
     
     // Callback arguments: results, tag
-    'searchByTag': {
+    'tagSearch': {
       value: function(tag, callback) {
         var results = [];
         
@@ -205,7 +205,7 @@ models.Corpus = function Corpus(data) {
         } else {
           var search = function(texts) {
             texts.forEach(function(text) {
-              results = results.concat(text.searchByTag(tag));
+              results = results.concat(text.tagSearch(tag));
             });
             
             if (typeof callback == 'function') { callback(results, tag); }
@@ -217,11 +217,11 @@ models.Corpus = function Corpus(data) {
       }.bind(this)
     },
     
-    'searchText': {
+    'textSearch': {
       value: function(attribute, searchExpr, callback) {
         var search = function(texts) {
           texts.forEach(function(text) {
-            text.searchText(attribute, searchExpr);
+            text.textSearch(attribute, searchExpr);
           });
           
           if (typeof callback == 'function') { callback(app.searchResults, 'phrase'); }
@@ -290,7 +290,7 @@ models.Text = function Text(data) {
       }.bind(this)
     },
     
-    'searchByTag': {
+    'tagSearch': {
       value: function(tag) {
         var results = [];
         
@@ -298,7 +298,7 @@ models.Text = function Text(data) {
           if (this.hasTag(tag)) { results.push(this); }
         } else {
           this.phrases.forEach(function(phrase) {
-            results = results.concat(phrase.searchByTag(tag));
+            results = results.concat(phrase.tagSearch(tag));
           }, this);
         }
         
@@ -306,10 +306,10 @@ models.Text = function Text(data) {
       }.bind(this)
     },
     
-    'searchText': {
+    'textSearch': {
       value: function(attribute, searchExpr) {
         this.phrases.forEach(function(phrase) {
-          phrase.searchText(attribute, searchExpr);
+          phrase.textSearch(attribute, searchExpr);
         });
       }.bind(this)
     },
@@ -361,7 +361,7 @@ models.Phrase = function Phrase(data) {
       }.bind(this)
     },
     
-    'searchByTag': {
+    'tagSearch': {
       value: function(tag) {
         var results = [];
         
@@ -369,7 +369,7 @@ models.Phrase = function Phrase(data) {
           if (this.hasTag(tag)) { results.push(this); }
         } else {
           this.words.forEach(function(word) {
-            results = results.concat(word.searchByTag(tag));
+            results = results.concat(word.tagSearch(tag));
           }, this);
         }
         
@@ -377,7 +377,7 @@ models.Phrase = function Phrase(data) {
       }.bind(this)
     },
     
-    'searchText': {
+    'textSearch': {
       value: function(attribute, searchExpr) {
         var checkHash = function(hash, searchExpr) {
           var some = Object.keys(hash).some(function(ortho) {
@@ -417,7 +417,7 @@ models.Word = function Word(data) {
   this.morphemes = new models.Morphemes(this.morphemes);
   
   Object.defineProperties(this, {
-    'searchByTag': {
+    'tagSearch': {
       value: function(tag) {
         var results = [];
         

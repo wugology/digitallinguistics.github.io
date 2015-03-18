@@ -82,7 +82,9 @@ var app = {
     idb.open('WugbotDev', initSequence);
   },
   
-  lastSearch: {},
+  lastTagSearch: {},
+  
+  lastTextSearch: {},
   
   // Change this function to use popups.blank instead
   notify: function(text) {
@@ -93,19 +95,18 @@ var app = {
     localStorage.wugbotPreferences = JSON.stringify(app.preferences, null, 2);
   },
   
-  searchByTag: function(tag, callback) {
-    app.preferences.currentCorpus.searchByTag(tag, function(results, tag) {
+  tagSearch: function(tag, callback) {
+    this.lastTagSearch = tag;
+    app.preferences.currentCorpus.tagSearch(tag, function(results, tag) {
       if (typeof callback == 'function') { callback(results, tag); }
     });
-  },
+  }.bind(this),
   
-  searchText: function(attribute, searchExpr, callback) {
-    this.lastSearch = { attribute: attribute, searchExpr: searchExpr };
+  textSearch: function(attribute, searchExpr, callback) {
+    this.lastTextSearch = { attribute: attribute, searchExpr: searchExpr };
     searchExpr = new RegExp(searchExpr, 'g');
     app.searchResults = [];
-    app.preferences.currentCorpus.searchText(attribute, searchExpr, function(results, lingType) {
-      if (typeof callback == 'function') { callback(results, lingType); }
-    });
+    app.preferences.currentCorpus.textSearch(attribute, searchExpr, callback);
   }.bind(this),
   
   searchResults: [],
@@ -435,7 +436,11 @@ modules.Tagger = function(searchResults, options) {
         results.forEach(function(result, i, arr) {
           if (i == arr.length-1) {
             this.addTag(tag, result, function() {
-              this.search(app.lastSearch.attribute, app.lastSearch.searchExpr);
+              var notify = function(results, tag) {
+                this.notify('newTagger', { data: results, options: { lingType: tag.lingType } });
+              }.bind(this);
+              
+              app.tagSearch(app.lastTagSearch, notify);
             }.bind(this));
           } else {
             this.addTag(tag, result);
@@ -465,7 +470,11 @@ modules.Tagger = function(searchResults, options) {
     var onLastResult = function() {
       app.preferences.currentCorpus.store();
       app.preferences.currentCorpus.cleanupTags(function() {
-        this.search(app.lastSearch.attribute, app.lastSearch.searchExpr);
+        var notify = function(results, tag) {
+          this.notify('newTagger', { data: results, options: { lingType: tag.lingType } });
+        }.bind(this);
+        
+        app.tagSearch(app.lastTagSearch, notify);
       }.bind(this));
     }.bind(this);
 
@@ -597,16 +606,25 @@ modules.Tagger = function(searchResults, options) {
     var options = Array.prototype.slice.call(document.getElementsByName('field'));
     var selected = options.filter(function(option) { return option.checked; });
     
-    this.search(selected[0].value, this.searchBox.value);
+    this.textSearch(selected[0].value, this.searchBox.value);
   }.bind(this);
 
-  this.search = function(attribute, searchExpr) {
+  this.tagSearch = function(tag) {
+    var notify = function(results, tag) {
+      app.lastTagSearch = tag;
+      this.notify('newTagger', { results: results, options: { lingType: lingType } });
+    }.bind(this);
+
+    app.tagSearch(tag, notify);
+  }.bind(this);
+  
+  this.textSearch = function(attribute, searchExpr) {
     var notify = function(results, lingType) {
-      app.lastSearch = { attribute: attribute, searchExpr: searchExpr };
+      app.lastTextSearch = { attribute: attribute, searchExpr: searchExpr };
       this.notify('newTagger', { results: results, options: { lingType: lingType } });
     }.bind(this);
     
-    app.searchText(attribute, searchExpr, notify);
+    app.textSearch(attribute, searchExpr, notify);
   };
   
   this.selectAll = function() {
@@ -714,7 +732,7 @@ modules.TagsOverview = function(collection) {
         this.notify('newTagger', { results: results, options: { lingType: tag.lingType } });
       }.bind(this);
       
-      app.searchByTag(models.Tag.parse(ev.target.dataset.tag), notify);
+      app.tagSearch(models.Tag.parse(ev.target.dataset.tag), notify);
     }
   }.bind(this);
   
