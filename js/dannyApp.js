@@ -82,7 +82,7 @@ var app = {
     idb.open('WugbotDev', initSequence);
   },
   
-  lastSearch: null,
+  lastSearch: {},
   
   // Change this function to use popups.blank instead
   notify: function(text) {
