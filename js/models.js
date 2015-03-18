@@ -104,7 +104,7 @@ models.Corpus = function Corpus(data) {
           tag.untag(item);
         };
         
-        removeTag(this.tags);
+        removeTag(this);
         
         var removeCrumbs = function(texts) {
           texts.forEach(function(text) {
