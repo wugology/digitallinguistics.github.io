@@ -17,3 +17,5 @@ Desiderata:
 - Edit tags in place (in the overview pane only)
 - Pressing escape when a popup is open should close it
 - Order the phrase-level tags alphabetically as well
+- Ability to deselect all results
+- Create .tagUp() and .tagDown() functions, to apply a tag at one level to every object at the level immediately above/below it

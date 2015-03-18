@@ -39,92 +39,71 @@ models.Corpus = function Corpus(data) {
   this.tags = new models.Tags(this.tags);
   
   Object.defineProperties(this, {
+    // Use this rather than .push() when you don't want to accidentally duplicate IDs
     'add': {
       value: function(idsToAdd, type) {
         if (!idsToAdd.length) { idsToAdd = toArray(idsToAdd); }
         
-        idsToAdd.forEach(function(idToAdd) {
-          var matches = this[type].filter(function(id) {
-            return id == idToAdd;
-          });
-          
-          if (matches.length == 0) {
-            this[type].push(idToAdd);
-          }
+        idsToAdd.forEach(function(id) {
+          if (hasID(this[type], id)) { this[type].push(id); }
         }, this);
         
         this.store();
       }.bind(this)
     },
     
-    // Adds floater tags to the corpus (tags that exist within the corpus but aren't in the tags array)
-    // Then removes any unused tags from the corpus' tags array
+    // Removes any unused tags from the corpus' tags array
+    // Then finds all tags in the corpus, and makes sure they're in the corpus tags array
     'cleanupTags': {
       value: function() {
-        var pullTagsUp = function(callback) {
-          var checkToPush = function(texts) {
-            texts.forEach(function(text) {
-              text.tags.forEach(function(tag) {
-                if (!this.hasTag(tag)) { tag.tag(this); }
-              }, this);
-              
-              text.phrases.forEach(function(phrase) {
-                phrase.tags.forEach(function(tag) {
-                  if (!this.hasTag(tag)) { tag.tag(this); }
-                }, this);
-              }, this);
-            }, this);
-            
-            if (typeof callback == 'function') { callback(); }
-          }.bind(this);
+        var addMissingTags = function() {
+          this.pullTags().forEach(function(tag) {
+            tag.tag(this);
+          }, this);
           
-          this.get('texts', checkToPush);
+          this.store();
         }.bind(this);
         
-        var removeExtras = function() {
-          var checkToRemove = function(tag, i, arr) {
-            var checkTag = function(results) {
-              if (results.length == 0) { this.deleteTag(tag); }
-              if (i == arr.length-1) { this.store(); }
-            }.bind(this);
-            
-            this.searchByTag(tag, checkTag);
-          }.bind(this);
-          
-          this.tags.forEach(checkToRemove, this);
+        var checkToRemove = function(results, tag) {
+          if (results.length == 0) { tag.untag(this); }
         }.bind(this);
         
-        pullTagsUp(removeExtras);
+        var removeUnusedTags = function() {
+          this.tags.forEach(function(tag, i, arr) {
+            this.searchByTag(tag, checkToRemove);
+            if (i == arr.length-1) { addMissingTags(); }
+          }, this);
+        }.bind(this);
+
+        removeUnusedTags();
       }.bind(this)
     },
 
     'deleteTag': {
       value: function(tag) {
-        var removeTag = function(item) {
-          tag.untag(item);
-        };
+        tag.untag(this);
         
-        removeTag(this);
+        this.store();
         
-        var removeCrumbs = function(texts) {
+        var removeTags = function(texts) {
           texts.forEach(function(text) {
-            removeTag(text);
+            tag.untag(text);
+            
             text.phrases.forEach(function(phrase) {
-              removeTag(phrase);
+              tag.untag(phrase);
               phrase.words.forEach(function(word) {
-                removeTag(word);
+                tag.untag(word);
                 word.morphemes.forEach(function(morpheme) {
-                  removeTag(morpheme);
+                  tag.untag(morpheme);
                 });
               });
             });
+            
             text.store();
           });
-        }.bind(this);
+        };
         
-        this.get('texts', removeCrumbs);
-        
-        this.store();
+        this.get('texts', removeTags);
       }.bind(this)
     },
 
@@ -150,17 +129,30 @@ models.Corpus = function Corpus(data) {
         this.get('texts', extractAbbrevs);
       }.bind(this)
     },
+
+    'pullTags': {
+      value: function() {
+        var tagsHolder = { tags: [] };
+        
+        var transferTags = function(results) {
+          results.forEach(function(result) {
+            result.tags.forEach(function(tag) {
+              tag.tag(tagsHolder);
+            });
+          });
+        };
+        
+        this.tags.forEach(function(tag) {
+          this.searchByTag(transferTags);
+        }, this);
+        
+        return tagsHolder.tags;
+      }.bind(this)
+    },
     
     'remove': {
       value: function(idsToRemove, type, callback) {
-        if (!idsToRemove.length) { idsToRemove = toArray(idsToRemove); }
-        
-        idsToRemove.forEach(function(idToRemove) {
-          this[type].forEach(function(id, i) {
-            if (id == idToRemove) { this[type].splice(i, 1); }
-          }, this);
-        }, this);
-        
+        removeids(idsToRemove, this[type]);
         this.store(callback);
       }.bind(this)
     },
@@ -185,23 +177,25 @@ models.Corpus = function Corpus(data) {
       }.bind(this)
     },
     
+    // Callback arguments: results, tag
     'searchByTag': {
       value: function(tag, callback) {
+        results = [];
         
         if (tag.type == 'corpus') {
           if (this.hasTag(tag)) {
-            app.searchResults.push(this);
+            results.push(this);
           }
           
-          if (typeof callback == 'function') { callback(app.searchResults, tag.type); }
+          if (typeof callback == 'function') { callback(results, tag); }
         
         } else {
           var search = function(texts) {
             texts.forEach(function(text) {
-              text.searchByTag(tag);
+              results.concat(text.searchByTag(tag));
             });
             
-            if (typeof callback == 'function') { callback(app.searchResults, tag.type); }
+            if (typeof callback == 'function') { callback(results, tag); }
           };
           
           this.get('texts', search);
@@ -269,7 +263,7 @@ models.Text = function Text(data) {
         idb.get(this[type], type, callback);
       }.bind(this)
     },
-    
+
     // Pass this a function that has the text as its argument - this keeps app-specific rendering methods in the app
     'render': {
       value: function(renderFunction) {
@@ -285,13 +279,17 @@ models.Text = function Text(data) {
     
     'searchByTag': {
       value: function(tag) {
+        var results = [];
+        
         if (tag.type == 'text') {
-          if (this.hasTag(tag)) { app.searchResults.push(this); }
+          if (this.hasTag(tag)) { results.push(this); }
         } else {
           this.phrases.forEach(function(phrase) {
-            phrase.searchByTag(tag);
+            results.concat(phrase.searchByTag(tag));
           }, this);
         }
+        
+        return results;
       }.bind(this)
     },
     
@@ -352,13 +350,17 @@ models.Phrase = function Phrase(data) {
     
     'searchByTag': {
       value: function(tag) {
+        var results = [];
+        
         if (tag.type == 'phrase') {
-          if (this.hasTag(tag)) { app.searchResults.push(this); }
+          if (this.hasTag(tag)) { results.push(this); }
         } else {
           this.words.forEach(function(word) {
-            word.searchByTag(tag);
+            results.concat(word.searchByTag(tag));
           }, this);
         }
+        
+        return results;
       }.bind(this)
     },
     
@@ -403,13 +405,17 @@ models.Word = function Word(data) {
   Object.defineProperties(this, {
     'searchByTag': {
       value: function(tag) {
+        var results = [];
+        
         if (tag.type == 'word') {
-          if (this.hasTag(tag)) { app.searchResults.push(this); }
+          if (this.hasTag(tag)) { results.push(this); }
         } else {
           this.morphemes.forEach(function(morpheme) {
-            if (morpheme.hasTag(tag)) { app.searchResults.push(this); }
+            if (morpheme.hasTag(tag)) { results.push(this); }
           }, this);
         }
+        
+        return results;
       }.bind(this)
     }
   });

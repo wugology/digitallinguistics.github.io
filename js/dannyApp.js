@@ -94,9 +94,8 @@ var app = {
   },
   
   searchByTag: function(tag, callback) {
-    app.searchResults = [];
-    app.preferences.currentCorpus.searchByTag(tag, function(results, tagType) {
-      if (typeof callback == 'function') { callback(results, tagType); }
+    app.preferences.currentCorpus.searchByTag(tag, function(results, tag) {
+      if (typeof callback == 'function') { callback(results, tag); }
     });
   },
   
@@ -148,6 +147,7 @@ var AppView = function() {
         if (modules.tagger) {
           modules.tagger.selectAllButton.removeEventListener('click', modules.tagger.selectAll);
           modules.tagger.bulkTagButton.removeEventListener('click', modules.tagger.bulkTag);
+          modules.tagger.bulkUntagButton.removeEventListener('click', modules.tagger.bulkUntag);
           modules.tagger.searchBar.removeEventListener('submit', modules.tagger.runSearch);
           modules.tagger.taggingList.removeEventListener('click', modules.tagger.newTag);
         }
@@ -408,6 +408,7 @@ modules.Tagger = function(searchResults, options) {
   this.workview = 'tags';
   
   this.bulkTagButton = $('#bulkTagButton');
+  this.bulkUntagButton = $('#bulkUntagButton');
   this.el = $('#tagger');
   this.resultsCounter = $('#resultsCounter');
   this.searchBar = $('#searchBar');
@@ -446,6 +447,35 @@ modules.Tagger = function(searchResults, options) {
       idb.getBreadcrumb(crumbs, tagAll);
     }.bind(this);
 
+    this.getTag(getCrumbs);
+  }.bind(this);
+  
+  this.bulkUntag = function() {
+    var tag;
+    
+    var getCrumbs = function(returnedTag) {
+      tag = returnedTag;
+      var response = confirm('Are you sure you want to delete this tag from these items? This cannot be undone.');
+      
+      if (response) {
+        var crumbs = this.getSelected();
+        idb.getBreadcrumb(crumbs, removeTag);
+      }
+    }.bind(this);
+    
+    var onLastResult = function() {
+      app.preferences.currentCorpus.cleanupTags();
+      app.preferences.currentCorpus.store( this.notify('newTagger') );
+    };
+
+    var removeTag = function(results) {
+      results.forEach(function(result, i) {
+        tag.untag(result);
+        result.store();
+        if (i == results.length-1) { onLastResult(); }
+      });
+    };
+    
     this.getTag(getCrumbs);
   }.bind(this);
   
@@ -580,15 +610,17 @@ modules.Tagger = function(searchResults, options) {
     var checkboxes = $('#taggingList input');
     if (checkboxes.some(function(checkbox) { return checkbox.checked == true; })) {
       var response = confirm('You already have some items selected. Are you sure you want to select all items instead?');
-      if (response) {
-        checkboxes.forEach(function(checkbox) { checkbox.checked = true; });
-      }
+    } else { var response = true; }
+
+    if (response) {
+      checkboxes.forEach(function(checkbox) { checkbox.checked = true; });
     }
   };
   
   this.observers.add('newTagger', appView);
   
   this.bulkTagButton.addEventListener('click', this.bulkTag);
+  this.bulkUntagButton.addEventListener('click', this.bulkUntag);
   this.searchBar.addEventListener('submit', this.runSearch);
   this.selectAllButton.addEventListener('click', this.selectAll);
   this.taggingList.addEventListener('click', this.newTag);
@@ -673,8 +705,8 @@ modules.TagsOverview = function(collection) {
   
   this.listen = function(ev) {
     if (ev.target.dataset.tag) {
-      var notify = function(results, lingType) {
-        this.notify('newTagger', { results: results, options: { lingType: lingType } });
+      var notify = function(results, tag) {
+        this.notify('newTagger', { results: results, options: { lingType: tag.lingType } });
       }.bind(this);
       
       app.searchByTag(models.Tag.parse(ev.target.dataset.tag), notify);

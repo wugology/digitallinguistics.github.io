@@ -72,6 +72,10 @@ function getUnique(attribute, array) {
   return values;
 };
 
+function hasID(arr, idToMatch) {
+  return arr.some(function(id) { return id == idToMatch });
+};
+
 function hide(el, media) {
   if (media != 'mobile') { el.classList.add('hideonDesktop'); }
   if (media != 'desktop') { el.classList.add('hideonMobile'); }
@@ -87,6 +91,14 @@ function hydrate(obj) {
     });
   }
   return newObj;
+};
+
+var removeids = function(idsToRemove, array) {
+  if (!idsToRemove.length) { idsToRemove = toArray(idsToRemove); }
+  
+  array.forEach(function(id, i) {
+    if (hasID(idsToRemove, id)) { array.splice(i, 1); }
+  });
 };
 
 function renderTextContent(textHash, wrapper) {
