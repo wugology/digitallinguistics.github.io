@@ -238,7 +238,7 @@ var PhraseView = function(model) {
     pv.dataset.breadcrumb = Breadcrumb.stringify(model.breadcrumb);
     var contentWrapper = pv.querySelector('.wrapper');
     
-    var key = createElement('abbr', { textContent: options.textAbbr + '.' + model.breadcrumb[1]+1 });
+    var key = createElement('abbr', { textContent: options.textAbbr + '.' + (model.breadcrumb[1] + 1) });
     contentWrapper.appendChild(key);
     
     var renderText = function(textHash, type) {
