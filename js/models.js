@@ -130,6 +130,48 @@ models.Corpus = function Corpus(data) {
         this.get('texts', extractAbbrevs);
       }.bind(this)
     },
+    
+    'getStatistics': {
+      value: function(callback) {
+        var getStats = function(texts) {
+          var delimiters = new RegExp('[,.!?“” ˊˋ]+', 'g');
+          
+          var types = [];
+          
+          var stats = {
+            tokens: 0,
+            phrases: 0
+          };
+          
+          var countTokens = function(phrase) {
+            var tokens = phrase.transcripts['Swadesh-Phonemic'].split(delimiters);
+            stats.tokens += tokens.length;
+            countTypes(tokens);
+          };
+          
+          var countTypes = function(tokens) {
+            tokens.forEach(function(token) {
+              var exists = types.some(function(type) {
+                return type == token;
+              });
+              
+              if (!exists) { types.push(token); }
+            });
+          };
+          
+          texts.forEach(function(text, i, arr) {
+            stats.phrases += arr.length;
+            text.phrases.forEach(countTokens);
+          });
+          
+          stats.types = types.length;
+          
+          if (typeof callback == 'function') { callback(stats); }
+        };
+        
+        this.get('texts', getStats);
+      }.bind(this)
+    },
 
     'pullTags': {
       value: function(callback) {
