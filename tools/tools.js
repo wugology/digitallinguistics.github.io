@@ -23,7 +23,7 @@ var ekegusiiColumns = [
     format: 'number'
   },
   {
-    elan: 'Duration',
+    elan: 'Duration - ss.msec',
     import: false
   },
   {
