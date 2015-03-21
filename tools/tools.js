@@ -42,6 +42,11 @@ var ekegusiiColumns = [
     orthography: 'Phonetic'
   },
   {
+    elan: 'Translations',
+    json: 'translations',
+    orthography: 'English'
+  },
+  {
     elan: 'Translation',
     json: 'translations',
     orthography: 'English'
