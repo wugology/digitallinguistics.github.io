@@ -205,17 +205,15 @@ var TextView = function(model, options) {
     });
     
     this.el.querySelector('.text header').addEventListener('input', function(ev) {
-      if (ev.target.classList.contains('title')) { this.model.titles[ev.target.id] == ev.target.value; }
+      if (ev.target.classList.contains('title')) { this.model.titles[ev.target.id] = ev.target.value; }
       if (ev.target.id == 'abbrBox') { this.model.abbreviation = ev.target.value; }
     }.bind(this));
     
     this.el.querySelector('.text header').addEventListener('keyup', function(ev) {
       if (ev.keyCode == 13 || ev.keyCode == 27) {
         ev.target.blur();
-        if (ev.target.classList.contains('title')) { this.model.titles[ev.target.id] == ev.target.value; }
-        if (ev.target.id == 'abbrBox') { this.model.abbreviation = ev.target.value; }
-        this.notify('headerChange');
         this.model.store();
+        this.notify('headerChange');
       }
     }.bind(this));
     
