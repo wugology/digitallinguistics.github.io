@@ -73,12 +73,15 @@ var TextView = function(model, options) {
     
     var tv = this.template.content.querySelector('.text').cloneNode(true);
     
+    tv.querySelector('#abbrBox').value = this.model.abbreviation;
+    
     // Render titles
     Object.keys(this.model.titles).forEach(function(key) {
       var li = createElement('li', { id: key });
       var label = createElement('label', { htmlFor: key });
       var p = createElement('p', { textContent: key });
-      var input = createElement('input', { value: this.model.titles[key] || '', id: key });
+      var input = createElement('input', { value: this.model.titles[key] || '', id: key, type: 'text' });
+      input.classList.add('title');
       
       label.appendChild(p);
       label.appendChild(input);
@@ -89,7 +92,7 @@ var TextView = function(model, options) {
       
     }, this);
     
-    $('#detailsPane').appendChild(tv);
+    $('#detailsPane .displayArea').appendChild(tv);
     
     this.el = tv;
     
@@ -201,14 +204,16 @@ var TextView = function(model, options) {
       }
     });
     
-    this.el.querySelector('.titles').addEventListener('input', function(ev) {
-      this.model.titles[ev.target.id] = ev.target.value;
+    this.el.querySelector('.text header').addEventListener('input', function(ev) {
+      if (ev.target.value.classList.contains('title')) { this.model.titles[ev.target.id] == ev.target.value; }
+      if (ev.target.id == 'abbrBox') { this.model.abbreviation = ev.target.value; }
+      this.model.store();
     }.bind(this));
     
-    this.el.querySelector('.titles').addEventListener('keyup', function(ev) {
+    this.el.querySelector('.text header').addEventListener('keyup', function(ev) {
       if (ev.keyCode == 13 || ev.keyCode == 27) {
         ev.target.blur();
-        this.notify('titleChange');
+        this.notify('headerChange');
         this.model.store();
       }
     }.bind(this));
@@ -238,7 +243,10 @@ var PhraseView = function(model) {
     pv.dataset.breadcrumb = Breadcrumb.stringify(model.breadcrumb);
     var contentWrapper = pv.querySelector('.wrapper');
     
-    var key = createElement('abbr', { textContent: options.textAbbr + '.' + (model.breadcrumb[1] + 1) });
+    var keyText = model.breadcrumb[1] + 1;
+    if (options.textAbbr) { keyText = options.textAbbr + ': ' + keyText }
+    
+    var key = createElement('abbr', { textContent: keyText });
     contentWrapper.appendChild(key);
     
     var renderText = function(textHash, type) {

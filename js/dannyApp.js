@@ -2,6 +2,11 @@
 
 // Controls general app functionality
 var app = {
+  // Change this function to use popups.blank instead
+  alert: function(text) {
+    alert(text);
+  },
+  
   initialize: function() {
     var initSequence = function() {
       // Load the preferences
@@ -76,7 +81,12 @@ var app = {
           }
           return false;
         });
-      });
+        
+        // Init observer system and add listeners
+        Events.call(this);
+        
+        this.observers.add('setWorkview', appView);
+      }.bind(this));
     };
     
     idb.open('WugbotDev', initSequence);
@@ -86,14 +96,20 @@ var app = {
   
   lastTextSearch: {},
   
-  // Change this function to use popups.blank instead
-  notify: function(text) {
-    alert(text);
-  },
-  
   save: function() {
     localStorage.wugbotPreferences = JSON.stringify(app.preferences, null, 2);
   },
+  
+  setCorpus: function(corpusID) {
+    idb.get(corpusID, 'corpora', function(results) {
+      var corpus = results[0];
+      this.preferences.currentText.store();
+      this.preferences.currentText = null;
+      this.preferences.currentCorpus.store();
+      corpus.setAsCurrent();
+      this.notify('setWorkview');
+    }.bind(this))
+  }.bind(this),
   
   tagSearch: function(tags, callback) {
     this.lastTagSearch = tags;
@@ -109,10 +125,17 @@ var app = {
     app.preferences.currentCorpus.textSearch(attribute, searchExpr, callback);
   }.bind(this),
   
+  update: function(action, data) {
+    if (action == 'newCorpus') {
+      this.setCorpus(data);
+    }
+  }.bind(this),
+  
   searchResults: [],
   
   preferences: {}
 };
+
 
 // APP VIEW
 var AppView = function() {
@@ -836,7 +859,7 @@ modules.TextsOverview = function(collection) {
       var renderFunction = function(text) {
         var tv = new TextView(text, { contentEditable: true });
         tv.render();
-        tv.observers.add('titleChange', this);
+        tv.observers.add('headerChange', this);
         tv.observers.add('deleteText', this);
         text.setAsCurrent();
       }.bind(this);
@@ -849,7 +872,7 @@ modules.TextsOverview = function(collection) {
     if (action == 'setWorkview') {
       this.textsList.removeEventListener('click', this.renderText);
       if (data != this.workview) { this.hide(); }
-    } else if (action == 'deleteText' || action == 'titleChange') {
+    } else if (action == 'deleteText' || action == 'headerChange') {
       var tl = new TextsListView(this.collection);
       tl.render(this.textsList);
     }
@@ -912,7 +935,7 @@ popups.FileUpload = function() {
 popups.ManageCorpora = function() {
   Popup.call(this);
   
-  this.button = $('#createCorpusButton');
+  this.form = $('#newCorpusForm');
   this.corpusList = $('#corpusList');
   this.el = $('#manageCorporaPopup');
   this.input = $('#corpusNameBox');
@@ -936,19 +959,17 @@ popups.ManageCorpora = function() {
     idb.getAll('corpora', renderList);
   }.bind(this);
   
-  this.button.addEventListener('click', function(ev) {
+  this.observers.add('newCorpus', app);
+  
+  this.form.addEventListener('submit', function(ev) {
     ev.preventDefault();
 
     var corpus = new models.Corpus({ name: this.input.value });
+        
+    corpus.store(function(corpusIDs) {
+      this.notify('newCorpus', corpusIDs[0]);
+    }.bind(this));
     
-    var setCorpus = function(corpusIDs) {
-      corpus.id = corpusIDs[0];
-      appView.corpusSelector.render(corpus.id);
-      corpus.setAsCurrent();
-      appView.setWorkview();
-    };
-    
-    corpus.store(setCorpus);
     this.hide();
   }.bind(this));
 };

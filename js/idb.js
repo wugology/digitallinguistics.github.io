@@ -5,6 +5,7 @@ var idb = {
   // Creates the tables (object stores) for the database
   createTables: function() {
     var defaults = { keyPath: 'id', autoIncrement: true };
+
     idb.tableList.forEach(function(table) {
       idb.database.createObjectStore(table.name, defaults);
     });
@@ -85,24 +86,24 @@ var idb = {
         callback(results);
       } else {
         if (!ids.length) {
-          var ids = toArray(ids);
+          var id = ids;
+          
+          var get = function(table) {
+            idb.getOne(id, table, results);
+          };
+          
+          idb.transact(tableName, results, callback, get);
+        } else {
+          var getEach = function(table) {
+            ids.forEach(function(id) {
+              if (id) {
+                idb.getOne(id, table, results);
+              }
+            });
+          };
+          
+          idb.transact(tableName, results, callback, getEach);
         }
-        
-        var getEach = function(table) {
-          ids.forEach(function(id) {
-            if (id) {
-              var request = table.get(id);
-              
-              request.onsuccess = function() {
-                if (request.result) {
-                  results.push(hydrate(request.result));
-                }
-              };
-            }
-          });
-        };
-        
-        idb.transact(tableName, results, callback, getEach);
       }
     }
   },
@@ -139,6 +140,15 @@ var idb = {
     };
     
     idb.transact('texts', results, callback, getByBreadcrumb);
+  },
+  
+  // Helper function: Does a get request on a table, and stores the result in the provided results array
+  getOne: function(id, table, resultsArr) {
+    var request = table.get(id);
+    
+    request.onsuccess = function() {
+      if (request.result) { resultsArr.push(hydrate(request.result)); }
+    };
   },
   
   // Opens the database, or creates a new one if it doesn't yet exist
@@ -185,6 +195,7 @@ var idb = {
   // Note that 'table' is an actual reference to an object store, not just a table name
   put: function(item, table, results) {
     var request = table.put(item);
+    
     request.onsuccess = function() {
       Object.defineProperty(item, 'id', {
         enumerable: true,

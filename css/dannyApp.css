@@ -97,7 +97,7 @@ legend {
 .phrases > li, #taggingList > li {
   margin-top: 1rem; }
 
-#corpusSelector, #taggingList .tags, .titles, #searchBar > div > label, .textsListItem p {
+#corpusSelector, #taggingList .tags, #searchBar > div > label, .textsListItem p {
   padding: 0 0.5rem; }
 
 .phrase > .wrapper > p, .tags > p, .tagValue {
@@ -168,10 +168,13 @@ input[type=checkbox] {
   max-width: 75%;
   min-width: 75%; }
 
-.titles input {
+.text header label {
+  width: 100%; }
+
+.text header input {
   font-family: 'Gentium Plus';
   font-size: 150%;
-  width: 90%; }
+  width: 100%; }
 
 #toolbar.closed #toolbarContent {
   display: none; }
