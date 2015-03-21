@@ -205,7 +205,7 @@ var TextView = function(model, options) {
     });
     
     this.el.querySelector('.text header').addEventListener('input', function(ev) {
-      if (ev.target.value.classList.contains('title')) { this.model.titles[ev.target.id] == ev.target.value; }
+      if (ev.target.classList.contains('title')) { this.model.titles[ev.target.id] == ev.target.value; }
       if (ev.target.id == 'abbrBox') { this.model.abbreviation = ev.target.value; }
       this.model.store();
     }.bind(this));
