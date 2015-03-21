@@ -76,6 +76,7 @@ var TextView = function(model, template, options) {
   },
   
   this.render = function(wrapper) {
+    this.wrapper = wrapper;
     wrapper.innerHTML = '';
     
     var tv = this.template.content.querySelector('.text').cloneNode(true);
@@ -134,7 +135,7 @@ var TextView = function(model, template, options) {
         img.addEventListener('click', function(ev) {
           this.model.media.forEach(function(mediaID, i) {
             if (mediaID = ev.target.id) { this.model.media.splice(i, 1); }
-            this.model.store(function() { this.render(); }.bind(this));
+            this.model.store(function() { this.render(this.wrapper); }.bind(this));
           }, this);
         }.bind(this));
       }, this);
@@ -157,7 +158,7 @@ var TextView = function(model, template, options) {
           media.addToCorpus();
           this.model.media.push(mediaIDs[0]);
           this.model.store();
-          this.render();
+          this.render(this.wrapper);
         }.bind(this);
         
         media.store(addRender);
@@ -356,8 +357,10 @@ var PhrasesView = function(phrases, template, options) {
       
       if (this.playable) {
         if (ev.target.classList.contains('play')) {
-          var crumb = Breadcrumb.parse(ev.target.parentNode.parentNode.dataset.breadcrumb);
-          var phrase = this.model.phrases[crumb[1]];
+          var crumb = Breadcrumb.parse(ev.target.parentNode.dataset.breadcrumb);
+          var phrase = this.collection.filter(function(phrase) {
+            return Breadcrumb.stringify(phrase.breadcrumb) == ev.target.parentNode.dataset.breadcrumb;
+          })[0];
           phrase.play();          
         }
       }
