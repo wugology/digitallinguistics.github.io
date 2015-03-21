@@ -1,4 +1,5 @@
 Desiderata:
+- Importing a text doesn't immediately add it to the corpus and rerender the texts list
 - Figure out why search results are doubling for multi-tag searching
 - Ability to search within results
 - Ability to view multiple tag sets at once (maybe with ctrl + click; if ctrl is down, display both)
