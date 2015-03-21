@@ -380,8 +380,8 @@ function View(model, template, options) {
   Events.call(this);
 };
 
-function CollectionView(collection, options) {
-  View.call(this, collection, null, options);
+function CollectionView(collection, template, options) {
+  View.call(this, collection, template, options);
   
   this.collection = this.model;
   delete this.model;

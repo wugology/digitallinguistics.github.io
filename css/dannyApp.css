@@ -13,7 +13,7 @@
   -webkit-align-items: flex-start;
   align-items: flex-start; }
 
-audio, .play, #taggingList .icon, .textsListItem abbr {
+audio, .phrase .icon, #taggingList .icon, .textsListItem abbr {
   -webkit-align-self: center;
   align-self: center; }
 
@@ -24,7 +24,7 @@ audio, .play, #taggingList .icon, .textsListItem abbr {
 .tagCategory { /* Tag category label */
   background-color: rgba(63, 249, 165, 0.25); }
 
-.tags > p, .tagValue {
+.tagLabel, .tagValue {
   background-color: rgba(63, 249, 165, 0.5); }
 
 .phrase {
@@ -45,7 +45,7 @@ footer, section {
 #sideNav a, #toolbarNav a {
   border: none; }
 
-.phrase > .wrapper > p, .tags > p, .tagValue {
+.phrase > .wrapper > p, .tagLabel, .tagValue {
   border-radius: 5px; }
 
 .phrase, .tagCategory {
@@ -57,7 +57,6 @@ footer, section {
 .icon, #mediaList li, .tagCategory h3, .tagValue, .textsListItem {
   cursor: pointer; }
 
-.buttons,
 .media li,
 #mediaList li,
 .phrase,
@@ -68,16 +67,25 @@ footer, section {
 #taggingList > li,
 .tags,
 #tagsList > li > ul,
+.textButtons,
 .textsListItem,
 .titles li {
   -webkit-flex-direction: row;
   flex-direction: row; }
 
-#mediaList li p, #resultsCounter, #searchBar > label, #searchBox, #taggingList .tags, #tagSearchBox, .titles label, .wrapper {
+#mediaList li p,
+.phrase label,
+#resultsCounter,
+#searchBar > label,
+#searchBox,
+#taggingList .tags,
+#tagSearchBox,
+.titles label,
+.wrapper {
   -webkit-flex-grow: 1;
   flex-grow: 1; }
 
-.buttons, .tags, #tagsList > li > ul, .wrap {
+.tags, #tagsList > li > ul, .textButtons, .wrap {
   -webkit-flex-wrap: wrap;
   flex-wrap: wrap; }
 
@@ -91,16 +99,19 @@ legend {
 .tagCategory, #tagPopup label, #taggingList input[type=checkbox], .textsListItem input {
   margin: 0.5rem; }
 
-.tagValue, .tags > p {
+.tagValue, .tagLabel {
   margin: 0.25rem; }
 
 .phrases > li, #taggingList > li {
   margin-top: 1rem; }
 
+.tags {
+  min-width: 25%; }
+
 #corpusSelector, #taggingList .tags, #searchBar > div > label, .textsListItem p {
   padding: 0 0.5rem; }
 
-.phrase > .wrapper > p, .tags > p, .tagValue {
+.phrase > .wrapper > p, .tagLabel, .tagValue {
   padding: 0.25rem 0.5rem; }
 
 .tagCategory, .textsListItem {
@@ -115,14 +126,14 @@ legend {
 #sideNav, #toolbarNav {
   top: 0; }
 
-.text fieldset {
+.text fieldset, .text header input, .text header label {
   width: 100%; }
 
 /* Styling by classes or element type (alphabetical by class/element) */
 .closed {
   max-width: 2.5rem; }
 
-.icon[src='img/tag.svg'] {
+.icon[src='img/tag.svg'], .icon[src='img/play.svg'] {
   min-height: 2.5rem;
   min-width: 2.5rem; }
 
@@ -149,10 +160,8 @@ input[type=checkbox] {
 .open {
   max-width: 100%; }
 
-.play {
-  max-height: 45px;
+.phrase icon {
   max-width: 45px;
-  min-height: 45px;
   min-width: 45px; }
 
 #sideNav li, #toolbarNav li {
@@ -164,17 +173,9 @@ input[type=checkbox] {
 #tagPopup input {
   margin: 0; }
 
-#taggingList > li > label {
-  max-width: 75%;
-  min-width: 75%; }
-
-.text header label {
-  width: 100%; }
-
 .text header input {
   font-family: 'Gentium Plus';
-  font-size: 150%;
-  width: 100%; }
+  font-size: 150%; }
 
 #toolbar.closed #toolbarContent {
   display: none; }
@@ -189,7 +190,7 @@ input[type=checkbox] {
 #corpusSelector:hover {
   box-shadow: 0 0 5px 0 white; }
 
-.buttons {
+.textButtons {
   -webkit-justify-content: center;
   justify-content: center; }
 

@@ -268,6 +268,7 @@ var AppView = function() {
         this.newModule('tagger', data.results, data.options);
       }
     }
+    if (action == 'newTag') { this.newModule('tagsOverview', app.preferences.currentCorpus.tags); }
     if (action == 'textsListChange') { this.newModule('textsOverview'); }
   }.bind(this);
   
@@ -440,18 +441,6 @@ modules.Tagger = function(searchResults, options) {
   this.searchBox = $('#tagSearchBox');
   this.selectAllButton = $('#taggerSelectAllButton');
   this.taggingList = $('#taggingList');
-  this.template = $('#tagItemTemplate');
-
-  this.addTag = function(tag, result, callback) {
-    tag.tag(result);
-    
-    var pushToCorpus = function() {
-      tag.tag(app.preferences.currentCorpus);
-      app.preferences.currentCorpus.store(callback);
-    };
-    
-    result.store(pushToCorpus);
-  };
 
   this.bulkTag = function() {
     var getCrumbs = function(tag) {
@@ -476,7 +465,7 @@ modules.Tagger = function(searchResults, options) {
       idb.getBreadcrumb(crumbs, tagAll);
     }.bind(this);
 
-    this.getTag(getCrumbs);
+    popups.tag.getTag(getCrumbs);
   }.bind(this);
   
   this.bulkUntag = function() {
@@ -511,27 +500,18 @@ modules.Tagger = function(searchResults, options) {
       });
     };
     
-    this.getTag(getCrumbs);
+    popups.tag.getTag(getCrumbs);
   }.bind(this);
   
   // Returns the BREADCRUMBS of the selected phrases
   this.getSelected = function() {
-    var checkboxes = $('input[name=tagCheckbox]');
+    var checkboxes = $('input[name=phraseCheckbox]');
     if (!checkboxes.length) { checkboxes = toArray(checkboxes); }
     
     var selected = checkboxes.filter(function(checkbox) { return checkbox.checked == true; });
     var crumbs = selected.map(function(checkbox) { return Breadcrumb.parse(checkbox.value); });
     return crumbs;
   };
-  
-  this.getTag = function(callback) {
-    var makeTag = function(category, value) {
-      var tag = new models.Tag({ lingType: this.lingType, category: category, value: value });
-      if (typeof callback == 'function') { callback(tag); }
-    }.bind(this);
-    
-    popups.tag.render(makeTag);
-  }.bind(this);
 
   this.listResults = function() {
     if (this.collection) {
@@ -542,89 +522,35 @@ modules.Tagger = function(searchResults, options) {
       this.taggingList.innerHTML = '';
       
       switch (this.lingType) {
-        case 'corpus':
-          this.collection.forEach(function(corpus) {
-            this.renderCorpus(corpus);
-          }, this);
+        case 'text':
+          console.log('Rendering tags by text!');
           break;
         case 'phrase':
-          this.collection.forEach(function(phrase) {
-            this.renderPhrase(phrase, {textAbbr: abbrevs[phrase.breadcrumb[0]] });
-          }, this);
+          this.collection = new models.Phrases(this.collection);
+          
+          var pv = new PhrasesView(this.collection, $('#phraseTemplate'), {
+            checkable: true,
+            playable: true,
+            taggable: true
+          });
+          
+          pv.render(this.taggingList);
+          
+          pv.observers.add('newTag', appView);
+          
           break;
         default:
-          if (this.collection) {
-            this.collection.forEach(function(phrase) {
-              this.renderPhrase(phrase, { textAbbr: abbrevs[phrase.breadcrumb[0]] });
-            }, this);
-          }
+          console.log('No linguistic type specified.');
       }
     }.bind(this);
     
     app.preferences.currentCorpus.getAbbrevs(renderResults);
   };
 
-  this.newTag = function(ev) {
-    if (ev.target.classList.contains('tag')) {
-      var listItem = ev.target.parentNode;
-      var crumb = Breadcrumb.parse(listItem.dataset.breadcrumb);
-      
-      var getAndRenderTag = function(results) {
-        var addRender = function(tag) {
-          var render = function() {
-            var phrase = results[0];
-            var replaceNode = listItem;
-            
-            var renderPhrases = function(abbrevs) {
-              this.renderPhrase(phrase, { replaceNode: replaceNode, textAbbr: abbrevs[phrase.breadcrumb[0]] });
-            }.bind(this);
-            
-            app.preferences.currentCorpus.getAbbrevs(renderPhrases);
-            
-            appView.newModule('tagsOverview');
-          }.bind(this);
-
-          this.addTag(tag, results[0], render);
-        }.bind(this);
-        
-        this.getTag(addRender);
-      }.bind(this);
-      
-      idb.getBreadcrumb(crumb, getAndRenderTag);
-    }
-  }.bind(this);
-
   this.render = function() {
     this.listResults();
     this.display();
   };
-  
-  this.renderCorpus = function(corpus) {
-  };
-  
-  this.renderPhrase = function(phrase, options) {
-    var li = this.template.content.querySelector('li').cloneNode(true);
-    li.dataset.breadcrumb = Breadcrumb.stringify(phrase.breadcrumb);
-    li.querySelector('input').value = Breadcrumb.stringify(phrase.breadcrumb);
-    
-    var tagsWrapper = li.querySelector('.tags');
-    
-    phrase.tags.forEach(function(tag) {
-      var text = tag.value ? tag.category + ' : ' + tag.value : tag.category;
-      var p = createElement('p', { textContent: text });
-      tagsWrapper.appendChild(p);
-    });
-    
-    if (options.replaceNode) {
-      options.replaceNode.parentNode.insertBefore(li, options.replaceNode);
-      options.replaceNode.parentNode.removeChild(options.replaceNode);
-    } else {
-      this.taggingList.appendChild(li);
-    }
-    
-    var pv = new PhraseView(phrase);
-    pv.render(li.querySelector('.wrapper'), options);
-  }.bind(this);
 
   this.runSearch = function(ev) {
     ev.preventDefault();
@@ -671,7 +597,6 @@ modules.Tagger = function(searchResults, options) {
   this.bulkUntagButton.addEventListener('click', this.bulkUntag);
   this.searchBar.addEventListener('submit', this.runSearch);
   this.selectAllButton.addEventListener('click', this.selectAll);
-  this.taggingList.addEventListener('click', this.newTag);
 };
 
 modules.TagsOverview = function(collection) {
@@ -857,8 +782,12 @@ modules.TextsOverview = function(collection) {
       })[0];
       
       var renderFunction = function(text) {
-        var tv = new TextView(text, { contentEditable: true });
-        tv.render();
+        var tv = new TextView(text, $('#textTemplate'), {
+          editable: true,
+          playable: true,
+          taggable: true
+        });
+        tv.render($('#detailsPane .displayArea'));
         tv.observers.add('headerChange', this);
         tv.observers.add('deleteText', this);
         text.setAsCurrent();
@@ -985,6 +914,15 @@ popups.Settings = function() {
 
 popups.Tag = function() {
   Popup.call(this);
+  
+  this.getTag = function(callback) {
+    var makeTag = function(category, value) {
+      var tag = new models.Tag({ lingType: 'phrase', category: category, value: value });
+      if (typeof callback == 'function') { callback(tag); }
+    }.bind(this);
+    
+    popups.tag.render(makeTag);
+  }.bind(this);
 
   this.el = $('#tagPopup');
   this.form = $('#tagPopup form');

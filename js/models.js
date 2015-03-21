@@ -64,8 +64,8 @@ models.Corpus = function Corpus(data) {
           }.bind(this));
         }.bind(this);
         
-        var checkToRemove = function(results, tag) {
-          if (results.length == 0) { tag.untag(this); }
+        var checkToRemove = function(results, tags) {
+          if (results.length == 0) { tags[0].untag(this); }
         }.bind(this);
         
         var removeUnusedTags = function() {
@@ -492,6 +492,7 @@ models.Lexeme = function Lexeme(data) {
 // Abbr: cxn
 models.Construction = function Construction(data) {};
 
+// The tag model also has a render function for now, because it seems unnecssary to have views for every tag
 models.Tag = function Tag(data) {
   if (data) { augment(this, data); }
   
@@ -507,6 +508,15 @@ models.Tag = function Tag(data) {
     'model': {
       enumerable: true,
       value: 'Tag'
+    },
+    
+    'render': {
+      value: function(wrapper) {
+        var text = this.value ? this.category + ' : ' + this.value : this.category;
+        var p = createElement('p', { textContent: text });
+        p.classList.add('tagLabel');
+        wrapper.appendChild(p);
+      }
     },
     
     'tag': {
@@ -571,7 +581,15 @@ models.MediaFiles = function MediaFiles(data) {
   return media;
 };
 
-// Doesn't seem like we need a Corpora collection model
+models.Corpora = function(data) {
+  var coll = data.map(function(corpusData) {
+    return new models.Corpus(corpusData);
+  });
+  
+  var corpora = new Collection(coll);
+  
+  return corpora;
+};
 
 models.Languages = function Languages(data) {
   var coll = data.map(function(languageData) {
@@ -600,16 +618,6 @@ models.Phrases = function Phrases(data) {
 
   var phrases = new Collection(coll);
   
-  // populatePhrase is a function that takes a phrase a content wrapper for that phrase as its argument
-  Object.defineProperty(phrases, 'render', {
-    value: function(wrapper, options) {
-      phrases.forEach(function(phrase) {
-        var pv = new PhraseView(phrase);
-        pv.render(wrapper, options);
-      });
-    }.bind(this)
-  });
-  
   return phrases;
 };
 
@@ -623,10 +631,9 @@ models.Words = function Words(data) {
   return words;
 };
 
-// Morphemes don't have a model - a collection of morphemes is actually a collection of lexemes
 models.Morphemes = function Morphemes(data) {
-  var coll = data.map(function(lexemeData) {
-    return new models.Lexeme(lexemeData);
+  var coll = data.map(function(morphemeData) {
+    return new models.morpheme(morphemeData);
   });
   
   var morphemes = new Collection(coll);

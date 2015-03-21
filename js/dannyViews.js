@@ -30,32 +30,38 @@ var Popup = function() {
 
 
 // ITEM VIEWS
-var TextView = function(model, options) {
-  View.call(this, model, $('#textTemplate'));
+var TextView = function(model, template, options) {
+  View.call(this, model, template, options);
   
   workview = 'texts';
   
+  // Moves to the next phrase in the text
   this.nextPhrase = function() {
+    // Finds how many phrases are in the current text
     var numPhrases = app.preferences.currentText.phrases.length;
-
+    
+    // Gets the currently selected phrase
     var selected = $('.selected');
     
+    // Removes the selection highlight from the currently selected phrase
     if (selected) {
       selected.classList.remove('selected');
     }
     
+    // Increments the current phrase number, or resets to the start if you're already at the last phrase
     if (app.preferences.currentPhrase[1] == numPhrases-1) {
       app.preferences.currentPhrase[1] = 0;
     } else {
       app.preferences.currentPhrase[1] += 1;
     }
     
+    // Adds the selection highlight to the newly selected phrase, then focuses on that phrase
     var newSelected = $('.phrase').filter(function(phrase) {
       return checkAgainst(app.preferences.currentPhrase, Breadcrumb.parse(phrase.dataset.breadcrumb))
     })[0];
     
     newSelected.classList.add('selected');
-    var textItem = newSelected.querySelector('.wrapper p:first-child')
+    var textItem = newSelected.querySelector('.content p:first-of-type');
     textItem.focus();
     range = new Range();
     range.selectNodeContents(textItem);
@@ -65,14 +71,16 @@ var TextView = function(model, options) {
     selection.addRange(range);
   },
   
+  // Moves to the previous phrase in the text
   this.prevPhrase = function() {
   },
   
-  this.render = function() {
-    $('#detailsPane .displayArea').innerHTML = '';
+  this.render = function(wrapper) {
+    wrapper.innerHTML = '';
     
     var tv = this.template.content.querySelector('.text').cloneNode(true);
     
+    // Render text abbreviation
     tv.querySelector('#abbrBox').value = this.model.abbreviation;
     
     // Render titles
@@ -89,19 +97,20 @@ var TextView = function(model, options) {
       tv.querySelector('.titles').appendChild(li);
       
       input.addEventListener('blur', this.model.store);
-      
     }, this);
     
-    $('#detailsPane .displayArea').appendChild(tv);
+    wrapper.appendChild(tv);
     
     this.el = tv;
     
     // Render phrases
-    phraseWrapper = this.el.querySelector('.phrases');
-    
+    phrasesWrapper = this.el.querySelector('.phrases');
+    phraseTemplate = $('#phraseTemplate');
     options.textAbbr = this.model.abbreviation;
-
-    this.model.phrases.render(phraseWrapper, options);
+    options.playable = true;
+    
+    var pv = new PhrasesView(this.model.phrases, phraseTemplate, options);
+    pv.render(phrasesWrapper);
     
     // Load media
     var setMedia = function(media) {
@@ -163,44 +172,11 @@ var TextView = function(model, options) {
       appView.setWorkview('texts');
       this.notify('deleteText');
     }.bind(this));
-
-    this.el.querySelector('.phrases').addEventListener('blur', function(ev) {
-      app.preferences.currentText.store();
-    }, true);
-    
-    this.el.querySelector('.phrases').addEventListener('click', function(ev) {
-      if (ev.target.classList.contains('play')) {
-        var crumb = Breadcrumb.parse(ev.target.parentNode.dataset.breadcrumb);
-        var phrase = this.model.phrases[crumb[1]];
-        phrase.play();
-      }
       
-      if (ev.target.classList.contains('phrase')) {
-        $('.phrase').forEach(function(phraseEl) { phraseEl.classList.remove('selected'); });
-        ev.target.classList.add('selected');
-        app.preferences.currentPhrase = Breadcrumb.parse(ev.target.dataset.breadcrumb);
-      }
-      
-      if (ev.target.classList.contains('phraseContent')) {
-        var selected = $('.selected');
-        if (selected.length > 0) { selected[0].classList.remove('selected'); }
-        ev.target.parentNode.parentNode.classList.add('selected');
-        app.preferences.currentPhrase = Breadcrumb.parse(ev.target.parentNode.parentNode.dataset.breadcrumb);
-      }
-    }.bind(this));
-
     this.el.querySelector('.phrases').addEventListener('input', function(ev) {
-      if (ev.target.classList.contains('phraseContent')) {
+      if (ev.target.classList.contains('phraseData')) {
         var crumb = Breadcrumb.parse(ev.target.parentNode.parentNode.dataset.breadcrumb);
         app.preferences.currentText.phrases[crumb[1]][ev.target.dataset.type][ev.target.dataset.ortho] = ev.target.textContent;
-      }
-    });
-    
-    this.el.querySelector('.phrases').addEventListener('keydown', function(ev) {
-      if (ev.keyCode == 13 || ev.keyCode == 27) {
-        ev.preventDefault();
-        ev.target.blur();
-        app.preferences.currentText.store();
       }
     });
     
@@ -232,31 +208,54 @@ var TextView = function(model, options) {
   appView.observers.add('setWorkview', this);
 };
 
-var PhraseView = function(model) {
-  View.call(this, model, null);
+// Available options:
+// checkable: Boolean - whether to include a checkbox with the phrase (default = false)
+// - will wrap the phrase content (not the buttons or tags) in an <input>,
+// - so clicking anywhere in the phrase checks the checkbox
+// displayWords: Boolean - whether to render the phrase with words, or just phrase-level data (default = false)
+// editable: Boolean - whether the phrase should be editable (default = false)
+// playable: Boolean - whether to include a play button on the phrase (default = false)
+// replaceNode: a DOM node that you want to replace with this new phrase view (default = null)
+// - still requires you to specify the wrapper where the phrase is being inserted; replaceNode should always be a child of that wrapper
+// taggable: Boolean - whether to display tags for this phrase (default = false)
+// textAbbr: the text abbreviation to display with each phrase (usually taken from the text.abbreviation property) (default = null)
+var PhraseView = function(model, template, options) {
+  View.call(this, model, template, options);
   
-  this.template = $('#phraseTemplate');
-  
-  this.render = function(wrapper, options) {
+  this.render = function(wrapper) {
     var pv = this.template.content.querySelector('.phrase').cloneNode(true);
-    pv.dataset.breadcrumb = Breadcrumb.stringify(model.breadcrumb);
-    var contentWrapper = pv.querySelector('.wrapper');
+    var contentWrapper = pv.querySelector('.content');
     
+    if (!this.checkable) {
+      pv.removeChild(pv.querySelector('input'));
+    } else {
+      pv.querySelector('input').id = 'phrase_' + this.model.breadcrumb[1];
+      pv.querySelector('input').value = Breadcrumb.stringify(this.model.breadcrumb);
+      pv.querySelector('label').htmlFor = 'phrase_' + this.model.breadcrumb[1];
+    }
+    
+    if (!this.playable) { pv.removeChild(pv.querySelector('play')); }
+    
+    if (!this.taggable) { pv.removeChild(pv.querySelector('tag')); }
+    
+    pv.dataset.breadcrumb = Breadcrumb.stringify(model.breadcrumb);
+    
+    // Renders the human-readable key for each phrase for easy reference (the text abbreviation, if present, and the phrase number)
     var keyText = model.breadcrumb[1] + 1;
     if (options.textAbbr) { keyText = options.textAbbr + ': ' + keyText }
-    
     var key = createElement('abbr', { textContent: keyText });
     contentWrapper.appendChild(key);
     
+    // Renders each of the text items in the phrase
     var renderText = function(textHash, type) {
       Object.keys(textHash).forEach(function(ortho) {
         var p = createElement('p', { textContent: textHash[ortho], spellcheck: false });
-        if (options.contentEditable == true) {
+        if (options.editable == true) {
           p.contentEditable = true;
         }
         p.dataset.type = type;
         p.dataset.ortho = ortho;
-        p.classList.add('phraseContent');
+        p.classList.add('phraseData');
         p.classList.add('unicode');
         contentWrapper.appendChild(p);
       }, this);
@@ -264,10 +263,23 @@ var PhraseView = function(model) {
     
     renderText(this.model.transcripts, 'transcripts');
     renderText(this.model.transcriptions, 'transcriptions');
+    if (this.displayWords) { console.log('No function written to display words yet.'); }
     renderText(this.model.translations, 'translations');
     renderText(this.model.notes, 'notes');
-
-    wrapper.appendChild(pv);
+    
+    // Renders the tags for the phrase
+    if (this.taggable) {
+      this.model.tags.forEach(function(tag) {
+        tag.render(pv.querySelector('.tags'));
+      });
+    }
+    
+    if (this.replaceNode) {
+      wrapper.insertBefore(pv, this.replaceNode);
+      wrapper.removeChild(this.replaceNode);
+    } else {
+      wrapper.appendChild(pv);
+    }
     
     this.el = pv;
   }.bind(this);
@@ -291,5 +303,92 @@ var TextsListView = function(texts) {
   this.render = function(wrapper) {
     wrapper.innerHTML = '';
     createList(wrapper, this.collection, this.populateListItem);
+  }.bind(this);
+};
+
+var PhrasesView = function(phrases, template, options) {
+  CollectionView.call(this, phrases, template, options);
+  
+  this.render = function(wrapper) {
+    this.el = wrapper;
+    this.el.innerHTML = '';
+    
+    phrases.forEach(function(phrase) {
+      var pv = new PhraseView(phrase, template, options);
+      pv.render(this.el);
+    }, this);
+    
+    this.addListeners();
+  }.bind(this);
+  
+  // Phrase = the new phrase you want to render, phraseNode = the old node to replace
+  this.rerenderPhrase = function(phrase, phraseNode) {
+    options.replaceNode = phraseNode;
+    var pv = new PhraseView(phrase, $('#phraseTemplate'), options);
+    pv.render(this.el);
+  }.bind(this);
+  
+  this.tagPhrase = function(phrase, phraseNode, callback) {
+    popups.tag.getTag(function(tag) {
+      tag.tag(phrase);
+      phrase.store(function() {
+        tag.tag(app.preferences.currentCorpus);
+        if (typeof callback == 'function') { callback(); }
+      });
+    });
+  };
+  
+  // Add event listeners
+  this.addListeners = function() {
+    this.el.addEventListener('click', function(ev) {
+      if (ev.target.classList.contains('phrase')) {
+        $('.phrase').forEach(function(phraseEl) { phraseEl.classList.remove('selected'); });
+        ev.target.classList.add('selected');
+        app.preferences.currentPhrase = Breadcrumb.parse(ev.target.dataset.breadcrumb);
+      }
+
+      if (ev.target.classList.contains('phraseData')) {
+        var selected = $('.selected');
+        if (selected.length > 0) { selected[0].classList.remove('selected'); }
+        ev.target.parentNode.parentNode.parentNode.classList.add('selected');
+        app.preferences.currentPhrase = Breadcrumb.parse(ev.target.parentNode.parentNode.parentNode.dataset.breadcrumb);
+      }
+      
+      if (this.playable) {
+        if (ev.target.classList.contains('play')) {
+          var crumb = Breadcrumb.parse(ev.target.parentNode.parentNode.dataset.breadcrumb);
+          var phrase = this.model.phrases[crumb[1]];
+          phrase.play();          
+        }
+      }
+      
+      if (this.taggable) {
+        if (ev.target.classList.contains('tag')) {
+          var phraseNode = ev.target.parentNode;
+          var crumb = Breadcrumb.parse(phraseNode.dataset.breadcrumb);
+          
+          var phrase = this.collection.filter(function(phrase) {
+            return Breadcrumb.stringify(phrase.breadcrumb) == phraseNode.dataset.breadcrumb;
+          })[0];
+          
+          this.tagPhrase(phrase, phraseNode, function() {
+            this.rerenderPhrase(phrase, phraseNode);
+            this.notify('newTag');
+          }.bind(this));
+        }
+      }
+    }.bind(this));
+    
+    if (this.editable) {
+      this.el.addEventListener('blur', function(ev) { app.preferences.currentText.store(); }, true);
+      
+      this.el.addEventListener('keydown', function(ev) {
+        if (ev.keyCode == 13 || ev.keyCode == 27) {
+          ev.preventDefault();
+          ev.target.blur();
+          app.preferences.currentText.store();
+        }
+      });
+    }
   }.bind(this);
 };
