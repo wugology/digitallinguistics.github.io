@@ -1,8 +1,6 @@
 Desiderata:
-- Delete tags via right click (both overview and details view)
+- Delete tags from a phrase on an individual level
 - Ability to rename tags (combine add and delete process)
-
-
 - Clicking any part of the phrase makes it selected
 - Pressing tab when the tag popup is open shouldn't start playing the selected phrase
 - Importing a text doesn't immediately add it to the corpus and rerender the texts list, but it should
