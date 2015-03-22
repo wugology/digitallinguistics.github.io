@@ -8,7 +8,7 @@ var Nav = function() {
 };
 
 var Module = function(collection, options) {
-  CollectionView.call(this, collection, options);
+  CollectionView.call(this, collection, null, options);
   
   if (!this.render) {
     this.render = function() { this.display(); };
@@ -91,6 +91,7 @@ var TextView = function(model, template, options) {
       var p = createElement('p', { textContent: key });
       var input = createElement('input', { value: this.model.titles[key] || '', id: key, type: 'text' });
       input.classList.add('title');
+      input.classList.add('unicode');
       
       label.appendChild(p);
       label.appendChild(input);

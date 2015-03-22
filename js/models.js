@@ -232,6 +232,26 @@ models.Corpus = function Corpus(data) {
       }.bind(this)
     },
     
+    // Removes a tag from the corpus and any of its linguistic objects
+    'removeTag': {
+      value: function(tag, callback) {
+        var removeTags = function(results, tags) {
+          tags[0].untag(this);
+          
+          results.forEach(function(result, i, arr) {
+            tags[0].untag(result);
+            result.store();
+            
+            if (i == arr.length-1) {
+              if (typeof callback == 'function') { callback(); }
+            }
+          });
+        }.bind(this);
+        
+        this.tagSearch(tag, removeTags);
+      }.bind(this)
+    },
+    
     // Callback arguments: results, tag
     'tagSearch': {
       value: function(tags, callback) {
@@ -424,7 +444,11 @@ models.Phrase = function Phrase(data) {
       value: function(attribute, searchExpr) {
         var checkHash = function(hash, searchExpr) {
           var some = Object.keys(hash).some(function(ortho) {
-            return hash[ortho].search(searchExpr) != -1;
+            if (hash[ortho]) {
+              return hash[ortho].search(searchExpr) != -1;
+            } else {
+              return false;
+            }
           }, this);
           
           return some;

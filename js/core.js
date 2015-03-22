@@ -383,6 +383,15 @@ function View(model, template, options) {
 function CollectionView(collection, template, options) {
   View.call(this, collection, template, options);
   
+  if (options) {
+    augment(this, options);
+  }
+  
+  if (template) {
+    this.template = template;
+  }
+  
   this.collection = this.model;
+  
   delete this.model;
 };

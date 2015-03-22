@@ -1,28 +1,31 @@
 Desiderata:
-- Importing a text doesn't immediately add it to the corpus and rerender the texts list
-- Figure out why search results are doubling for multi-tag searching
+- Delete tags via right click (both overview and details view)
+- Ability to rename tags (combine add and delete process)
+
+
+- Clicking any part of the phrase makes it selected
+- Pressing tab when the tag popup is open shouldn't start playing the selected phrase
+- Importing a text doesn't immediately add it to the corpus and rerender the texts list, but it should
 - Ability to search within results
-- Ability to view multiple tag sets at once (maybe with ctrl + click; if ctrl is down, display both)
 - Redisplay tagger after bulk tag
 - Count of the number of items with each tag (overview view)
 - Name of Add tag button in popup needs to change depending on whether you're adding or removing tags
 - Tags overview list still isn't sorting correctly (you should just filter the tags into new arrays, and display only those arrays) in order
-- Delete tags via right click (both overview and details view)
 - Clicking on tag category renders all tags with that category (not just exact matches)
 - Character palette
 - Notes field on the tag
 - Color field on tag
-- Ability to rename tags (combine add and delete process)
 - Clicking the manage corpora box, then clicking outside of it, seems to reset the workview - stop this behavior
 - Hide the results counter when the tagger module is hidden (it displays the last result when the user comes back to it)
 - Ability to search for things that *don't* have a particular tag
-- Tagger results should not be contentEditable
-- Edit tags in place (in the overview pane only)
 - Pressing escape when a popup is open should close it
 - Order the phrase-level tags alphabetically as well
 - Ability to deselect all results
 - Create .tagUp() and .tagDown() functions, to apply a tag at one level to every object at the level immediately above/below it
+  - Maybe also a .moveTagDown() function, which moves a tag down a level to a specific, provided child
+  - Also a .moveTagUp(), which moves a tag to its parent
 - User icon should toggle the user popup, not just display it
 - Add .selected highlighting to tags when clicked, and when ctrl+clicked (this probably means that the tagsOverview module shouldn't rerender for a new search - only when the corpus tag data changes)
 - stick results / search bar at top
 - a stats module
+- the User popup should close when the user clicks the user icon a second time

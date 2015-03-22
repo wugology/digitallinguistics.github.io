@@ -264,8 +264,11 @@ var AppView = function() {
     if (action == 'appNavClick') { this.setWorkview(data); }
     if (action == 'newTagger') {
       this.newModule('tagsOverview', app.preferences.currentCorpus.tags);
+      
       if (data) {
         this.newModule('tagger', data.results, data.options);
+      } else {
+        this.newModule('tagger');
       }
     }
     if (action == 'newTag') { this.newModule('tagsOverview', app.preferences.currentCorpus.tags); }
@@ -444,25 +447,28 @@ modules.Tagger = function(searchResults, options) {
 
   this.bulkTag = function() {
     var getCrumbs = function(tag) {
+      tag.tag(app.preferences.currentCorpus);
+      
       var crumbs = this.getSelected();
       
-      var tagAll = function(results) {
-        results.forEach(function(result, i, arr) {
-          if (i == arr.length-1) {
-            this.addTag(tag, result, function() {
-              var notify = function(results, tag) {
-                this.notify('newTagger', { data: results, options: { lingType: tag.lingType } });
-              }.bind(this);
-              
-              app.tagSearch(app.lastTagSearch, notify);
-            }.bind(this));
-          } else {
-            this.addTag(tag, result);
-          }
-        }, this);
-      }.bind(this);
-      
-      idb.getBreadcrumb(crumbs, tagAll);
+      crumbs.forEach(function(crumb, i, arr) {
+        var resultsToTag = this.collection.filter(function(result) {
+          return Breadcrumb.stringify(result.breadcrumb) == Breadcrumb.stringify(crumb);
+        });
+        
+        resultsToTag.forEach(function(resultToTag) {
+          tag.tag(resultToTag);
+          resultToTag.store();
+        });
+        
+        if (i == arr.length-1) {
+          var notify = function(results, tags) {
+            this.notify('newTagger', { results: results, options: { lingType: tags[0].lingType }})
+          }.bind(this);
+
+          app.tagSearch(tag, notify);
+        }
+      }, this);
     }.bind(this);
 
     popups.tag.getTag(getCrumbs);
@@ -518,9 +524,9 @@ modules.Tagger = function(searchResults, options) {
       this.resultsCounter.innerHTML = 'Results found: ' + this.collection.length;
     }
     
-    var renderResults = function(abbrevs) {
+    var renderResults = function() {
       this.taggingList.innerHTML = '';
-      
+
       switch (this.lingType) {
         case 'text':
           console.log('Rendering tags by text!');
@@ -540,7 +546,6 @@ modules.Tagger = function(searchResults, options) {
           
           break;
         default:
-          console.log('No linguistic type specified.');
       }
     }.bind(this);
     
@@ -629,7 +634,7 @@ modules.TagsOverview = function(collection) {
     
     if (lingTypes.length == 0) {
       var message = createElement('h3', { textContent: 'There are no tags in this corpus! Start adding some tags to your data and the tags will show up here.' });
-      message.classList.add('tagCategory');
+      message.classList.add('tagGroup');
       this.tagsList.appendChild(message);
     }
     
@@ -646,8 +651,9 @@ modules.TagsOverview = function(collection) {
         
         categories.forEach(function(category) {
           var catli = createElement('li');
-          catli.classList.add('tagCategory');
+          catli.classList.add('tagGroup');
             var h3 = createElement('h3', { textContent: category });
+            h3.classList.add('tagCategory');
             h3.dataset.tag = lingType + ':' + category;
             catli.appendChild(h3);
             var valwrapper = createElement('ul');
@@ -668,6 +674,28 @@ modules.TagsOverview = function(collection) {
       this.tagsList.appendChild(lingTypeli);
     }, this);
   }.bind(this);
+  
+  this.tagMenu = function(ev) {
+    ev.preventDefault();
+    if (ev.target.classList.contains('tagCategory') || ev.target.classList.contains('tagValue')) {
+      new popups.Menu(ev, [
+        {
+          text: 'Edit tag',
+          callback: function() {
+            console.log('Editing tag!');
+          }
+        },
+        {
+          text: 'Delete tag',
+          callback: function() {
+            app.preferences.currentCorpus.removeTag(models.Tag.parse(ev.target.dataset.tag), function() {
+              modules.tagsOverview.notify('newTagger');
+            }.bind(this));
+          }.bind(this)
+        }
+      ]);
+    }
+  };
   
   this.render = function() {
     this.listTags();
@@ -695,6 +723,7 @@ modules.TagsOverview = function(collection) {
   }.bind(this);
   
   this.tagsList.addEventListener('click', this.listen);
+  this.tagsList.addEventListener('contextmenu', this.tagMenu)
 };
 
 modules.TextsOverview = function(collection) {
@@ -903,6 +932,31 @@ popups.ManageCorpora = function() {
   }.bind(this));
 };
 
+// ev is the click event that should trigger the menu popup
+// - this function grabs the XY coordinates from that event to know where to render the popup
+// menuItems is an array of hashes, one for each list item to be displayed in the menu
+// Each menuItem hash has two attributes:
+// - text: the text content to display for that item in the menu
+// - callback: the function to be run when that menu item is clicked
+// The menu renders automatically when called - no need to call a .render() method
+popups.Menu = function(ev, menuItems) {
+  Popup.call(this);
+  
+  this.el = $('#menu');
+  this.el.innerHTML = '';
+  
+  this.el.style.top = ev.clientY + 'px';
+  this.el.style.left = ev.clientX + 'px';
+  
+  menuItems.forEach(function(menuItem) {
+    var li = createElement('li', { textContent: menuItem.text });
+    this.el.appendChild(li);
+    li.addEventListener('click', menuItem.callback);
+  }, this);
+  
+  this.display();
+};
+
 popups.Settings = function() {
   Popup.call(this);
   
@@ -1037,5 +1091,8 @@ window.addEventListener('keydown', function(ev) {
   }
 });
 
+window.addEventListener('click', function() {
+  hide($('#menu'));
+});
 window.addEventListener('load', app.initialize);
 window.addEventListener('unload', app.save);

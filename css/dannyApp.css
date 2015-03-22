@@ -21,13 +21,13 @@ audio, .phrase .icon, #taggingList .icon, .textsListItem abbr {
   -webkit-align-self: flex-end;
   align-self: flex-end; }
 
-.tagCategory { /* Tag category label */
+.tagGroup {
   background-color: rgba(63, 249, 165, 0.25); }
 
 .tagLabel, .tagValue {
   background-color: rgba(63, 249, 165, 0.5); }
 
-.phrase {
+#menu > li:hover, .phrase {
   background-color: rgba(63, 147, 249, 0.25); }
 
 .phrase > .wrapper > p {
@@ -39,7 +39,7 @@ audio, .phrase .icon, #taggingList .icon, .textsListItem abbr {
 .phrase > .wrapper > p:focus {
   background-color: rgba(63, 147, 249, 0.5); }
 
-footer, section {
+footer, #menu, section {
   border: 1px solid lightgray; }
 
 #sideNav a, #toolbarNav a {
@@ -48,13 +48,13 @@ footer, section {
 .phrase > .wrapper > p, .tagLabel, .tagValue {
   border-radius: 5px; }
 
-.phrase, .tagCategory {
+#menu, .phrase, .tagGroup {
   border-radius: 10px; }
 
 .phrase.selected {
   box-shadow: 0px 0px 5px 0px #3F93F9; }
 
-.icon, #mediaList li, .tagCategory h3, .tagValue, .textsListItem {
+.icon, #mediaList li, .tagCategory, #menu > li, .tagValue, .textsListItem {
   cursor: pointer; }
 
 .media li,
@@ -89,6 +89,9 @@ footer, section {
   -webkit-flex-wrap: wrap;
   flex-wrap: wrap; }
 
+#menu, .title {
+  font-size: 150%; }
+
 legend {
   font-weight: bold; }
 
@@ -96,7 +99,7 @@ legend {
   -webkit-justify-content: space-between;
   justify-content: space-between; }
 
-.tagCategory, #tagPopup label, #taggingList input[type=checkbox], .textsListItem input {
+.tagGroup, #tagPopup label, #taggingList input[type=checkbox], .textsListItem input {
   margin: 0.5rem; }
 
 .tagValue, .tagLabel {
@@ -111,16 +114,16 @@ legend {
 #corpusSelector, #taggingList .tags, #searchBar > div > label, .textsListItem p {
   padding: 0 0.5rem; }
 
-.phrase > .wrapper > p, .tagLabel, .tagValue {
+#menu > li, .phrase > .wrapper > p, .tagLabel, .tagValue {
   padding: 0.25rem 0.5rem; }
 
-.tagCategory, .textsListItem {
+.tagGroup, .textsListItem {
   padding: 0.5rem; }
 
 .phrase, #popups > div {
   padding: 1rem; }
 
-#sideNav, img[src='img/close.svg'], #toolbarNav {
+#menu, #sideNav, img[src='img/close.svg'], #toolbarNav {
   position: absolute; }
 
 #sideNav, #toolbarNav {
@@ -156,6 +159,9 @@ input[type=checkbox] {
 
 #mediaList li img {
   height: 2rem; }
+
+#menu {
+  background-color: white; }
   
 .open {
   max-width: 100%; }
@@ -172,10 +178,6 @@ input[type=checkbox] {
 
 #tagPopup input {
   margin: 0; }
-
-.text header input {
-  font-family: 'Gentium Plus';
-  font-size: 150%; }
 
 #toolbar.closed #toolbarContent {
   display: none; }
