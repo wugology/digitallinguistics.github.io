@@ -129,7 +129,7 @@ legend {
 #sideNav, #toolbarNav {
   top: 0; }
 
-.text fieldset, .text header input, .text header label {
+.phrase label, .text fieldset, .text header input, .text header label {
   width: 100%; }
 
 /* Styling by classes or element type (alphabetical by class/element) */
