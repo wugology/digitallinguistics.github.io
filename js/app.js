@@ -13,19 +13,19 @@ var app = {
       if (localStorage.wugbotPreferences != 'undefined') { app.preferences = JSON.parse(localStorage.wugbotPreferences); }
       
       // Initialize app views
-      appView = new AppView();
-      appView.mainNav = new AppView.MainNav();
-      appView.appNav = new AppView.AppNav();
-      appView.navIcons = new AppView.NavIcons(); // Needs to be ordered after mainNav and appNav
-      appView.corpusSelector = new AppView.CorpusSelector();
+      appView = new AppView;
+      appView.mainNav = new AppView.MainNav;
+      appView.appNav = new AppView.AppNav;
+      appView.navIcons = new AppView.NavIcons; // Needs to be ordered after mainNav and appNav
+      appView.corpusSelector = new AppView.CorpusSelector;
       
       // Initialize popups
-      popups.blank = new popups.Blank();
-      popups.fileUpload = new popups.FileUpload();
-      popups.manageCorpora = new popups.ManageCorpora();
-      popups.settings = new popups.Settings();
-      popups.tag = new popups.Tag();
-      popups.user = new popups.User();
+      popups.blank = new popups.Blank;
+      popups.fileUpload = new popups.FileUpload;
+      popups.manageCorpora = new popups.ManageCorpora;
+      popups.settings = new popups.Settings;
+      popups.tag = new popups.Tag;
+      popups.user = new popups.User;
       
       // Set the current workview
       var setWorkview = function() {
@@ -349,7 +349,7 @@ AppView.CorpusSelector = function() {
         appView.setWorkview(app.preferences.currentWorkview);
       }.bind(this);
       
-      idb.get(Number(ev.target.value), 'corpora', setCorpus);
+      idb.get(+ev.target.value, 'corpora', setCorpus);
     }
   }.bind(this));
 };
@@ -756,7 +756,7 @@ modules.TextsOverview = function(collection) {
       var selected = $('input[name=textCheckbox]:checked');
       if (!selected.length) { selected = toArray(selected); }
       this.textsList.innerHTML = '';
-      selected.forEach(function(checkbox) { app.preferences.currentCorpus.texts.push(Number(checkbox.value)); });
+      selected.forEach(function(checkbox) { app.preferences.currentCorpus.texts.push(+checkbox.value); });
       app.preferences.currentCorpus.store(this.notify('textsListChange'));
     }
   }.bind(this);
@@ -793,7 +793,7 @@ modules.TextsOverview = function(collection) {
   this.removeSelected = function() {
     var selected = $('#textsList input:checked');
     if (!selected.length) { selected = toArray(selected); }
-    var ids = selected.map(function(input) { return Number(input.value); });
+    var ids = selected.map(function(input) { return +input.value; });
     app.preferences.currentCorpus.remove(ids, 'texts');
     this.notify('textsListChange');
   }.bind(this);
@@ -807,7 +807,7 @@ modules.TextsOverview = function(collection) {
   this.renderText = function renderText(ev) {
     if (ev.target.tagName == 'P') {
       var text = this.collection.filter(function(text) {
-        return text.id == Number(ev.target.parentNode.dataset.id);
+        return text.id == +ev.target.parentNode.dataset.id;
       })[0];
       
       var renderFunction = function(text) {
@@ -1026,7 +1026,7 @@ popups.User = function() {
         popups.blank.hide();
         var selected = $('#blankPopup input:checked');
         if (!selected.length) { selected = toArray(selected); }
-        var ids = selected.map(function(input) { return Number(input.value); });
+        var ids = selected.map(function(input) { return +input.value; });
         
         var remove = function(corpora) {
           app.preferences.currentCorpus.remove(ids, 'texts');

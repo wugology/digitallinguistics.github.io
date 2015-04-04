@@ -41,3 +41,7 @@ Desiderata:
 - stick results / search bar at top
 - a stats module
 - the User popup should close when the user clicks the user icon a second time
+- Ability to quickly go to a point in a text by breadcrumb
+- Mark whether an example of something has been used in grammatical descriptions yet
+- Click a tag or search result to see it in context, in the text
+- List the text abbreviation in the search results (will need to get a textAbbrevs list to reference for each search result)

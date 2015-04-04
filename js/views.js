@@ -63,7 +63,7 @@ var TextView = function(model, template, options) {
     newSelected.classList.add('selected');
     var textItem = newSelected.querySelector('.content p:first-of-type');
     textItem.focus();
-    range = new Range();
+    range = new Range;
     range.selectNodeContents(textItem);
     range.collapse(false);
     selection = window.getSelection();

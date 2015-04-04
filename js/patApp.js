@@ -1,1 +1,0 @@
-// App UI Javascript for Pat's app
