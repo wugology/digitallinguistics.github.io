@@ -58,7 +58,7 @@ var ekegusiiColumns = [
   }
 ];
 
-tools.elan2json = function(file, columns, callback) {
+function elan2json(file, columns, callback) {
   var phrases = [];
   var fileReader = new FileReader();
   fileReader.onload = function(ev) {
