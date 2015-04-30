@@ -35,3 +35,12 @@ var $ = function(selector) {
   var selected = nodes.length == 1 ? nodes[0] : nodes;
   return selected;
 }.bind(document);
+
+function tryDemo() {
+  var homePageIntro = introJs();
+  homePageIntro.setOptions({
+    steps: homePageSteps
+  }).start();
+}
+
+window.addEventListener('load', tryDemo);
