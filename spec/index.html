@@ -107,6 +107,41 @@ p {
         <code>"phrase"</code>
       </header>
       <p><strong class=required>Required</strong> A segmentation of a <code>Text</code>. The standard imposes no assumptions about how the linguist will choose to implement this segmentation—linguists may use Intonation Units, Turns, Sentences, or any other appropriate subdivision.</p>
+
+      <section>
+
+        <header>
+          <h2 class="object">Transcriptions</h2>
+          <code>"transcriptions"</code>
+        </header>
+        <p><strong class=required>Required</strong> A set of one or more <code>Transcription</code>s for the <code>Phrase</code>.</p>
+
+        <section>
+          <header>
+            <h2 class="string">Transcription</h2>
+            <code>[name of orthography]</code>
+          </header>
+          <p><strong class=required>Required</strong> A phonemic representation of the phrase in an orthography which can be unambiguously mapped to IPA.</p>
+        </section>
+
+      </section>
+
+      <section>
+        <header>
+          <h2 class="object">Representations</h2>
+          <code>"representations"</code>
+          <p>A set of labeled representations.</p>
+        </header>
+        <section>
+          <header>
+            <h2 class="string">Representation</h2>
+            <code>[name of representation]</code>
+          </header>
+          <p><strong class=required>Optional</strong> An alternate representation of the phrase which includes annotations in addition to phonemic detail, such as discourse transcripts, conversation analyses, prosodic annotations, prose-oriented representations, or punctuated text. Possible applications might include a pedagogically-oriented uses such as storybooks, quizzes, or games. Fun stuff.</p>
+        </section>
+      </section>
+
+
     </section>
 
   </section>
