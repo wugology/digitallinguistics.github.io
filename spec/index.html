@@ -1,44 +1,75 @@
 <!doctype html>
-
+<title>Digital Linguistics Data Specification</title>
+<meta chareset=utf-8>
 <style>
+body { 
+  font-size: 16px;
+}
+
+h1, h2, h3 { 
+  font-family: "Fira Sans";
+}
+
 .required, .optional { 
-  background-color:maroon;
-  color:white;
-  font-size: small;
+  font-size: x-small;
   text-transform: uppercase;
   font-family: sans-serif;
-  margin-right: 1rem;
+  margin-right: .5rem;
   padding: .5rem;
   width: 2rem;
   border-radius: 4px;
+  border-width: 2px;
 }
 
 .required { 
-  background-color:maroon;
+  background-color:green;
+  border-color:green;
+  color:white;
 }
 
 .optional { 
-  background-color:green;
+  background-color:transparent;
+  color:black;
+  border-style:solid;
+  border-color:green;
+}
+
+.array:before , 
+.object:before , 
+.string:before { 
+  background-image: linear-gradient(#555,#222);
+  border-radius: 4px;
+  padding: .5rem;
+  font-size: x-small;
+  align-items: center;
+  color: white;
+  border: 1px solid #222;
+  text-shadow: -2px -2px 3px black;
+  margin-right: 1rem;
+  width: 1rem; 
 }
 
 .array:before { 
   content: "[ ]";
-  margin-right: 1rem;
 }
 
 
 .object:before { 
   content: "{ }";
-  margin-right: 1rem;
 }
 
 .string:before { 
   content: "“ ”";
-  margin-right: 1rem;
+}
+
+body > section { 
+  border: none;
+  margin-left: 0;
 }
 
 section { 
   margin-left: 2rem;
+  margin-bottom: 0;
   border-left: 1px dotted gray;
   padding-left: 2rem;
 }
@@ -67,16 +98,16 @@ p {
 <h1>Digital Linguistics Data Specification</h1>
 </header>
 
-<section>
+<section id=text>
   <header>
-    <h1 class="object">Text</h1>
+    <h1 id="object">Text</h1>
   </header>
   <p>
    The text is the fundamental unit of documentation. It represents a linguistic performance of a stretch of discourse in context.
    This may include a wide variety of linguistic genres: an elicitation session, a conversation, a narrative, a song, etc. 
   </p>
 
-  <section>
+  <section id=title>
     <header>
       <h2 class="string">Title</h2>
       <code>"title"</code>
@@ -85,17 +116,17 @@ p {
     <pre><code>
       "title" : "Bear and Rabbit",
     </code></pre>
-  </section>
+  </section><!-- #text -->
 
-  <section>
+  <section id=id>
     <header>
       <h2 class="string">Text Identifier (ID)</h2>
       <code>"id"</code>
     </header>
     <p><strong class=optional>Optional</strong> something about id <mark>TODO</mark></p>
-  </section>
+  </section><!-- #id -->
 
-  <section>
+  <section id=phrases>
     <header>
       <h2 class="array">Phrases</h2>
       <code>"phrases"</code>
@@ -106,9 +137,9 @@ p {
         <h2 class="object">Phrase</h2>
         <code>"phrase"</code>
       </header>
-      <p><strong class=required>Required</strong> A segmentation of a <code>Text</code>. The standard imposes no assumptions about how the linguist will choose to implement this segmentation—linguists may use Intonation Units, Turns, Sentences, or any other appropriate subdivision.</p>
+      <p><strong class=required>Required</strong> A segmentation of a <code>Text</code>. The standard imposes no assumptions about how the linguist will choose to implement this segmentation—linguists may choose use Intonation Units, Turns, Sentences, or any other appropriate subdivision.</p>
 
-      <section>
+      <section id=transcriptions>
 
         <header>
           <h2 class="object">Transcriptions</h2>
@@ -116,37 +147,38 @@ p {
         </header>
         <p><strong class=required>Required</strong> A set of one or more <code>Transcription</code>s for the <code>Phrase</code>.</p>
 
-        <section>
+        <section id=transcription>
           <header>
             <h2 class="string">Transcription</h2>
             <code>[name of orthography]</code>
           </header>
-          <p><strong class=required>Required</strong> A phonemic representation of the phrase in an orthography which can be unambiguously mapped to IPA.</p>
-        </section>
+          <p><strong class=required>Required</strong> A phonemic representation of the phrase in an orthography which is either in IPA or can be unambiguously mapped to IPA.</p>
+        </section><!-- #transcription -->
 
-      </section>
+      </section><!-- #transcriptions -->
 
-      <section>
+      <section id=representations>
         <header>
           <h2 class="object">Representations</h2>
           <code>"representations"</code>
-          <p>A set of labeled representations.</p>
         </header>
-        <section>
+        <p><strong class=optional>optional</strong> A set of labeled representations.</p>
+
+        <section id=representation>
           <header>
             <h2 class="string">Representation</h2>
             <code>[name of representation]</code>
           </header>
-          <p><strong class=required>Optional</strong> An alternate representation of the phrase which includes annotations in addition to phonemic detail, such as discourse transcripts, conversation analyses, prosodic annotations, prose-oriented representations, or punctuated text. Possible applications might include a pedagogically-oriented uses such as storybooks, quizzes, or games. Fun stuff.</p>
-        </section>
-      </section>
+          <p><strong class=optional>Optional</strong> An alternate representation of the phrase which includes annotations in addition to phonemic detail, such as discourse transcripts, conversation analyses, prosodic annotations, prose-oriented representations, or punctuated text. Possible applications might include a pedagogically-oriented uses such as storybooks, quizzes, or games. Fun stuff.</p>
+        </section><!-- #representation -->
 
+      </section><!-- #representations -->
 
-    </section>
+    </section><!-- #phrase -->
 
-  </section>
+  </section><!-- #phrases -->
 
-</section>
+</section><!-- #text -->
 
 
  
