@@ -1,18 +1,4 @@
 {
-  "abbreviation": "A26",
-  "access": "",
-  "dateCreated": "Sun Nov 30 2014 12:49:28 GMT-0800 (Pacific Standard Time)",
-  "dateModified": "Sun Nov 30 2014 12:49:28 GMT-0800 (Pacific Standard Time)",
-  "dateRecorded": "",
-  "title": "Bear and Rabbit",
-  "type": "monologue",
-  "activityID": null,
-  "cityID": null,
-  "countryID": null,
-  "genreID": null,
-  "GISLocationID": null,
-  "localeID": null,
-  "regionID": null,
   "phrases": [
     {
       "transcription": "wey ʔakuntkšˊ kunˊ hus hiʔinkiˊ ʔišinˊ.",
@@ -5816,6 +5802,5 @@
       ],
       "tags": []
     }
-  ],
-  "tags": []
+  ]
 }
