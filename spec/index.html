@@ -1,55 +1,152 @@
-<!DOCTYPE html>
-<html lang=en>
-<head>
-	<meta charset=utf-8>
-	<title>Data Structure</title>	
-	<meta name=author content='The Wugbot Team'>
-	<meta name=description content='Data specification for Digital Linguistics'>
-	<meta name=keywords content='wugbot, digital linguistics, DLX, language documentation, computational linguistics, corpus linguistics, linguistics, specification'>
-  
-  <link rel=stylesheet href=../css/fonts.css>
-  <link rel=stylesheet href=../css/style.css>
-  <link rel=stylesheet href=../css/desktop.css media='(min-width: 1000px)'>
-  <link rel=stylesheet href=../css/mobile.css media='(max-width: 1000px)'>
-</head>
-<body>
+<!doctype html>
+
+<style>
+.required, .optional { 
+  background-color:maroon;
+  color:white;
+  font-size: small;
+  text-transform: uppercase;
+  font-family: sans-serif;
+  margin-right: 1rem;
+  padding: .5rem;
+  width: 2rem;
+  border-radius: 4px;
+}
+
+.required { 
+  background-color:maroon;
+}
+
+.optional { 
+  background-color:green;
+}
+
+.array:before { 
+  content: "[ ]";
+  margin-right: 1rem;
+}
+
+
+.object:before { 
+  content: "{ }";
+  margin-right: 1rem;
+}
+
+.string:before { 
+  content: "“ ”";
+  margin-right: 1rem;
+}
+
+section { 
+  margin-left: 2rem;
+  border-left: 1px dotted gray;
+  padding-left: 2rem;
+}
+
+header { 
+  display:flex;
+  flex-direction:row;
+  align-items: center;
+}
+
+header code { 
+  background:lightgray;
+  padding: .5rem 1rem;
+  margin-left: 1rem;
+}
+
+pre { 
+}
+
+p { 
+  line-height: 2;
+}
+</style>
+
+<header>
+<h1>Digital Linguistics Data Specification</h1>
+</header>
+
+<section>
   <header>
-    <div id=navbar>
-      <div id=navIcons>
-        <img id=menuIcon src=img/menu.svg alt='open site navigation menu' class='hideonDesktop icon'>
-      </div>
-      
-      <div id=navs>
-        <nav id=mainNav class=hideonMobile>
-          <ul>
-            <li><a href=index.html class=underline>Home</a></li>
-            <li><a href=aboutWugbot.html>About Wugbot</a></li>
-            <li><a href=aboutDLX.html>About Digital Linguistics</a></li>
-            <li><a href=app.html>App</a></li>
-            <li><a href=spec.html>Data Structure</a></li>
-          </ul>
-        </nav>
-      </div>
-    </div>
+    <h1 class="object">Text</h1>
   </header>
-  
-  <main>
-    <section class=mainSection></section>
-    <section class=mainSection></section>
-    <section class=mainSection></section>
-  </main>
-  
-  <footer>
-    <div>
-      <p>&copy;2015 Wugbot</p>
-      <p>The materials and code on this site are made available under <a href=http://mit-license.org/>an MIT license</a>.</p>
-    </div>
-    <label for=github>
-      <p><a href=https://github.com/wugbot/wugbot.org>View the code for this website on Github.</a></p>
-      <a href=https://github.com/wugbot/wugbot.org><img src=img/GitHub32px.png alt='GitHub octocat' height=32 width=32></a>
-    </label>
-  </footer>
-  
-  <script src=js/site.js></script>
-</body>
-</html>
+  <p>
+   The text is the fundamental unit of documentation. It represents a linguistic performance of a stretch of discourse in context.
+   This may include a wide variety of linguistic genres: an elicitation session, a conversation, a narrative, a song, etc. 
+  </p>
+
+  <section>
+    <header>
+      <h2 class="string">Title</h2>
+      <code>"title"</code>
+    </header>
+    <p><strong class=required>Required</strong> A human-readable prose description of the content of the text.</p>
+    <pre><code>
+      "title" : "Bear and Rabbit",
+    </code></pre>
+  </section>
+
+  <section>
+    <header>
+      <h2 class="string">Text Identifier (ID)</h2>
+      <code>"id"</code>
+    </header>
+    <p><strong class=optional>Optional</strong> something about id <mark>TODO</mark></p>
+  </section>
+
+  <section>
+    <header>
+      <h2 class="array">Phrases</h2>
+      <code>"phrases"</code>
+    </header>
+    <p><strong class=required>Required</strong> A collection of all the <code>Phrases</code> in the <code>Text</code>.</p>
+    <section>
+      <header>
+        <h2 class="object">Phrase</h2>
+        <code>"phrase"</code>
+      </header>
+      <p><strong class=required>Required</strong> A segmentation of a <code>Text</code>. The standard imposes no assumptions about how the linguist will choose to implement this segmentation—linguists may use Intonation Units, Turns, Sentences, or any other appropriate subdivision.</p>
+
+      <section>
+
+        <header>
+          <h2 class="object">Transcriptions</h2>
+          <code>"transcriptions"</code>
+        </header>
+        <p><strong class=required>Required</strong> A set of one or more <code>Transcription</code>s for the <code>Phrase</code>.</p>
+
+        <section>
+          <header>
+            <h2 class="string">Transcription</h2>
+            <code>[name of orthography]</code>
+          </header>
+          <p><strong class=required>Required</strong> A phonemic representation of the phrase in an orthography which can be unambiguously mapped to IPA.</p>
+        </section>
+
+      </section>
+
+      <section>
+        <header>
+          <h2 class="object">Representations</h2>
+          <code>"representations"</code>
+          <p>A set of labeled representations.</p>
+        </header>
+        <section>
+          <header>
+            <h2 class="string">Representation</h2>
+            <code>[name of representation]</code>
+          </header>
+          <p><strong class=required>Optional</strong> An alternate representation of the phrase which includes annotations in addition to phonemic detail, such as discourse transcripts, conversation analyses, prosodic annotations, prose-oriented representations, or punctuated text. Possible applications might include a pedagogically-oriented uses such as storybooks, quizzes, or games. Fun stuff.</p>
+        </section>
+      </section>
+
+
+    </section>
+
+  </section>
+
+</section>
+
+
+ 

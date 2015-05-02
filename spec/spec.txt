@@ -1,17 +1,24 @@
-{} Corpus
 
-   [] Texts
+{} Text
 
-      {} Text
-      
-         [] Phrases
-      
-            {} Phrase
-      
-               “”  Transcription
-               “”  Translation
-      
-                 [] Words 
-                 
-                    {} Word 
-      
+   “” title
+   {} Metadata
+   
+   [] Phrases
+
+      {} Phrase
+
+         “”  Transcription
+         {}  Translations 
+             “” en  
+             “” es  
+
+         [] Words
+
+            {} Word
+
+             “”  Token
+             “”  Gloss
+
+
+
