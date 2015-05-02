@@ -1,0 +1,17 @@
+{} Corpus
+
+   [] Texts
+
+      {} Text
+      
+         [] Phrases
+      
+            {} Phrase
+      
+               “”  Transcription
+               “”  Translation
+      
+                 [] Words 
+                 
+                    {} Word 
+      
