@@ -157,8 +157,6 @@ function runDemo() {
         updatePhrase();
         updateWords();
       }
-  }).oncomplete(function(){
-    localStorage.setItem('introFinished',true);
   }).start();
 }
 // Event listeners

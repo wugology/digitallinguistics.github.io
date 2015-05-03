@@ -61,12 +61,3 @@ var homePageSteps = [
     tooltipClass: 'header'
   }
 ] 
-
-var homePageRevisitSteps = [
-  {
-    element: '#demoLink',
-    intro: '<p>Welcome back! Finish your walkthrough!</p><a href=introdemo.html><button type=button>Go!</button></a>',
-    position: 'top',
-    tooltipClass: 'header'
-  }
-] 
