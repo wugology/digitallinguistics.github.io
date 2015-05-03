@@ -37,10 +37,20 @@ var $ = function(selector) {
 }.bind(document);
 
 function tryDemo() {
-  var homePageIntro = introJs();
-  homePageIntro.setOptions({
-    steps: homePageSteps
-  }).start();
+  if (!localStorage.getItem('introFinished')){
+    var homePageIntro=introJs();
+    if (localStorage.getItem('introStarted')){
+      homePageIntro.setOptions({
+        steps: homePageRevisitSteps
+      }).start();
+    }
+    else{
+      localStorage.setItem('introStarted', true);
+      homePageIntro.setOptions({
+        steps: homePageSteps
+      }).start();
+    }
+  }
 }
 
 window.addEventListener('load', tryDemo);
