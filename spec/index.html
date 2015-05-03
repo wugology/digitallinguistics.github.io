@@ -4,10 +4,31 @@
 <style>
 body { 
   font-size: 16px;
+  font-family: "Fira Sans";
+
 }
 
-h1, h2, h3 { 
-  font-family: "Fira Sans";
+body > header  { 
+  text-align:right;
+}
+
+body > header > h1 { 
+}
+
+main { 
+  height: 100vh;
+}
+
+main aside { 
+  top: 0;
+  position:fixed;
+  overflow-y: auto; 
+  width: 20%;
+}
+
+main section#text { 
+  margin-left: 20%;
+  
 }
 
 .required, .optional { 
@@ -68,16 +89,23 @@ body > section {
 }
 
 section { 
-  margin-left: 2rem;
+  margin-left: 1rem;
   margin-bottom: 0;
-  border-left: 1px dotted gray;
+  border-left: 1px dotted lightgray;
+  padding-top: 3rem;
   padding-left: 2rem;
 }
 
-header { 
+main header { 
   display:flex;
   flex-direction:row;
-  align-items: center;
+  align-items: baseline;
+  vertical-align:bottom;
+  padding-bottom: 0;
+}
+
+section header h1 { 
+  margin:0;
 }
 
 header code { 
@@ -91,6 +119,7 @@ pre {
 
 p { 
   line-height: 2;
+  width: 60%;
 }
 </style>
 
@@ -98,18 +127,26 @@ p {
 <h1>Digital Linguistics Data Specification</h1>
 </header>
 
+
+<main>
+
+<aside id=toc>
+<header><h1>Outline</h1></header>
+<ol></ol>
+</aside>
+
 <section id=text>
   <header>
-    <h1 id="object">Text</h1>
+    <h1 class=object id="text">Text</h1>
   </header>
-  <p>
+  <p><strong class=required>required</strong>
    The text is the fundamental unit of documentation. It represents a linguistic performance of a stretch of discourse in context.
    This may include a wide variety of linguistic genres: an elicitation session, a conversation, a narrative, a song, etc. 
   </p>
 
   <section id=title>
     <header>
-      <h2 class="string">Title</h2>
+      <h1 class="string">Title</h1>
       <code>"title"</code>
     </header>
     <p><strong class=required>Required</strong> A human-readable prose description of the content of the text.</p>
@@ -120,7 +157,7 @@ p {
 
   <section id=id>
     <header>
-      <h2 class="string">Text Identifier (ID)</h2>
+      <h1 class="string">Text Identifier (ID)</h1>
       <code>"id"</code>
     </header>
     <p><strong class=optional>Optional</strong> something about id <mark>TODO</mark></p>
@@ -128,13 +165,13 @@ p {
 
   <section id=phrases>
     <header>
-      <h2 class="array">Phrases</h2>
+      <h1 class="array">Phrases</h1>
       <code>"phrases"</code>
     </header>
     <p><strong class=required>Required</strong> A collection of all the <code>Phrases</code> in the <code>Text</code>.</p>
-    <section>
+    <section id=phrase>
       <header>
-        <h2 class="object">Phrase</h2>
+        <h1 class="object">Phrase</h1>
         <code>"phrase"</code>
       </header>
       <p><strong class=required>Required</strong> A segmentation of a <code>Text</code>. The standard imposes no assumptions about how the linguist will choose to implement this segmentation—linguists may choose use Intonation Units, Turns, Sentences, or any other appropriate subdivision.</p>
@@ -142,14 +179,14 @@ p {
       <section id=transcriptions>
 
         <header>
-          <h2 class="object">Transcriptions</h2>
+          <h1 class="object">Transcriptions</h1>
           <code>"transcriptions"</code>
         </header>
         <p><strong class=required>Required</strong> A set of one or more <code>Transcription</code>s for the <code>Phrase</code>.</p>
 
         <section id=transcription>
           <header>
-            <h2 class="string">Transcription</h2>
+            <h1 class="string">Transcription</h1>
             <code>[name of orthography]</code>
           </header>
           <p><strong class=required>Required</strong> A phonemic representation of the phrase in an orthography which is either in IPA or can be unambiguously mapped to IPA.</p>
@@ -159,17 +196,17 @@ p {
 
       <section id=representations>
         <header>
-          <h2 class="object">Representations</h2>
+          <h1 class="object">Representations</h1>
           <code>"representations"</code>
         </header>
         <p><strong class=optional>optional</strong> A set of labeled representations.</p>
 
         <section id=representation>
           <header>
-            <h2 class="string">Representation</h2>
+            <h1 class="string">Representation</h1>
             <code>[name of representation]</code>
           </header>
-          <p><strong class=optional>Optional</strong> An alternate representation of the phrase which includes annotations in addition to phonemic detail, such as discourse transcripts, conversation analyses, prosodic annotations, prose-oriented representations, or punctuated text. Possible applications might include a pedagogically-oriented uses such as storybooks, quizzes, or games. Fun stuff.</p>
+          <p><strong class=optional>Optional</strong> An alternate representation of the phrase which includes annotations in addition to phonemic detail, such as discourse transcripts, conversation analyses, prosodic annotations, prose-oriented representations, or punctuated text. Possible applications might include a pedagogically-oriented uses such as storybooks, quizzes, or games.</p>
         </section><!-- #representation -->
 
       </section><!-- #representations -->
@@ -180,5 +217,19 @@ p {
 
 </section><!-- #text -->
 
+</main>
 
+
+<script>
+
+var sections = [].slice.call(document.body.querySelectorAll('section#text section'));
+
+sections.forEach(s => {
+  var li = document.createElement('li');
+  var html = '<a href=#' + s.id + '>' + s.id + '</a>';
+  li.insertAdjacentHTML('afterbegin', html);
+  document.querySelector('#toc').appendChild(li);
+})
+
+</script>
  
