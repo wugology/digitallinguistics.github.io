@@ -16,7 +16,7 @@ body > header > h1 {
 }
 
 main { 
-  height: 100vh;
+  min-height: 100vh;
 }
 
 main aside { 
@@ -29,6 +29,19 @@ main aside {
 main section#text { 
   margin-left: 20%;
   
+}
+
+footer { 
+  margin-top: 10rem;
+  padding: 1rem;
+  width: 100vw;
+  border-top: 1px solid black;
+}
+
+footer ul { 
+  display: flex;
+  justify-content: space-around;
+  list-style:none;
 }
 
 .required, .optional { 
@@ -125,6 +138,7 @@ p {
 
 <header>
 <h1>Digital Linguistics Data Specification</h1>
+<h2 id=version>Version 0.1 (<time datetime="2015-05-02">May 2, 2015</time>)</h2>
 </header>
 
 
@@ -269,6 +283,15 @@ p {
 
 </main>
 
+
+<footer>
+<ul>
+<li><a href=https://github.com/digitallinguistics/digitallinguistics.github.io>Github</a> 
+<li>A Wugbot Production.
+<li>LICENSE HERE <mark>todo</mark>
+</ul>
+
+</footer>
 
 <script>
 
