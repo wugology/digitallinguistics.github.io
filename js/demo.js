@@ -139,7 +139,6 @@ function runDemo() {
   introDemo.setOptions({
     steps: demoSteps
   }).onbeforechange(function(targetElement){
-
       if (targetElement.id=="jsonArea"){
         document.querySelector('#transcriptionBox').value="Esta frase es un ejemplo.";
         document.querySelector('#translationBox').value="This sentence is an example.";

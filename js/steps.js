@@ -69,4 +69,4 @@ var homePageRevisitSteps = [
     position: 'top',
     tooltipClass: 'header'
   }
-] 
+]
