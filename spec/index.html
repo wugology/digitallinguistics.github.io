@@ -25,15 +25,13 @@
      This may include a wide variety of linguistic genres: an elicitation session, a conversation, a narrative, a song, etc. 
     </p>
     <pre><code>
-  {
-    "id" : "25-1",
-    "title" : "Bear and Rabbit",
-    "phrases" : [ { phrase 1 }, { phrase 2 }, ... ],
-    "defaults" : {
-      "orthography" : "SwadPhonemic",
-      "speaker" : "Benjamin Paul"
-    }
-  }
+{
+  "id" : "25-1",
+  "title" : "Bear and Rabbit",
+  "participants" : [ { participant 1 }, { participant 2 }, … ],
+  "orthographies" : [ { orthography 1 }, { orthography 2 }, … ],
+  "phrases" : [ { phrase 1 }, { phrase 2 }, … ]
+}
     </code></pre>
   
     <section id=id>
@@ -43,7 +41,7 @@
       </header>
       <p><strong class=optional>Optional</strong> A unique string identifier for the text, (e.g. <a title="Globally unique identifier - Wikipedia, the free encyclopedia" href="https://en.wikipedia.org/wiki/Globally_unique_identifier">globally unique identifier</a>, an integer, etc.)</p>
       <pre><code>
-  "id" : 25
+"id" : 25
       </code></pre>
     </section><!-- id -->
   
@@ -54,7 +52,7 @@
       </header>
       <p><strong class=required>Required</strong> A human-readable prose description of the content of the text.</p>
       <pre><code>
-  "title" : "Bear and Rabbit"
+"title" : "Bear and Rabbit"
       </code></pre>
     </section><!-- title -->
     
@@ -65,7 +63,7 @@
       </header>
       <p><strong class=optional>Optional</strong> A collection of all the individuals who contributed to this text in some way, for example through recording, digitization, analysis, transcription, or editing.</p>
       <pre><code>
-  "participants" : [ { participant 1 }, { participant 2 }, ... ]
+"participants" : [ { participant 1 }, { participant 2 }, ... ]
       </code></pre>
       
       <section id=participant>
