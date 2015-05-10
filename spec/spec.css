@@ -126,28 +126,20 @@ section {
 }
 
 main header { 
-  display:flex;
-  flex-direction:row;
+  display: flex;
+  flex-direction: row;
   align-items: baseline;
-  vertical-align:bottom;
   padding-bottom: 0;
 }
 
 section header h1 { 
-  margin:0;
+  margin: 0;
 }
 
 header code { 
-  background:lightgray;
+  background: lightgray;
   padding: .5rem 1rem;
   margin-left: 1rem;
-}
-
-pre {
-}
-
-pre code { 
-  white-space: pre-wrap;
 }
 
 p { 
