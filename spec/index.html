@@ -44,18 +44,18 @@
     <pre><code>
       "title" : "Bear and Rabbit"
     </code></pre>
-  </section><!-- #text -->
+  </section><!-- title -->
 
   <section id=id>
     <header>
       <h1 class="string">Text Identifier (ID)</h1>
       <code>"id"</code>
-    </header
-    <p><strong class=optional>Optional</strong> A unique string identifier for the text. (A <a title="Globally unique identifier - Wikipedia, the free encyclopedia" href="https://en.wikipedia.org/wiki/Globally_unique_identifier">Globally unique identifier</a>, an integer, etc.)</p>
+    </header>
+    <p><strong class=optional>Optional</strong> A unique string identifier for the text, (e.g. <a title="Globally unique identifier - Wikipedia, the free encyclopedia" href="https://en.wikipedia.org/wiki/Globally_unique_identifier">globally unique identifier</a>, an integer, etc.)</p>
     <pre><code>
       "id" : 25
     </code></pre>
-  </section><!-- #id -->
+  </section><!-- id -->
 
   <section id=phrases>
     <header>
@@ -74,10 +74,6 @@
       <p><strong class=required>Required</strong> A segmentation of a <code>Text</code>. The standard imposes no assumptions about how the linguist will choose to implement this segmentation—linguists may choose use Intonation Units, Turns, Sentences, or any other appropriate subdivision.</p>
       <pre><code>
         {
-          "representations": {
-            "Modern-practical" : "Kunugu wey puup panx naqank hi cuugx we kick heex qucpa qucaaxnakx.",
-            "Swadesh-transcript" : "kunuguˊ we pu·pˊ panš naʔankˊ hi ču·gšˊ we kičkˊ he·š ʔučpaˊ ʔuča·šnakšˊ."
-          },
           "transcriptions": {
             "Swadesh-phonemic" : "kunugu wey pu·p panš naʔank hi ču·gš we kičk he·š ʔučpa ʔuča·šnakš",
             "Modern-phonemic" : "kunugu wey puup panx naqank hi cuugx we kick heex qucpa qucaaxnakx",
