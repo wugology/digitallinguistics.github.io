@@ -22,12 +22,12 @@ main aside {
   width: 20%;
 }
 
-main section#text { 
+main > section { 
   margin-left: 20%;
   background:#ddd; 
 }
 
-main #text section { 
+main > section section { 
   margin-right: 1rem;
   margin-bottom: 1rem;
   background: hsla(230, 3%, 100%, .5);
@@ -152,5 +152,5 @@ pre code {
 
 p { 
   line-height: 2;
-  width: 60%;
+  width: 80%;
 }

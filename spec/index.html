@@ -15,167 +15,221 @@
 <ol></ol>
 </aside>
 
-<section id=text>
-  <header>
-    <h1 class=object id="text">Text</h1>
-  </header>
-  <p><strong class=required>required</strong>
-   The text is the fundamental unit of documentation. It represents a linguistic performance of a stretch of discourse in context.
-   This may include a wide variety of linguistic genres: an elicitation session, a conversation, a narrative, a song, etc. 
-  </p>
-  <pre><code>
-    {
-      "id" : "25-1",
-      "title" : "Bear and Rabbit",
-      "phrases" : [ { phrase 1 }, { phrase 2 }, ... ],
-      "defaults" : {
-        "orthography" : "SwadPhonemic",
-        "speaker" : "Benjamin Paul"
-      }
-    }
-  </code></pre>
-
-  <section id=title>
+<section id=spec>
+  <section id=text>
     <header>
-      <h1 class="string">Title</h1>
-      <code>"title"</code>
+      <h1 class=object id="text">Text</h1>
     </header>
-    <p><strong class=required>Required</strong> A human-readable prose description of the content of the text.</p>
+    <p><strong class=required>required</strong>
+     The text is the fundamental unit of documentation. It represents a linguistic performance of a stretch of discourse in context.
+     This may include a wide variety of linguistic genres: an elicitation session, a conversation, a narrative, a song, etc. 
+    </p>
     <pre><code>
-      "title" : "Bear and Rabbit"
-    </code></pre>
-  </section><!-- #text -->
-
-  <section id=id>
-    <header>
-      <h1 class="string">Text Identifier (ID)</h1>
-      <code>"id"</code>
-    </header
-    <p><strong class=optional>Optional</strong> A unique string identifier for the text. (A <a title="Globally unique identifier - Wikipedia, the free encyclopedia" href="https://en.wikipedia.org/wiki/Globally_unique_identifier">Globally unique identifier</a>, an integer, etc.)</p>
-    <pre><code>
-      "id" : 25
-    </code></pre>
-  </section><!-- #id -->
-
-  <section id=phrases>
-    <header>
-      <h1 class="array">Phrases</h1>
-      <code>"phrases"</code>
-    </header>
-    <p><strong class=required>Required</strong> A collection of all the <code>Phrases</code> in the <code>Text</code>.</p>
-    <pre><code>
-      "phrases": [ { phrase 1 }, { phrase 2 }, ... ]
-    </code></pre>
-    <section id=phrase>
-    
-      <header>
-        <h1 class="object">Phrase</h1>
-      </header>
-      <p><strong class=required>Required</strong> A segmentation of a <code>Text</code>. The standard imposes no assumptions about how the linguist will choose to implement this segmentation—linguists may choose use Intonation Units, Turns, Sentences, or any other appropriate subdivision.</p>
-      <pre><code>
-        {
-          "representations": {
-            "Modern-practical" : "Kunugu wey puup panx naqank hi cuugx we kick heex qucpa qucaaxnakx.",
-            "Swadesh-transcript" : "kunuguˊ we pu·pˊ panš naʔankˊ hi ču·gšˊ we kičkˊ he·š ʔučpaˊ ʔuča·šnakšˊ."
-          },
-          "transcriptions": {
-            "Swadesh-phonemic" : "kunugu wey pu·p panš naʔank hi ču·gš we kičk he·š ʔučpa ʔuča·šnakš",
-            "Modern-phonemic" : "kunugu wey puup panx naqank hi cuugx we kick heex qucpa qucaaxnakx",
-            "APA-phonemic" : "kunukʼu wey puːp panš naʔank hi čuːkʼš we kičk heːš ʔučpa ʔučaːšnakš"
-          },
-          "translations": {
-            "Swadesh-free" : "The rabbit went to some people and (found) the women were making prepared-meal.",
-            "Hieber-literal" : "It is said the rabbit, going to the peopleʼs place, (found) the women making meal/flour."
-          }
+      {
+        "id" : "25-1",
+        "title" : "Bear and Rabbit",
+        "phrases" : [ { phrase 1 }, { phrase 2 }, ... ],
+        "defaults" : {
+          "orthography" : "SwadPhonemic",
+          "speaker" : "Benjamin Paul"
         }
+      }
+    </code></pre>
+  
+    <section id=title>
+      <header>
+        <h1 class="string">Title</h1>
+        <code>"title"</code>
+      </header>
+      <p><strong class=required>Required</strong> A human-readable prose description of the content of the text.</p>
+      <pre><code>
+        "title" : "Bear and Rabbit"
+      </code></pre>
+    </section><!-- #text -->
+  
+    <section id=id>
+      <header>
+        <h1 class="string">Text Identifier (ID)</h1>
+        <code>"id"</code>
+      </header
+      <p><strong class=optional>Optional</strong> A unique string identifier for the text. (A <a title="Globally unique identifier - Wikipedia, the free encyclopedia" href="https://en.wikipedia.org/wiki/Globally_unique_identifier">Globally unique identifier</a>, an integer, etc.)</p>
+      <pre><code>
+        "id" : 25
+      </code></pre>
+    </section><!-- #id -->
+  
+    <section id=phrases>
+      <header>
+        <h1 class="array">Phrases</h1>
+        <code>"phrases"</code>
+      </header>
+      <p><strong class=required>Required</strong> A collection of all the <code>Phrases</code> in the <code>Text</code>.</p>
+      <pre><code>
+        "phrases": [ { phrase 1 }, { phrase 2 }, ... ]
+      </code></pre>
+      <section id=phrase>
+      
+        <header>
+          <h1 class="object">Phrase</h1>
+        </header>
+        <p><strong class=required>Required</strong> A segmentation of a <code>Text</code>. The standard imposes no assumptions about how the linguist will choose to implement this segmentation—linguists may choose use Intonation Units, Turns, Sentences, or any other appropriate subdivision.</p>
+        <pre><code>
+          {
+            "representations": {
+              "Modern-practical" : "Kunugu wey puup panx naqank hi cuugx we kick heex qucpa qucaaxnakx.",
+              "Swadesh-transcript" : "kunuguˊ we pu·pˊ panš naʔankˊ hi ču·gšˊ we kičkˊ he·š ʔučpaˊ ʔuča·šnakšˊ."
+            },
+            "transcriptions": {
+              "Swadesh-phonemic" : "kunugu wey pu·p panš naʔank hi ču·gš we kičk he·š ʔučpa ʔuča·šnakš",
+              "Modern-phonemic" : "kunugu wey puup panx naqank hi cuugx we kick heex qucpa qucaaxnakx",
+              "APA-phonemic" : "kunukʼu wey puːp panš naʔank hi čuːkʼš we kičk heːš ʔučpa ʔučaːšnakš"
+            },
+            "translations": {
+              "Swadesh-free" : "The rabbit went to some people and (found) the women were making prepared-meal.",
+              "Hieber-literal" : "It is said the rabbit, going to the peopleʼs place, (found) the women making meal/flour."
+            }
+          }
+        </code></pre>
+
+        <section id=speaker>
+  
+          <header>
+            <h1 class="string">Speaker</h1>
+            <code>"speaker"</code>
+          </header>
+          <p><strong class=optional>Optional</strong> A unique identifier for the <code>Person</code> who spoke or otherwise created the phrase.</p>
+          <pre><code>
+"speaker": "JPH"
+          </code></pre>
+  
+        </section><!-- #speaker -->
+        <section id=transcriptions>
+  
+          <header>
+            <h1 class="object">Transcriptions</h1>
+            <code>"transcriptions"</code>
+          </header>
+          <p><strong class=required>Required</strong> A set of one or more <code>Transcription</code>s for the <code>Phrase</code>.</p>
+          <pre><code>
+            "transcriptions" : {
+              "Swadesh-phonemic" : "kunugu wey pu·p panš naʔank hi ču·gš we kičk he·š ʔučpa ʔuča·šnakš",
+              "Modern-phonemic" : "kunugu wey puup panx naqank hi cuugx we kick heex qucpa qucaaxnakx",
+              "APA-phonemic" : "kunukʼu wey puːp panš naʔank hi čuːkʼš we kičk heːš ʔučpa ʔučaːšnakš"
+            }
+          </code></pre>
+  
+          <section id=transcription>
+            <header>
+              <h1 class="string">Transcription</h1>
+              <code>[name of orthography]</code>
+            </header>
+            <p><strong class=required>Required</strong> A phonemic representation of the phrase in an orthography which is either in IPA or can be unambiguously mapped to IPA.</p>
+            <pre><code>
+              "APA-phonemic" : "kunukʼu wey puːp panš naʔank hi čuːkʼš we kičk heːš ʔučpa ʔučaːšnakš"
+            </code></pre>
+          </section><!-- #transcription -->
+  
+        </section><!-- #transcriptions -->
+  
+        <section id=representations>
+          <header>
+            <h1 class="object">Representations</h1>
+            <code>"representations"</code>
+          </header>
+          <p><strong class=optional>optional</strong> A set of labeled representations.</p>
+          <pre><code>
+            "representations": {
+              "Modern-practical" : "Kunugu wey puup panx naqank hi cuugx we kick heex qucpa qucaaxnakx.",
+              "Swadesh-transcript" : "kunuguˊ we pu·pˊ panš naʔankˊ hi ču·gšˊ we kičkˊ he·š ʔučpaˊ ʔuča·šnakšˊ."
+            }
+          </code></pre>
+  
+          <section id=representation>
+            <header>
+              <h1 class="string">Representation</h1>
+              <code>[name of representation]</code>
+            </header>
+            <p><strong class=optional>Optional</strong> An alternate representation of the phrase which includes annotations in addition to phonemic detail, such as discourse transcripts, conversation analyses, prosodic annotations, prose-oriented representations, or punctuated text. Possible applications might include a pedagogically-oriented uses such as storybooks, quizzes, or games.</p>
+            <pre><code>
+              "Swadesh-transcript" : "kunuguˊ we pu·pˊ panš naʔankˊ hi ču·gšˊ we kičkˊ he·š ʔučpaˊ ʔuča·šnakšˊ."
+            </code></pre>
+          </section><!-- #representation -->
+  
+        </section><!-- #representations -->
+  
+        <section id=words>
+          <header>
+            <h1 class="array">Words</h1>
+            <code>"words"</code>
+          </header>
+          <p><strong class=optional>optional</strong> An array of words.</p>
+          <pre><code>
+            "words": [
+              { word 1 }, { word 2 }, { word 3 }
+            ]
+          </code></pre>
+  
+          <section id=word>
+            <header>
+              <h1 class="object">Word</h1>
+            </header>
+            <p><strong class=optional>Optional</strong> Word </p>
+            <pre><code>
+            { 
+              token: "kunugu", 
+              gloss: "something"
+            } 
+            </code></pre>
+          </section><!-- #word -->
+  
+        </section><!-- #words -->
+  
+      </section><!-- #phrase -->
+  
+    </section><!-- #phrases -->
+  
+  </section><!-- #text -->
+  
+  <section id=language>
+    <header>
+      <h1 class=object id="language">Language</h1>
+    </header>
+    <p><strong class=required>required</strong>
+      All language-specific information, including language codes, language names, orthographies, and phonemic inventories.
+    </p>
+    <div class=examples>
+
+      <pre code=ctm><code>
+      {
+         "code": "ctm",
+         "name": "Chitimacha"
+         "inventory": [
+         ],
+         "orthographies": [
+           "transliterations": [
+             
+           ]
+         ],
+      }
       </code></pre>
 
-      <section id=transcriptions>
+    </div>
+    <section id="code">
+      <header>
+        <h1 class="string">Language code</h1>
+        <code>"id"</code>
+      </header>
+      <p>
+        <strong class="required">Required</strong> A language code which identifies the language being documented. 
+      </p>
+      <pre><code>
+        "id" : 25
+      </code></pre>
+    </section>
+  
+  </section><!-- #language -->
 
-        <header>
-          <h1 class="object">Transcriptions</h1>
-          <code>"transcriptions"</code>
-        </header>
-        <p><strong class=required>Required</strong> A set of one or more <code>Transcription</code>s for the <code>Phrase</code>.</p>
-        <pre><code>
-          "transcriptions" : {
-            "Swadesh-phonemic" : "kunugu wey pu·p panš naʔank hi ču·gš we kičk he·š ʔučpa ʔuča·šnakš",
-            "Modern-phonemic" : "kunugu wey puup panx naqank hi cuugx we kick heex qucpa qucaaxnakx",
-            "APA-phonemic" : "kunukʼu wey puːp panš naʔank hi čuːkʼš we kičk heːš ʔučpa ʔučaːšnakš"
-          }
-        </code></pre>
-
-        <section id=transcription>
-          <header>
-            <h1 class="string">Transcription</h1>
-            <code>[name of orthography]</code>
-          </header>
-          <p><strong class=required>Required</strong> A phonemic representation of the phrase in an orthography which is either in IPA or can be unambiguously mapped to IPA.</p>
-          <pre><code>
-            "APA-phonemic" : "kunukʼu wey puːp panš naʔank hi čuːkʼš we kičk heːš ʔučpa ʔučaːšnakš"
-          </code></pre>
-        </section><!-- #transcription -->
-
-      </section><!-- #transcriptions -->
-
-      <section id=representations>
-        <header>
-          <h1 class="object">Representations</h1>
-          <code>"representations"</code>
-        </header>
-        <p><strong class=optional>optional</strong> A set of labeled representations.</p>
-        <pre><code>
-          "representations": {
-            "Modern-practical" : "Kunugu wey puup panx naqank hi cuugx we kick heex qucpa qucaaxnakx.",
-            "Swadesh-transcript" : "kunuguˊ we pu·pˊ panš naʔankˊ hi ču·gšˊ we kičkˊ he·š ʔučpaˊ ʔuča·šnakšˊ."
-          }
-        </code></pre>
-
-        <section id=representation>
-          <header>
-            <h1 class="string">Representation</h1>
-            <code>[name of representation]</code>
-          </header>
-          <p><strong class=optional>Optional</strong> An alternate representation of the phrase which includes annotations in addition to phonemic detail, such as discourse transcripts, conversation analyses, prosodic annotations, prose-oriented representations, or punctuated text. Possible applications might include a pedagogically-oriented uses such as storybooks, quizzes, or games.</p>
-          <pre><code>
-            "Swadesh-transcript" : "kunuguˊ we pu·pˊ panš naʔankˊ hi ču·gšˊ we kičkˊ he·š ʔučpaˊ ʔuča·šnakšˊ."
-          </code></pre>
-        </section><!-- #representation -->
-
-      </section><!-- #representations -->
-
-      <section id=words>
-        <header>
-          <h1 class="array">Words</h1>
-          <code>"words"</code>
-        </header>
-        <p><strong class=optional>optional</strong> An array of words.</p>
-        <pre><code>
-          "words": [
-            { word 1 }, { word 2 }, { word 3 }
-          ]
-        </code></pre>
-
-        <section id=word>
-          <header>
-            <h1 class="object">Word</h1>
-          </header>
-          <p><strong class=optional>Optional</strong> Word </p>
-          <pre><code>
-          { 
-            token: "kunugu", 
-            gloss: "something"
-          } 
-          </code></pre>
-        </section><!-- #word -->
-
-      </section><!-- #words -->
-
-    </section><!-- #phrase -->
-
-  </section><!-- #phrases -->
-
-</section><!-- #text -->
+</section><!-- #spec -->
 
 </main>
 
@@ -191,7 +245,7 @@
 
 <script>
 
-var sections = [].slice.call(document.body.querySelectorAll('section#text section'));
+var sections = [].slice.call(document.body.querySelectorAll('main > section  section'));
 
 sections.forEach(s => {
   var li = document.createElement('li');
