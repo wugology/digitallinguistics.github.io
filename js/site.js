@@ -47,9 +47,11 @@ function tryDemo() {
     else{
       localStorage.setItem('introStarted', true);
       homePageIntro.setOptions({
-        steps: homePageSteps
+        steps: homePageSteps,
+        showStepNumbers: false,
+        showButtons: false
       }).start();
-    }
+    } 
   }
 }
 

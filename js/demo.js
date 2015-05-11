@@ -136,25 +136,33 @@ function update() {
 
 function runDemo() {
   var introDemo = introJs();
+  var secondTimeOnInput = false;
   introDemo.setOptions({
-    steps: demoSteps
+    steps: demoSteps,
+    showStepNumbers: false,
+    showButtons: false,
+    showProgress: true
   }).onbeforechange(function(targetElement){
-      if (targetElement.id=="jsonArea"){
-        document.querySelector('#transcriptionBox').value="Esta frase es un ejemplo.";
-        document.querySelector('#translationBox').value="This sentence is an example.";
-        update();
+      if (targetElement.id=="inputArea"){
         
-        var exampleGlosses=['This','sentence','is','an','example'];
-        var examplePosIndeces=[3,1,2,3,1];
-	Array.prototype.slice.call(document.querySelectorAll('#inputArea .wordGloss')).forEach(function(glossBox, i) {
-          glossBox.textContent=exampleGlosses[i];
-        }); 
-	Array.prototype.slice.call(document.querySelectorAll('#inputArea .wordPOS')).forEach(function(posBox, i) {
-          posBox.selectedIndex=examplePosIndeces[i];
-        });
-        
-        updatePhrase();
-        updateWords();
+        if (secondTimeOnInput){
+          document.querySelector('#transcriptionBox').value="Esta frase es un ejemplo.";
+          document.querySelector('#translationBox').value="This sentence is an example.";
+          update();
+          
+          var exampleGlosses=['This','sentence','is','an','example'];
+          var examplePosIndeces=[3,1,2,3,1];
+    Array.prototype.slice.call(document.querySelectorAll('#inputArea .wordGloss')).forEach(function(glossBox, i) {
+            glossBox.textContent=exampleGlosses[i];
+          }); 
+    Array.prototype.slice.call(document.querySelectorAll('#inputArea .wordPOS')).forEach(function(posBox, i) {
+            posBox.selectedIndex=examplePosIndeces[i];
+          });
+          
+          updatePhrase();
+          updateWords();
+        }
+        secondTimeOnInput=true;
       }
   }).oncomplete(function(){
     localStorage.setItem('introFinished',true);
@@ -162,6 +170,7 @@ function runDemo() {
 }
 // Event listeners
 document.querySelector('#downloadButton').addEventListener('click', download);
+document.querySelector('#demoRestartButton').addEventListener('click', runDemo);
 nodes.transcriptionBox.addEventListener('input', update);
 nodes.translationBox.addEventListener('input', updatePhrase);
 nodes.wordsArea.addEventListener('change', updateWords);
