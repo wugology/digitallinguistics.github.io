@@ -1,6 +1,6 @@
 var demoSteps = [
       {
-        element: '#header',
+        element: '.header',
         intro: "Welcome to Digital Linguistics! Here's a little demo to show you what we're all about!<br><br>Use the arrow keys for navigation or hit ESC to exit the tour immediately.",
         position: 'bottom',
         tooltipClass: 'header'
@@ -55,7 +55,7 @@ var demoSteps = [
 
 var homePageSteps = [
   {
-    element: '#demoLink',
+    element: 'button',
     intro: '<p>See how Digital Linguistics works!</p><a href=introdemo.html><button type=button>Go!</button></a>',
     position: 'top',
     tooltipClass: 'header'
@@ -64,7 +64,7 @@ var homePageSteps = [
 
 var homePageRevisitSteps = [
   {
-    element: '#demoLink',
+    element: 'button',
     intro: '<p>Welcome back! Finish your walkthrough!</p><a href=introdemo.html><button type=button>Go!</button></a>',
     position: 'top',
     tooltipClass: 'header'

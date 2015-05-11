@@ -137,7 +137,10 @@ function update() {
 function runDemo() {
   var introDemo = introJs();
   introDemo.setOptions({
-    steps: demoSteps
+    steps: demoSteps,
+    showStepNumbers: false,
+    showButtons: false,
+    showProgress: true
   }).onbeforechange(function(targetElement){
       if (targetElement.id=="jsonArea"){
         document.querySelector('#transcriptionBox').value="Esta frase es un ejemplo.";
