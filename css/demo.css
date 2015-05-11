@@ -99,6 +99,14 @@ a, a:hover, a:visited, a:active {
 blockquote:before, blockquote:after, q:before, q:after {
   content: '';
   content: none; }
+  
+button {
+  align-self: center;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem; }
 
 h1 {
   font-weight: bold;
@@ -184,14 +192,6 @@ html, body {
 
 p {
   display: inline-block; }
-  
-#downloadButton {
-  align-self: center;
-  background-color: white;
-  border: 1px solid black;
-  border-radius: 10px;
-  cursor: pointer;
-  padding: 0.25rem 0.5rem; }
   
 #charCount li {
   padding: 0.25rem 0.5rem; }
