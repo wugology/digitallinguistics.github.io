@@ -2,8 +2,7 @@ var demoSteps = [
       {
         element: '.header',
         intro: "Welcome to Digital Linguistics! Here's a little demo to show you what we're all about!<br><br>Use the arrow keys for navigation or hit ESC to exit the tour immediately.<br><br>If you accidentally exit at any time, simply refresh the page to restart the demo.",
-        position: 'bottom',
-        tooltipClass: 'header'
+        position: 'bottom'
       },
       {
         element: '#data',
@@ -59,14 +58,12 @@ var demoSteps = [
       {
         element: '#downloadButton',
         intro: "Click this button to download the data in the form shown below (.json). You can open and edit it with a text editor.",
-        position: 'right',
-        tooltipClass: 'header'
+        position: 'right'
       },
       {
         element: '#homepageButton',
         intro: "Now try it yourself! Click anywhere or hit esc to exit our demo, then change the input fields to watch our website manipulate your data in real time. Hit this link when you're done to return to the homepage.",
-        position: 'left',
-        tooltipClass: 'header'
+        position: 'left'
       }
     ]
 
