@@ -5,7 +5,7 @@
 
 <header>
   <h1>Digital Linguistics Data Specification</h1>
-  <h2 id=version>Version ɑ.2 (<time datetime="2015-05-10">May 10, 2015</time>)</h2>
+  <h2 id=version>Version ɑ.3 (<time datetime="2015-05-14">May 14, 2015</time>)</h2>
 </header>
 
 <main>
@@ -16,6 +16,22 @@
 </aside>
 
 <section id=spec>
+  <section id=intro>
+    <header>
+      <h1>Introduction</h1>
+    </header>
+    
+    <p>This document lays out a standard format for exchanging linguistic data in digital form. The format is designed to capture hierarchical linguistic data in a way that aligns with the descriptive categories that linguists use, relying on fundamental linguistic notions such as <dfn>text</dfn>, <dfn>morpheme</dfn>, <dfn>orthography</dfn>, etc. For instance, it is capable of capturing the fact that a text contains sentences, sentences contain words, word contains morphemes, and morphemes contain phonemes. This turns out to be a crucial factor in inputting, editing, searching, and analyzing linguistic data. For a more detailed discussion of the advantages of this format in doing Digital Linguistics, see <cite>Hieber & Hall</cite> (forthcoming).</p>
+    
+    <p>There are many ways that someone could digitally represent linguistic data. For example, one could represent the ‘language’ field as <code>"lang"</code> or <code>"language"</code>. The current specification provides a standard for how linguists can represent their data using <abbr title="JavaScript Object Notation">JSON</abbr>, i.e. <strong>J</strong>ava<strong>S</strong>cript <strong>O</strong>bject <strong>N</strong>otation. JSON is the data interchange format for the web, supported by all major programming languages, and is both easy for humans to read and write and machines to parse and generate. This specification is designed to be application-independent, and compatible with modern web technologies. For more information on JSON, visit <a href="http://json.org/">JSON.org</a>.</p>
+    
+    <p>A few things to keep in mind:</p>
+    
+    <ul>
+      <li>The fields/attributes in an object can be in any order. The <code>id</code> field of the text does not always have to preced the <code>title</code> field, for example.</li>
+    </ul>
+  </section>
+  
   <section id=text>
     <header>
       <h1 class=object id="text">Text</h1>
@@ -26,8 +42,9 @@
     </p>
     <pre><code>
 {
-  "id" : "25-1",
+  "id" : "346",
   "title" : "Bear and Rabbit",
+  "abbreviation" : "A25",
   "participants" : [ { participant 1 }, { participant 2 }, … ],
   "orthographies" : [ { orthography 1 }, { orthography 2 }, … ],
   "phrases" : [ { phrase 1 }, { phrase 2 }, … ]
