@@ -34,7 +34,7 @@
       <li>The fields/attributes in an object can be in any order. The <code>id</code> field of the text does not always have to preced the <code>title</code> field, for example.</li>
       <li>To make this specification more visually understandable, occasionally a JSON object will appear without any of its properties, and simply be given a label instead, e.g. <code>{ phrase 1 }</code>.</li>
     </ul>
-  </section>
+  </section><!-- intro -->
   
   <section id=text>
     <header>
@@ -86,7 +86,7 @@
       <pre><code>
 "abbreviation" : "A25"
       </code></pre>
-    </section>
+    </section><!-- abbreviation -->
     
     <section id=participants>
       <header>
@@ -95,7 +95,18 @@
       </header>
       <p><strong class=optional>Optional</strong> A collection of all the individuals who contributed to this text in some way, for example through recording, digitization, analysis, transcription, or editing.</p>
       <pre><code>
-"participants" : [ { participant 1 }, { participant 2 }, ... ]
+"participants" : [
+  {
+    "name" : "Benjamin Paul",
+    "role" : "speaker",
+    "personID" : 2
+  },
+  {
+    "name" : "Morris Swadesh",
+    "role" : "researcher",
+    "personID" : 3
+  }
+]
       </code></pre>
       
       <section id=participant>
@@ -103,11 +114,15 @@
           <h1 class="object">Participant</h1>
           <code>"participant"</code>
         </header>
-        <p><strong class=optional>Optional</strong> Description of participant object here.</p>
+        <p><strong class=optional>Optional</strong> A participant in the text, and the role they played (e.g. recording, transcribing, speaking, etc.). The <code>"personID"</code> field references the id of a person in the database or JSON files accompanying this text. See the <a href="#person">dlxJSON specification for Person</a> for more details.</p>
         <pre><code>
-some code here
+{
+  "name" : "Benjamin Paul",
+  "role" : "speaker",
+  "personID" : 2
+}
         </code></pre>
-      </section>
+      </section><!-- participant -->
     </section><!-- participants -->
     
     <section id=defaults>
@@ -122,7 +137,7 @@ some code here
       <pre><code>
   some code here
       </code></pre>
-    </section>
+    </section><!-- defaults -->
   
     <section id=phrases>
       <header>
