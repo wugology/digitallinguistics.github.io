@@ -1,14 +1,10 @@
 body { 
   font-size: 18px;
   font-family: "Fira Sans";
-
 }
 
 body > header  { 
   text-align:right;
-}
-
-body > header > h1 { 
 }
 
 main { 
@@ -145,4 +141,16 @@ header code {
 p { 
   line-height: 2;
   width: 80%;
+}
+
+abbr {
+  font-style: italic;
+}
+
+pre {
+  background-color: black;
+  color: white;
+  margin: 1rem;
+  overflow-x: scroll;
+  padding: 1rem;
 }
