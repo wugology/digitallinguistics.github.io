@@ -80,25 +80,28 @@
     
     <section id=titles>
       <header>
-        <h1 class="object">Title</h1>
-        <code>"title"</code>
+        <h1 class="object">Titles</h1>
+        <code>"titles"</code>
       </header>
-      <p><strong class=required>Required</strong> A human-readable prose description of the content of the text. The title may be in multiple languages and/or orthographies, which are attributes of the title object.</p>
+      <p><strong class=required>Required</strong> A title is a human-readable prose description of the content of the text. The title may be in multiple languages and/or orthographies, which are attributes of the titles object.</p>
       <pre><code>
-"code here"
+"title" : {
+  "Eng" : "Bear & Rabbit",
+  "ModPractical" : "Qakun Puup ne"
+}
       </code></pre>
-    </section>
-  
-    <section id=title>
-      <header>
-        <h1 class="string">Title</h1>
-        <code>"title"</code>
-      </header>
-      <p><strong class=required>Required</strong> A human-readable prose description of the content of the text.</p>
-      <pre><code>
+
+      <section id=title>
+        <header>
+          <h1 class="string">Title</h1>
+          <code>"[name of orthography]"</code>
+        </header>
+        <p><strong class=required>Required</strong> A human-readable prose description of the content of the text, in a specified orthography.</p>
+        <pre><code>
 "title" : "Bear and Rabbit"
-      </code></pre>
-    </section><!-- title -->
+        </code></pre>
+      </section><!-- title -->
+    </section><!-- titles -->
     
     <section id=abbreviation>
       <header>
@@ -221,7 +224,7 @@
           <section id=transcription>
             <header>
               <h1 class="string">Transcription</h1>
-              <code>[name of orthography]</code>
+              <code>"[name of orthography]"</code>
             </header>
             <p><strong class=required>Required</strong> A phonemic representation of the phrase in an orthography which is either in IPA or can be unambiguously mapped to IPA.</p>
             <pre><code>
@@ -323,7 +326,7 @@
         <strong class="required">Required</strong> A language code which identifies the language being documented. 
       </p>
       <pre><code>
-        "id" : 25
+"id" : 25
       </code></pre>
     </section>
   
@@ -355,4 +358,3 @@ sections.forEach(s => {
 })
 
 </script>
- 
