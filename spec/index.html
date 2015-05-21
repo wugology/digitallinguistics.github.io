@@ -5,7 +5,7 @@
 
 <header>
   <h1>Digital Linguistics Data Specification</h1>
-  <h2 id=version>Version ɑ.3 (<time datetime="2015-05-14">May 14, 2015</time>)</h2>
+  <h2 id=version>Version ɑ.4 (<time datetime="2015-05-21">May 21, 2015</time>)</h2>
 </header>
 
 <main>
@@ -46,6 +46,7 @@
     </p>
     <pre><code>
 {
+  "dataType" : "text",
   "id" : "346",
   "title" : "Bear and Rabbit",
   "abbreviation" : "A25",
@@ -54,6 +55,17 @@
   "phrases" : [ { phrase 1 }, { phrase 2 }, … ]
 }
     </code></pre>
+    
+    <section id=dataType>
+      <header>
+        <h1 class="string">Data Type</h1>
+        <code>"dataType"</code>
+      </header>
+      <p><strong class=required>Required</strong> The type of linguistic data. This property is used in Javascript to determine the type of data being processed. For a text, this must be <code>"text"</code>.</p>
+      <pre><code>
+"dataType" : "text"
+      </code></pre>
+    </section><!-- dataType -->
   
     <section id=id>
       <header>
@@ -65,6 +77,17 @@
 "id" : 25
       </code></pre>
     </section><!-- id -->
+    
+    <section id=titles>
+      <header>
+        <h1 class="object">Title</h1>
+        <code>"title"</code>
+      </header>
+      <p><strong class=required>Required</strong> A human-readable prose description of the content of the text. The title may be in multiple languages and/or orthographies, which are attributes of the title object.</p>
+      <pre><code>
+"code here"
+      </code></pre>
+    </section>
   
     <section id=title>
       <header>
@@ -87,6 +110,17 @@
 "abbreviation" : "A25"
       </code></pre>
     </section><!-- abbreviation -->
+    
+    <section id=textType>
+      <header>
+        <h1 class="string">Text Type</h1>
+        <code>"textType"</code>
+      </header>
+      <p><strong class=optional>Optional</strong> The type of text, e.g. monologue, dialogue, or song.</p>
+      <pre><code>
+"textType" : "monologue"
+      </code></pre>
+    </section><!-- textType -->
     
     <section id=participants>
       <header>
@@ -124,20 +158,6 @@
         </code></pre>
       </section><!-- participant -->
     </section><!-- participants -->
-    
-    <section id=defaults>
-      <header>
-        <h1 class="object">Properties</h1>
-        <code>"properties"</code>
-      </header>
-      <p><strong class=optional>Optional</strong> Specifies the default properties for the text. Every phrase within the text is then assumed to have the same properties unless specified otherwise. Properties that can be specified as defaults are:</p>
-      <ul>
-        <li></li>
-      </ul>
-      <pre><code>
-  some code here
-      </code></pre>
-    </section><!-- defaults -->
   
     <section id=phrases>
       <header>
@@ -146,7 +166,7 @@
       </header>
       <p><strong class=required>Required</strong> A collection of all the <code>Phrases</code> in the <code>Text</code>.</p>
       <pre><code>
-  "phrases": [ { phrase 1 }, { phrase 2 }, ... ]
+"phrases": [ { phrase 1 }, { phrase 2 }, ... ]
       </code></pre>
       <section id=phrase>
       
@@ -155,22 +175,35 @@
         </header>
         <p><strong class=required>Required</strong> A segmentation of a <code>Text</code>. This standard imposes no requirements regarding how the linguist should implement this segmentation—linguists may choose to use Intonation Units, Turns, Sentences, or any other appropriate subdivision.</p>
         <pre><code>
-  {
-    "transcriptions": {
-      "SwadPhonemic" : "kunugu wey pu·p panš naʔank hi čuyiʔi",
-      "ModPhonemic" : "kunugu wey puup panx naqank hi cuyiqi",
-      "APAPhonemic" : "kunukʼu wey puːp panš naʔank hi čuyiʔi",
-      "ModPractical" : "Kunugu wey puup panx naqank hi cuyiqi.",
-      "SwadTranscript" : "kunuguˊ we pu·pˊ panš naʔankˊ hi ču·gšˊ […]"
-    },
-    
-    "translations": {
-      "SwadFree" : "The rabbit went to some people […]",
-      "Literal" : "It is said the rabbit, going to the peopleʼs place […]"
-    }
-  }
-        </code></pre>
+{
+  "dataType" : "phrase",
   
+  "transcriptions" : {
+    "SwadPhonemic" : "kunugu wey pu·p panš naʔank hi čuyiʔi",
+    "ModPhonemic" : "kunugu wey puup panx naqank hi cuyiqi",
+    "APAPhonemic" : "kunukʼu wey puːp panš naʔank hi čuyiʔi",
+    "ModPractical" : "Kunugu wey puup panx naqank hi cuyiqi.",
+    "SwadTranscript" : "kunuguˊ we pu·pˊ panš naʔankˊ hi ču·gšˊ […]"
+  },
+  
+  "translations" : {
+    "SwadFree" : "The rabbit went to some people […]",
+    "Literal" : "It is said the rabbit, going to the peopleʼs place […]"
+  }
+}
+        </code></pre>
+        
+        <section id=dataType>
+          <header>
+            <h1 class="string">Data Type</h1>
+            <code>"dataType"</code>
+          </header>
+          <p><strong class=required>Required</strong> The type of linguistic data. This property is used in Javascript to determine the type of data being processed. For a phrase, this must be <code>"phrase"</code>.</p>
+          <pre><code>
+"dataType" : "phrase"
+          </code></pre>
+        </section><!-- dataType -->
+    
         <section id=transcriptions>
           <header>
             <h1 class="object">Transcriptions</h1>
@@ -178,11 +211,11 @@
           </header>
           <p><strong class=required>Required</strong> A set of one or more <code>Transcription</code>s for the <code>Phrase</code>.</p>
           <pre><code>
-  "transcriptions" : {
-    "Swadesh-phonemic" : "kunugu wey pu·p panš naʔank hi čuyiʔi",
-    "Modern-phonemic" : "kunugu wey puup panx naqank hi cuyiqi",
-    "APA-phonemic" : "kunukʼu wey puːp panš naʔank hi čuyiʔi"
-  }
+"transcriptions" : {
+  "Swadesh-phonemic" : "kunugu wey pu·p panš naʔank hi čuyiʔi",
+  "Modern-phonemic" : "kunugu wey puup panx naqank hi cuyiqi",
+  "APA-phonemic" : "kunukʼu wey puːp panš naʔank hi čuyiʔi"
+}
           </code></pre>
   
           <section id=transcription>
@@ -199,12 +232,12 @@
           <section id=speaker>
     
             <header>
-              <h1 class="string">Speaker</h1>
+              <h1 class="number">Speaker</h1>
               <code>"speaker"</code>
             </header>
             <p><strong class=optional>Optional</strong> A unique identifier for the <code>Person</code> who spoke or otherwise created the phrase.</p>
             <pre><code>
-  "speaker": "JPH"
+"speaker": 12
             </code></pre>
     
           </section><!-- #speaker -->
@@ -218,9 +251,9 @@
           </header>
           <p><strong class=optional>optional</strong> An array of words.</p>
           <pre><code>
-            "words": [
-              { word 1 }, { word 2 }, { word 3 }
-            ]
+"words": [
+  { word 1 }, { word 2 }, { word 3 }
+]
           </code></pre>
   
           <section id=word>
@@ -229,11 +262,24 @@
             </header>
             <p><strong class=optional>Optional</strong> Word </p>
             <pre><code>
-            { 
-              token: "kunugu", 
-              gloss: "something"
-            } 
+{ 
+  dataType : "word",
+  token : "kunugu", 
+  gloss : "something"
+} 
             </code></pre>
+            
+            <section id=dataType>
+              <header>
+                <h1 class="string">Data Type</h1>
+                <code>"dataType"</code>
+              </header>
+              <p><strong class=required>Required</strong> The type of linguistic data. This property is used in Javascript to determine the type of data being processed. For a word, this must be <code>"word"</code>.</p>
+              <pre><code>
+"dataType" : "word"
+              </code></pre>
+            </section><!-- dataType -->
+          
           </section><!-- #word -->
   
         </section><!-- #words -->
@@ -254,17 +300,17 @@
     <div class=examples>
 
       <pre code=ctm><code>
-      {
-         "code": "ctm",
-         "name": "Chitimacha"
-         "inventory": [
-         ],
-         "orthographies": [
-           "transliterations": [
-             
-           ]
-         ],
-      }
+{
+   "code": "ctm",
+   "name": "Chitimacha"
+   "inventory": [
+   ],
+   "orthographies": [
+     "transliterations": [
+       
+     ]
+   ],
+}
       </code></pre>
 
     </div>
