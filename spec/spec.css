@@ -79,8 +79,9 @@ footer ul {
   border-color:green;
 }
 
-.array:before , 
-.object:before , 
+.array:before,
+.number:before,
+.object:before,
 .string:before { 
   background-image: linear-gradient(#555,#222);
   border-radius: 4px;
@@ -99,6 +100,9 @@ footer ul {
   content: "[ ]";
 }
 
+.number:before {
+  content: "#";
+}
 
 .object:before { 
   content: "{ }";
