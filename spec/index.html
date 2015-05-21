@@ -155,7 +155,7 @@
       </header>
       <p><strong class=required>Required</strong> A collection of all the <code>Phrases</code> in the <code>Text</code>.</p>
       <pre><code>
-  "phrases": [ { phrase 1 }, { phrase 2 }, ... ]
+"phrases": [ { phrase 1 }, { phrase 2 }, ... ]
       </code></pre>
       <section id=phrase>
       
@@ -164,22 +164,22 @@
         </header>
         <p><strong class=required>Required</strong> A segmentation of a <code>Text</code>. This standard imposes no requirements regarding how the linguist should implement this segmentation—linguists may choose to use Intonation Units, Turns, Sentences, or any other appropriate subdivision.</p>
         <pre><code>
-  {
-    "dataType" : "phrase",
-    
-    "transcriptions" : {
-      "SwadPhonemic" : "kunugu wey pu·p panš naʔank hi čuyiʔi",
-      "ModPhonemic" : "kunugu wey puup panx naqank hi cuyiqi",
-      "APAPhonemic" : "kunukʼu wey puːp panš naʔank hi čuyiʔi",
-      "ModPractical" : "Kunugu wey puup panx naqank hi cuyiqi.",
-      "SwadTranscript" : "kunuguˊ we pu·pˊ panš naʔankˊ hi ču·gšˊ […]"
-    },
-    
-    "translations" : {
-      "SwadFree" : "The rabbit went to some people […]",
-      "Literal" : "It is said the rabbit, going to the peopleʼs place […]"
-    }
+{
+  "dataType" : "phrase",
+  
+  "transcriptions" : {
+    "SwadPhonemic" : "kunugu wey pu·p panš naʔank hi čuyiʔi",
+    "ModPhonemic" : "kunugu wey puup panx naqank hi cuyiqi",
+    "APAPhonemic" : "kunukʼu wey puːp panš naʔank hi čuyiʔi",
+    "ModPractical" : "Kunugu wey puup panx naqank hi cuyiqi.",
+    "SwadTranscript" : "kunuguˊ we pu·pˊ panš naʔankˊ hi ču·gšˊ […]"
+  },
+  
+  "translations" : {
+    "SwadFree" : "The rabbit went to some people […]",
+    "Literal" : "It is said the rabbit, going to the peopleʼs place […]"
   }
+}
         </code></pre>
         
         <section id=dataType>
@@ -189,7 +189,7 @@
           </header>
           <p><strong class=required>Required</strong> The type of linguistic data. This property is used in Javascript to determine the type of data being processed. For a phrase, this must be <code>"phrase"</code>.</p>
           <pre><code>
-  "dataType" : "phrase"
+"dataType" : "phrase"
           </code></pre>
         </section><!-- dataType -->
     
@@ -200,11 +200,11 @@
           </header>
           <p><strong class=required>Required</strong> A set of one or more <code>Transcription</code>s for the <code>Phrase</code>.</p>
           <pre><code>
-  "transcriptions" : {
-    "Swadesh-phonemic" : "kunugu wey pu·p panš naʔank hi čuyiʔi",
-    "Modern-phonemic" : "kunugu wey puup panx naqank hi cuyiqi",
-    "APA-phonemic" : "kunukʼu wey puːp panš naʔank hi čuyiʔi"
-  }
+"transcriptions" : {
+  "Swadesh-phonemic" : "kunugu wey pu·p panš naʔank hi čuyiʔi",
+  "Modern-phonemic" : "kunugu wey puup panx naqank hi cuyiqi",
+  "APA-phonemic" : "kunukʼu wey puːp panš naʔank hi čuyiʔi"
+}
           </code></pre>
   
           <section id=transcription>
@@ -221,12 +221,12 @@
           <section id=speaker>
     
             <header>
-              <h1 class="string">Speaker</h1>
+              <h1 class="number">Speaker</h1>
               <code>"speaker"</code>
             </header>
             <p><strong class=optional>Optional</strong> A unique identifier for the <code>Person</code> who spoke or otherwise created the phrase.</p>
             <pre><code>
-  "speaker": "JPH"
+"speaker": 12
             </code></pre>
     
           </section><!-- #speaker -->
@@ -240,9 +240,9 @@
           </header>
           <p><strong class=optional>optional</strong> An array of words.</p>
           <pre><code>
-            "words": [
-              { word 1 }, { word 2 }, { word 3 }
-            ]
+"words": [
+  { word 1 }, { word 2 }, { word 3 }
+]
           </code></pre>
   
           <section id=word>
@@ -251,11 +251,11 @@
             </header>
             <p><strong class=optional>Optional</strong> Word </p>
             <pre><code>
-            { 
-              dataType : "word",
-              token : "kunugu", 
-              gloss : "something"
-            } 
+{ 
+  dataType : "word",
+  token : "kunugu", 
+  gloss : "something"
+} 
             </code></pre>
             
             <section id=dataType>
@@ -289,17 +289,17 @@
     <div class=examples>
 
       <pre code=ctm><code>
-      {
-         "code": "ctm",
-         "name": "Chitimacha"
-         "inventory": [
-         ],
-         "orthographies": [
-           "transliterations": [
-             
-           ]
-         ],
-      }
+{
+   "code": "ctm",
+   "name": "Chitimacha"
+   "inventory": [
+   ],
+   "orthographies": [
+     "transliterations": [
+       
+     ]
+   ],
+}
       </code></pre>
 
     </div>
