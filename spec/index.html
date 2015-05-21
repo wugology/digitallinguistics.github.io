@@ -49,7 +49,6 @@
   "dataType" : "text",
   "id" : "346",
   "title" : "Bear and Rabbit",
-  "textType" : "monologue",
   "abbreviation" : "A25",
   "participants" : [ { participant 1 }, { participant 2 }, … ],
   "orthographies" : [ { orthography 1 }, { orthography 2 }, … ],
@@ -62,7 +61,7 @@
         <h1 class="string">Data Type</h1>
         <code>"dataType"</code>
       </header>
-      <p><strong class=required>Required</strong> The type of linguistic data. This property is used in Javascript to determine the type of data being processed.</p>
+      <p><strong class=required>Required</strong> The type of linguistic data. This property is used in Javascript to determine the type of data being processed. For a text, this must be <code>"text"</code>.</p>
       <pre><code>
 "dataType" : "text"
       </code></pre>
@@ -100,17 +99,6 @@
 "abbreviation" : "A25"
       </code></pre>
     </section><!-- abbreviation -->
-    
-    <section id=textType>
-      <header>
-        <h1 class="string">Text Type</h1>
-        <code>"textType"</code>
-      </header>
-      <p><strong class=optional>Optional</strong> The type of text, e.g. monologue, dialogue, or song.</p>
-      <pre><code>
-"textType" : "monologue"
-      </code></pre>
-    </section><!-- textType -->
     
     <section id=participants>
       <header>
@@ -156,7 +144,7 @@
       </header>
       <p><strong class=required>Required</strong> A collection of all the <code>Phrases</code> in the <code>Text</code>.</p>
       <pre><code>
-"phrases": [ { phrase 1 }, { phrase 2 }, ... ]
+  "phrases": [ { phrase 1 }, { phrase 2 }, ... ]
       </code></pre>
       <section id=phrase>
       
@@ -165,22 +153,35 @@
         </header>
         <p><strong class=required>Required</strong> A segmentation of a <code>Text</code>. This standard imposes no requirements regarding how the linguist should implement this segmentation—linguists may choose to use Intonation Units, Turns, Sentences, or any other appropriate subdivision.</p>
         <pre><code>
-{
-  "transcriptions": {
-    "SwadPhonemic" : "kunugu wey pu·p panš naʔank hi čuyiʔi",
-    "ModPhonemic" : "kunugu wey puup panx naqank hi cuyiqi",
-    "APAPhonemic" : "kunukʼu wey puːp panš naʔank hi čuyiʔi",
-    "ModPractical" : "Kunugu wey puup panx naqank hi cuyiqi.",
-    "SwadTranscript" : "kunuguˊ we pu·pˊ panš naʔankˊ hi ču·gšˊ […]"
-  },
-  
-  "translations": {
-    "SwadFree" : "The rabbit went to some people […]",
-    "Literal" : "It is said the rabbit, going to the peopleʼs place […]"
+  {
+    "dataType" : "phrase",
+    
+    "transcriptions" : {
+      "SwadPhonemic" : "kunugu wey pu·p panš naʔank hi čuyiʔi",
+      "ModPhonemic" : "kunugu wey puup panx naqank hi cuyiqi",
+      "APAPhonemic" : "kunukʼu wey puːp panš naʔank hi čuyiʔi",
+      "ModPractical" : "Kunugu wey puup panx naqank hi cuyiqi.",
+      "SwadTranscript" : "kunuguˊ we pu·pˊ panš naʔankˊ hi ču·gšˊ […]"
+    },
+    
+    "translations" : {
+      "SwadFree" : "The rabbit went to some people […]",
+      "Literal" : "It is said the rabbit, going to the peopleʼs place […]"
+    }
   }
-}
         </code></pre>
-  
+        
+        <section id=dataType>
+          <header>
+            <h1 class="string">Data Type</h1>
+            <code>"dataType"</code>
+          </header>
+          <p><strong class=required>Required</strong> The type of linguistic data. This property is used in Javascript to determine the type of data being processed. For a phrase, this must be <code>"phrase"</code>.</p>
+          <pre><code>
+  "dataType" : "phrase"
+          </code></pre>
+        </section><!-- dataType -->
+    
         <section id=transcriptions>
           <header>
             <h1 class="object">Transcriptions</h1>
@@ -202,19 +203,19 @@
             </header>
             <p><strong class=required>Required</strong> A phonemic representation of the phrase in an orthography which is either in IPA or can be unambiguously mapped to IPA.</p>
             <pre><code>
-"APA-phonemic" : "kunukʼu wey puːp panš naʔank hi čuːkʼš we kičk heːš ʔučpa ʔučaːšnakš"
+              "APA-phonemic" : "kunukʼu wey puːp panš naʔank hi čuːkʼš we kičk heːš ʔučpa ʔučaːšnakš"
             </code></pre>
           </section><!-- #transcription -->
   
           <section id=speaker>
     
             <header>
-              <h1 class="number">Speaker</h1>
+              <h1 class="string">Speaker</h1>
               <code>"speaker"</code>
             </header>
             <p><strong class=optional>Optional</strong> A unique identifier for the <code>Person</code> who spoke or otherwise created the phrase.</p>
             <pre><code>
-"speaker": 4
+  "speaker": "JPH"
             </code></pre>
     
           </section><!-- #speaker -->
@@ -228,9 +229,9 @@
           </header>
           <p><strong class=optional>optional</strong> An array of words.</p>
           <pre><code>
-"words": [
-  { word 1 }, { word 2 }, { word 3 }
-]
+            "words": [
+              { word 1 }, { word 2 }, { word 3 }
+            ]
           </code></pre>
   
           <section id=word>
@@ -239,11 +240,24 @@
             </header>
             <p><strong class=optional>Optional</strong> Word </p>
             <pre><code>
-{ 
-  token: "kunugu", 
-  gloss: "something"
-} 
+            { 
+              dataType : "word",
+              token : "kunugu", 
+              gloss : "something"
+            } 
             </code></pre>
+            
+            <section id=dataType>
+              <header>
+                <h1 class="string">Data Type</h1>
+                <code>"dataType"</code>
+              </header>
+              <p><strong class=required>Required</strong> The type of linguistic data. This property is used in Javascript to determine the type of data being processed. For a word, this must be <code>"word"</code>.</p>
+              <pre><code>
+"dataType" : "word"
+              </code></pre>
+            </section><!-- dataType -->
+          
           </section><!-- #word -->
   
         </section><!-- #words -->
@@ -264,17 +278,17 @@
     <div class=examples>
 
       <pre code=ctm><code>
-{
-   "code": "ctm",
-   "name": "Chitimacha"
-   "inventory": [
-   ],
-   "orthographies": [
-     "transliterations": [
-       
-     ]
-   ],
-}
+      {
+         "code": "ctm",
+         "name": "Chitimacha"
+         "inventory": [
+         ],
+         "orthographies": [
+           "transliterations": [
+             
+           ]
+         ],
+      }
       </code></pre>
 
     </div>
@@ -287,7 +301,7 @@
         <strong class="required">Required</strong> A language code which identifies the language being documented. 
       </p>
       <pre><code>
-"id" : 25
+        "id" : 25
       </code></pre>
     </section>
   
