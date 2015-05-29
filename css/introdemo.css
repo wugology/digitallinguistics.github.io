@@ -355,3 +355,13 @@ tr.introjs-showElement > th {
   left: 50%;
   top: 50%;
 }
+
+
+.bar {
+  flex: 1;
+  background-color:#660066;
+  text-align:center;
+  border-right: 1px solid white;
+  color:gray;
+}
+

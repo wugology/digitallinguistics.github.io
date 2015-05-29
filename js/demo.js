@@ -168,6 +168,69 @@ function runDemo() {
     localStorage.setItem('introFinished',true);
   }).start();
 }
+
+//stats!!
+
+
+var Barchart = function(data, el){
+   var self = this;
+
+   this.el = el;
+   this.data = data;
+   this.keys = Object.keys(this.data);
+   this.values = this.keys.map(function(d){ return data[d] });
+   this.max = Math.max.apply(Math, this.values);
+   this.bars = Object.keys(this.data).length;
+
+}
+
+Barchart.prototype.render = function(){
+   var self = this;
+   self.el.innerHTML = '';
+   Object.keys(self.data).forEach(function(letter){
+     var bar = self.drawBar(self.data[letter]);
+     bar.textContent = letter ;
+     self.el.appendChild(bar)
+   })
+}
+
+Barchart.prototype.drawBar = function(value){
+  var bar = document.createElement('div');
+  bar.classList.add('bar');
+  var percentage = (value / (this.max + 10)) * 100;
+  bar.style.height = percentage + '%'  ; 
+  return bar;
+}
+
+
+function phonemize(string) {
+//Gets rid of non-word characters, makes everything lower case, and outputs phonemes (letters)
+  var text2 = string.replace(/\W+/g,"");
+  var text3 = text2.replace(/\d+/g, '');
+  var text4 = text3.toLowerCase();
+  var phonemes = text4.split('');
+  return phonemes;
+};
+
+var count = function (sequence) {
+  return sequence.reduce(function (tally, item) {
+    if (!(item in tally)) {
+      tally[item] = 0
+    }
+    tally[item] += 1;
+    return tally 
+  }, {})
+}
+
+document.querySelector('transcriptionBox').addEventListener('keyup', function(ev){
+
+    var tally = count(phonemize(this.value));
+    var barchart = new Barchart(tally, document.querySelector('#chart'));
+    barchart.render();
+
+})
+
+
 // Event listeners
 document.querySelector('#downloadButton').addEventListener('click', download);
 document.querySelector('#demoRestartButton').addEventListener('click', runDemo);
